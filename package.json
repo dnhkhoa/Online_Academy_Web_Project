@@ -1,0 +1,27 @@
+{
+  "type": "module",
+  "name": "online_academy_web_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dnhkhoa/Online_Academy_Web_Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dnhkhoa/Online_Academy_Web_Project/issues"
+  },
+  "homepage": "https://github.com/dnhkhoa/Online_Academy_Web_Project#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
