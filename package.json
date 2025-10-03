@@ -22,6 +22,8 @@
   "homepage": "https://github.com/dnhkhoa/Online_Academy_Web_Project#readme",
   "dependencies": {
     "express": "^5.1.0",
+    "express-handlebars": "^8.0.3",
+    "express-handlebars-sections": "^1.0.1",
     "nodemon": "^3.1.10"
   }
 }

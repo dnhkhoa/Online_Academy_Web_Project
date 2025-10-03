@@ -1,0 +1,70 @@
+body {
+  background-color: #fbfbfb;
+  color: #212529;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, Arial,
+    sans-serif;
+}
+
+.auth-card {
+  border: 1px solid #eee;
+  border-radius: 1.5rem;
+  background: #fff;
+}
+
+.auth-visual {
+  background: linear-gradient(135deg, #6c757d 0%, #343a40 100%);
+}
+
+.auth-visual-inner {
+  background: radial-gradient(
+      1200px 400px at -10% 120%,
+      rgba(255, 255, 255, 0.2) 0,
+      rgba(255, 255, 255, 0) 60%
+    ),
+    radial-gradient(
+      800px 300px at 120% -10%,
+      rgba(255, 255, 255, 0.15) 0,
+      rgba(255, 255, 255, 0) 60%
+    );
+}
+
+.auth-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.form-label {
+  font-weight: 600;
+}
+
+.form-control {
+  border-radius: 0.75rem;
+  border-color: #e4e4e4;
+}
+
+.form-control:focus {
+  border-color: #adb5bd;
+  box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.2);
+}
+
+.btn-dark.rounded-pill {
+  font-weight: 600;
+  padding: 0.85rem 1.25rem;
+}
+
+.auth-page a {
+  color: #212529;
+}
+
+.auth-page a:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+@media (max-width: 767.98px) {
+  .auth-card {
+    border-radius: 1rem;
+  }
+}

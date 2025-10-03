@@ -1,0 +1,448 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/home.css" />
+{{/section}}
+
+<header class="border-bottom bg-white site-header">
+  <div class="container py-4 d-flex align-items-center justify-content-between">
+    <a href="/" class="text-decoration-none text-dark fs-2 fw-semibold">Online
+      Academy</a>
+
+    <nav class="d-none d-lg-flex gap-4 align-items-center">
+      <a href="#" class="text-decoration-none text-dark">Courses</a>
+      <a href="#" class="text-decoration-none text-dark">Categories</a>
+      <a href="#" class="text-decoration-none text-dark">Learn</a>
+      <div class="dropdown">
+        <a
+          href="#"
+          class="text-decoration-none text-dark dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Explore
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">All courses</a></li>
+          <li><a class="dropdown-item" href="#">Learning paths</a></li>
+          <li><a class="dropdown-item" href="#">Workshops</a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="d-none d-lg-flex gap-2">
+      <a
+        href="/account/signup"
+        class="btn btn-outline-dark rounded-pill px-4"
+      >Signup
+      </a>
+      <a href="/account/signin" class="btn btn-dark rounded-pill px-4">Login
+      </a>
+    </div>
+    <button
+      class="btn btn-outline-secondary d-lg-none rounded-circle"
+      type="button"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#mobileNav"
+      aria-controls="mobileNav"
+    >
+      <i class="bi bi-list"></i>
+    </button>
+  </div>
+</header>
+
+<div
+  class="offcanvas offcanvas-end"
+  tabindex="-1"
+  id="mobileNav"
+  aria-labelledby="mobileNavLabel"
+>
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="mobileNavLabel">Menu</h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column gap-3">
+    <a href="#" class="text-decoration-none text-dark">Courses</a>
+    <a href="#" class="text-decoration-none text-dark">Categories</a>
+    <a href="#" class="text-decoration-none text-dark">Learn</a>
+    <a href="#" class="text-decoration-none text-dark">Explore</a>
+    <div class="d-flex gap-2">
+      <a href="#" class="btn btn-outline-dark flex-grow-1">Signup</a>
+      <a href="#" class="btn btn-dark flex-grow-1">Login</a>
+    </div>
+  </div>
+</div>
+
+<main class="pb-5">
+  <section class="py-5">
+    <div class="container">
+      <div
+        class="hero-banner text-white d-flex flex-column justify-content-center align-items-center text-center px-4 px-lg-5"
+      >
+        <div class="hero-content col-12 col-lg-8">
+          <h1 class="display-5 fw-bold mb-3">Learn skills that transform your
+            career</h1>
+          <p class="lead mb-4">
+            Master new technologies with expert-led online courses. Start your
+            learning journey today.
+          </p>
+          <div
+            class="d-flex flex-column flex-sm-row gap-3 justify-content-center"
+          >
+            <a
+              href="#"
+              class="btn btn-light text-dark fw-semibold px-4"
+            >Browse</a>
+            <a
+              href="#"
+              class="btn btn-outline-light fw-semibold px-4"
+            >Signup</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Featured</small>
+        <h2 class="display-6">Top courses this week</h2>
+        <p class="text-muted mb-0">
+          Discover the most engaging and high-quality courses from industry
+          experts.
+        </p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div
+            class="ghost-card big d-flex flex-column justify-content-between"
+          >
+            <div>
+              <span class="badge bg-dark mb-3">New</span>
+              <h3 class="fw-bold">Python for beginners</h3>
+              <p class="text-muted mb-4">
+                Learn python programming from scratch with practical examples
+                and real-world projects.
+              </p>
+            </div>
+            <div class="ghost-image mb-4"></div>
+            <div class="d-flex gap-3">
+              <a href="#" class="btn btn-dark">Enroll</a>
+              <a
+                href="#"
+                class="btn btn-link text-dark text-decoration-none"
+              >Details <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="ghost-card h-100">
+            <h5 class="fw-bold">Web development masterclass</h5>
+            <p class="text-muted">
+              Build modern web applications with cutting-edge technologies.
+            </p>
+            <div class="ghost-image mb-3"></div>
+            <a href="#" class="text-decoration-none fw-semibold">Details
+              <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="ghost-card h-100">
+            <h5 class="fw-bold">Mobile app development</h5>
+            <p class="text-muted">
+              Create professional mobile apps for iOS and Android platforms.
+            </p>
+            <div class="ghost-image mb-3"></div>
+            <a href="#" class="text-decoration-none fw-semibold">Details
+              <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-white">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Popular</small>
+        <h2 class="display-6">Most viewed courses</h2>
+        <p class="text-muted mb-0">
+          Explore the courses that learners are watching most this week.
+        </p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="ghost-card h-100">
+            <div class="ghost-image mb-4"></div>
+            <h5 class="fw-bold">Complete python bootcamp</h5>
+            <p class="text-muted">Comprehensive python programming course for
+              all levels.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="ghost-card h-100">
+            <div class="ghost-image mb-4"></div>
+            <h5 class="fw-bold">JavaScript fundamentals</h5>
+            <p class="text-muted">Master modern JavaScript programming
+              techniques.</p>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ghost-card h-100">
+            <div class="ghost-image mb-4"></div>
+            <h5 class="fw-bold">React development</h5>
+            <p class="text-muted">Build interactive web applications with React
+              framework.</p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center mt-4"
+      >
+        <a href="#" class="btn btn-outline-dark px-4">View all</a>
+        <a href="#" class="text-decoration-none fw-semibold">Explore
+          <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Fresh</small>
+        <h2 class="display-6">Latest courses</h2>
+        <p class="text-muted mb-0">
+          Discover brand new courses across multiple disciplines.
+        </p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="ghost-card h-100 border border-2">
+            <span class="badge bg-dark mb-3">New</span>
+            <h5 class="fw-bold">AI fundamentals</h5>
+            <p class="text-muted">Introduction to artificial intelligence and
+              machine learning.</p>
+            <div class="ghost-image mb-4"></div>
+            <a href="#" class="text-decoration-none fw-semibold">Explore
+              <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="ghost-card h-100 border border-2">
+            <span class="badge bg-dark mb-3">Hot</span>
+            <h5 class="fw-bold">Cybersecurity basics</h5>
+            <p class="text-muted">Learn essential network security and
+              protection strategies.</p>
+            <div class="ghost-image mb-4"></div>
+            <a href="#" class="text-decoration-none fw-semibold">Explore
+              <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ghost-card h-100 border border-2">
+            <span class="badge bg-dark mb-3">Trending</span>
+            <h5 class="fw-bold">Cloud computing essentials</h5>
+            <p class="text-muted">Master cloud infrastructure and deployment
+              techniques.</p>
+            <div class="ghost-image mb-4"></div>
+            <a href="#" class="text-decoration-none fw-semibold">Explore
+              <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-white">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Benefits</small>
+        <h2 class="display-6">Why choose our online academy</h2>
+        <p class="text-muted mb-0">
+          Transform your skills with flexible and comprehensive learning
+          experiences.
+        </p>
+      </div>
+      <div class="row text-center text-md-start mb-5 g-4">
+        <div class="col-md-4 feature-item">
+          <h5>Expert instructors</h5>
+          <p>Learn from industry professionals with real-world experience and
+            proven track records.</p>
+        </div>
+        <div class="col-md-4 feature-item">
+          <h5>Flexible learning</h5>
+          <p>Study at your own pace with on-demand courses accessible from
+            anywhere.</p>
+        </div>
+        <div class="col-md-4 feature-item">
+          <h5>Practical skills</h5>
+          <p>Gain hands-on experience through project-based learning and
+            interactive content.</p>
+        </div>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="ghost-image tall mt-4"></div>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Trending</small>
+        <h2 class="display-6">Most popular learning categories</h2>
+        <p class="text-muted mb-0">
+          Discover the learning paths that students are most passionate about
+          this week.
+        </p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="ghost-card h-100">
+            <div class="ghost-image mb-4"></div>
+            <h5 class="fw-bold">Web development</h5>
+            <p class="text-muted">Growing demand for modern web technologies.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="ghost-card h-100">
+            <div class="ghost-image mb-4"></div>
+            <h5 class="fw-bold">Mobile development</h5>
+            <p class="text-muted">Increasing interest in mobile app creation.</p>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ghost-card h-100">
+            <div class="ghost-image mb-4"></div>
+            <h5 class="fw-bold">Data science</h5>
+            <p class="text-muted">Rising popularity of data analysis and machine
+              learning.</p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center mt-4"
+      >
+        <a href="#" class="btn btn-outline-dark px-4">View all</a>
+        <a href="#" class="text-decoration-none fw-semibold">Explore
+          <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5 bg-white">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-4">
+          <h2 class="fw-bold">Course gallery</h2>
+          <p class="text-muted">Browse our curated selection of top-rated online
+            learning experiences.</p>
+        </div>
+        <div class="col-lg-8">
+          <div class="d-flex align-items-center gap-4">
+            <div class="ghost-image flex-fill tall"></div>
+            <div
+              class="ghost-image flex-fill d-none d-md-block"
+              style="min-height: 220px; width: 30%;"
+            ></div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between mt-4">
+            <div class="d-flex gap-3">
+              <button class="circle-btn" type="button"><i
+                  class="bi bi-arrow-left"
+                ></i></button>
+              <button class="circle-btn" type="button"><i
+                  class="bi bi-arrow-right"
+                ></i></button>
+            </div>
+            <div class="slider-dots d-flex gap-2">
+              <span class="active"></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="display-6 fw-bold">Start your learning journey</h2>
+        <p class="text-muted">Join thousands of students who are transforming
+          their careers through online education.</p>
+        <div
+          class="d-flex flex-column flex-sm-row gap-3 justify-content-center"
+        >
+          <a href="#" class="btn btn-dark px-4">Signup</a>
+          <a href="#" class="btn btn-outline-dark px-4">Learn more</a>
+        </div>
+      </div>
+      <div class="ghost-image tall"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="py-5 border-top bg-white site-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <a
+          href="/"
+          class="text-decoration-none text-dark fs-3 fw-semibold d-block mb-3"
+        ><img src="/static/LogoUTE.png" alt="Logo" class="site-logo" /></a>
+        <p class="mb-1"><strong>Address</strong></p>
+        <p class="text-muted mb-2">1 Vo Van Ngan, Thu Duc, Tp.HCM</p>
+        <p class="mb-1"><strong>Contact</strong></p>
+        <a
+          href="mailto:onlineacademy@gmail.com"
+          class="text-decoration-none"
+        >onlineacademy@gmail.com</a>
+        <div class="footer-social mt-3">
+          <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+          <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" aria-label="X"><i class="bi bi-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+          <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="row footer-link-group">
+          <div class="col-6">
+            <a href="#">About us</a>
+            <a href="#">Courses</a>
+            <a href="#">Instructors</a>
+            <a href="#">Blog</a>
+            <a href="#">Careers</a>
+          </div>
+          <div class="col-6">
+            <a href="#">Help</a>
+            <a href="#">Community</a>
+            <a href="#">Partners</a>
+            <a href="#">Enterprise</a>
+            <a href="#">Sitemap</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="ghost-image" style="min-height: 180px;"></div>
+      </div>
+    </div>
+    <hr class="my-5" />
+    <div
+      class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3"
+    >
+      <span class="text-muted">&copy; Online Academy. All rights reserved.</span>
+      <div class="d-flex gap-3">
+        <a href="#" class="text-decoration-none text-muted">Privacy policy</a>
+        <a href="#" class="text-decoration-none text-muted">Terms of service</a>
+        <a href="#" class="text-decoration-none text-muted">Cookies settings</a>
+      </div>
+    </div>
+  </div>
+</footer>
