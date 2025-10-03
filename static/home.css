@@ -3,10 +3,6 @@ body {
   background-color: #fbfbfb;
 }
 
-.site-logo {
-  width: 120px;
-  height: auto;
-}
 .hero-banner {
   min-height: 430px;
   background-color: #6c757d;
@@ -97,27 +93,6 @@ body {
   align-items: center;
   justify-content: center;
   background-color: #fff;
-}
-
-.footer-link-group a {
-  display: block;
-  color: #212529;
-  text-decoration: none;
-  margin-bottom: 0.25rem;
-}
-
-.footer-link-group a:hover {
-  text-decoration: underline;
-}
-
-.footer-social a {
-  color: #212529;
-  font-size: 1.1rem;
-  margin-right: 0.65rem;
-}
-
-.footer-social a:hover {
-  color: #000;
 }
 
 @media (max-width: 767.98px) {

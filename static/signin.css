@@ -49,7 +49,7 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.2);
 }
 
-.btn-dark.rounded-pill {
+.auth-page .btn.btn-dark.rounded-pill {
   font-weight: 600;
   padding: 0.85rem 1.25rem;
 }

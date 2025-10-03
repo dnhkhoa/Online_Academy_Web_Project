@@ -1,0 +1,25 @@
+.site-logo {
+  width: 120px;
+  height: auto;
+}
+
+.footer-link-group a {
+  display: block;
+  color: #212529;
+  text-decoration: none;
+  margin-bottom: 0.25rem;
+}
+
+.footer-link-group a:hover {
+  text-decoration: underline;
+}
+
+.footer-social a {
+  color: #212529;
+  font-size: 1.1rem;
+  margin-right: 0.65rem;
+}
+
+.footer-social a:hover {
+  color: #000;
+}
