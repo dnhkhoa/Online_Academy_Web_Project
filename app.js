@@ -26,8 +26,7 @@ app.get("/", function (req, res) {
   res.render("home");
 });
 
-import accountRouter from "./routes/account.route.js";
-app.use("/account", accountRouter);
+
 import categoryRoutes from './routes/category.route.js';
 app.use('/admin/categories', categoryRoutes);
 

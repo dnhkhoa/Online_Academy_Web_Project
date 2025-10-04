@@ -3,52 +3,118 @@ import * as categoryModel from '../models/category.model.js';
 
 const router = express.Router();
 
-//Trang danh danh sách tất cả cate
-router.get('/', async function(req, res){
-    const list = await categoryModel.findAll();
-    res.render('vwCategory/list', {
-        categories: list
+//Danh sách cat tầng 1
+router.get('/', async function (req, res) {
+    const parents = await categoryModel.findAllParents();
+    res.render('vwAdminCategory/parents', {
+        parents: parents
     });
 });
 
-//Thêm mới
-router.get('/add', function(req, res){
-    res.render('vwCategory/add');
-});
-router.post('/add', async function(req, res){
-    const category = {
-       catname: req.body.catname
+//Danh sách cat tầng 2
+router.get('/children', async function (req, res) {
+    const parentid = req.query.parentid || 0;
+    const parent = await categoryModel.findById(parentid);
+    let children = [];
+    if (parent) {
+        children = await categoryModel.findChildrenByParent(parentid)
     }
-    await categoryModel.add(category);
-    res.redirect('/admin/categories');
-}); 
+    res.render('vwAdminCategory/children', {
+        parent: parent,
+        children: children
+    });
+});
 
-//cập nhật
-router.get('/edit', async function(req, res){
-    const id = req.query.id || 0;
+// Thêm cat
+router.get('/add', async function (req, res) {
+    let parentid = null;
+    let parent = null;
+    if (req.query.parentid) {
+        parentid = req.query.parentid;
+        parent = await categoryModel.findById(parentid)
+    }
+    res.render('vwAdminCategory/add', {
+        parent: parent
+    });
+});
+router.post('/add', async function (req, res) {
+    let parentid = null;
+    if(req.body.parentid){
+        parentid = req.body.parentid
+    }
+    const category = {
+        catname: req.body.catname,
+        parentid: parentid? parentid : null
+    };
+    await categoryModel.add(category);
+    if (parentid){
+        res.redirect(`/admin/categories/children?parentid=${parentid} `);
+    } 
+    else {
+        res.redirect('/admin/categories');
+    }
+});
+
+//Chỉnh sửa cat
+router.get('/edit', async function (req, res) {
+    let id = 0;
+    if(req.query.id){
+        id = req.query.id;
+    }
     const category = await categoryModel.findById(id);
     if(!category){
-        return res.redirect('/admin/categories');
+        res.redirect('/admin/categories');
+        return;
     }
-    res.render('vwCategory/edit', {
-        category:category
+    let parent = null;
+    if(category.parentid){
+        parent = await categoryModel.findById(category.parentid);
+    }
+
+    res.render('vwAdminCategory/edit',{
+        category:category,
+        parent: parent,
     });
 });
-router.post('/patch', async function(req, res){
-    const id = req.body.catid;
-    const category = {
-       catname: req.body.catname
+router.post('/patch', async function (req, res) {
+    let id = 0;
+    let parentid = null;
+    if(req.body.catid){
+        id = req.body.catid;
     }
-    await categoryModel.patch(id, category);
-    res.redirect('/admin/categories');
+    if(req.body.parentid){
+        parentid = req.body.parentid;
+    }
+    const changes = {
+        catname: req.body.catname,
+        parentid: parentid,
+    }
+    await categoryModel.patch(id,changes)
+    if (parentid) {
+        res.redirect(`/admin/categories/children?parentid=${parentid}`);
+    } else {
+        res.redirect('/admin/categories')
+    }
 });
 
-//xóa
-router.post('/del', async function (req, res){
-    const id = req.body.catid;
+//Xóa cat
+router.post('/del', async function (req, res) {
+    let id = 0;
+    let parentid = null;
+    if(req.body.catid){
+        id = req.body.catid;
+    }
+    if (req.body.parent){
+        parentid = req.body.parentid;
+    }
     await categoryModel.del(id);
-    res.redirect('/admin/categories')
+
+    if (parentid){
+        res.redirect(`/admin/categories/children?parentid=${parentid}`);
+    } 
+    else {
+        res.redirect('/admin/categories')
+    }
 });
 
 export default router;
-
