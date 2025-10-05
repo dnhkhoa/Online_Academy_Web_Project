@@ -26,9 +26,10 @@ app.get("/", function (req, res) {
   res.render("home");
 });
 
-
 import categoryRoutes from './routes/category.route.js';
 app.use('/admin/categories', categoryRoutes);
+import courseRoutes from './routes/course.route.js';
+app.use('/admin/courses', courseRoutes);
 
 
 app.listen(3000, function () {
