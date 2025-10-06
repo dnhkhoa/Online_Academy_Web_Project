@@ -2,6 +2,62 @@
   <link rel="stylesheet" href="/static/signup.css" />
 {{/section}}
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("signupForm");
+
+    form.addEventListener("submit", function (event) {
+      // Clear previous validation states
+      const inputs = form.querySelectorAll("input");
+      inputs.forEach((input) => {
+        input.classList.remove("is-invalid");
+      });
+
+      let isValid = true;
+
+      // Full name validation
+      const fullName = document.getElementById("fullName");
+      if (fullName.value.trim() === "") {
+        isValid = false;
+        fullName.classList.add("is-invalid");
+      }
+
+      // Email validation
+      const email = document.getElementById("email");
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email.value.trim())) {
+        isValid = false;
+        email.classList.add("is-invalid");
+      }
+
+      // Password validation
+      const password = document.getElementById("password");
+      if (password.value.length < 8) {
+        isValid = false;
+        password.classList.add("is-invalid");
+      }
+
+      // Confirm password validation
+      const confirmPassword = document.getElementById("confirmPassword");
+      if (confirmPassword.value !== password.value || confirmPassword.value === "") {
+        isValid = false;
+        confirmPassword.classList.add("is-invalid");
+      }
+
+      // Terms and conditions validation
+      const terms = document.getElementById("terms");
+      if (!terms.checked) {
+        isValid = false;
+        terms.classList.add("is-invalid");
+      }
+
+      if (!isValid) {
+        event.preventDefault(); // Prevent form submission if invalid
+      }
+    });
+  });
+</script>
+
 <div class="auth-page container py-5 min-vh-100 d-flex align-items-center">
   <div class="row w-100 justify-content-center">
     <div class="col-12 col-md-10 col-lg-8 col-xxl-7">
@@ -18,7 +74,7 @@
               </div>
             </div>
 
-            <form method="post" action="/signup" novalidate>
+            <form method="post" action="/signup" novalidate id="signupForm">
               <div class="mb-3">
                 <label for="fullName" class="form-label">Full name</label>
                 <input
