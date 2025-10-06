@@ -1,0 +1,13 @@
+{{!< layouts/main }}
+<p class="mb-3">Nhập <code>orderId</code> có trong DB để đi sang MoMo:</p>
+<form class="row g-2" method="get" action="/payments/go">
+  <div class="col-auto">
+    <input name="orderId" class="form-control" placeholder="orderId..." required>
+  </div>
+  <div class="col-auto">
+    <input name="expire" class="form-control" placeholder="expire ms (optional)">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary">Go</button>
+  </div>
+</form>
