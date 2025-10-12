@@ -1,11 +1,20 @@
-const express = require("express");
-const session = require("express-session");
-const dotenv = require("dotenv");
-const { engine } = require("express-handlebars");
-const hbs_sections = require("express-handlebars-sections");
-const path = require("path");
+import express from "express";
+import session from "express-session";
+import dotenv from "dotenv";
+import { engine } from "express-handlebars";
+import hbs_sections from "express-handlebars-sections";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import supabase from "./config/supabase.js";
+import authRoutes from "./routes/auth.route.js";
+import accountRouter from "./routes/account.route.js";
 
 dotenv.config();
+
+// __dirname fix cho ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -24,6 +33,7 @@ app.engine(
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   session({
@@ -32,10 +42,6 @@ app.use(
     saveUninitialized: true,
   })
 );
-
-const supabase = require("./config/supabase");
-const authRoutes = require("./routes/auth.route");
-const accountRouter = require("./routes/account.route");
 
 app.use("/auth", authRoutes);
 app.use("/account", accountRouter);
@@ -46,5 +52,6 @@ app.get("/", (req, res) => {
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(` Server running at http://localhost:${PORT}`);
 });
+ 
