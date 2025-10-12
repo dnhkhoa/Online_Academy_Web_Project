@@ -29,6 +29,9 @@ app.get("/", function (req, res) {
 import accountRouter from "./routes/account.route.js";
 app.use("/account", accountRouter);
 
+import courseRouter from "./routes/course.route.js";
+app.use("/course", courseRouter);
+
 app.listen(3000, function () {
   console.log("Server is running on http://localhost:3000");
 });
