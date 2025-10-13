@@ -32,6 +32,9 @@ app.use("/account", accountRouter);
 import courseRouter from "./routes/course.route.js";
 app.use("/course", courseRouter);
 
+import categoryRouter from "./routes/category.route.js";
+app.use("/admin/categories", categoryRouter);
+
 app.listen(3000, function () {
   console.log("Server is running on http://localhost:3000");
 });

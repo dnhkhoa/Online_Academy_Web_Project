@@ -1,0 +1,191 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/add.css" />
+{{/section}}
+
+<div class="category-add-container">
+
+  <div class="content-grid single-column">
+    <form
+      id="frmAddCategory"
+      method="post"
+      enctype="multipart/form-data"
+      class="card shadow-sm category-form-card"
+    >
+      <div class="card-header">
+        <h5 class="card-title mb-0">New Category</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="form-grid">
+          <section class="form-panel">
+
+            <!-- Parent category FIRST -->
+            <div class="form-section parent-category">
+              <label for="selParent" class="form-label mb-0">Parent category</label>
+              <p class="field-hint mb-2">
+                Choose an existing parent to add a course into it, or select
+                <em>No parent</em>
+                to create a new parent category.
+              </p>
+              <select class="form-select" id="selParent" name="parentId">
+                <option value="0">No parent</option>
+                <option value="analytics">A</option>
+                <option value="innovation">B</option>
+                <option value="professional">C</option>
+                <option value="creative">D</option>
+              </select>
+            </div>
+
+            <!-- Category/Course name -->
+            <div class="form-section">
+              <label for="txtCatName" class="form-label" id="lblCatName">Parent
+                category name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="txtCatName"
+                name="catname"
+                value=""
+                autofocus
+              />
+              <!-- 1 = creating parent, 0 = creating course -->
+              <input type="hidden" id="isParent" name="isParent" value="1" />
+            </div>
+          </section>
+
+          <!-- Media & visibility (detail-block) -->
+          <section class="form-panel detail-block d-none" id="panelMedia">
+            <div class="panel-header">
+              <h6>Media &amp; visibility</h6>
+              <p>Upload a cover image and manage how the category appears.</p>
+            </div>
+
+            <div class="form-section">
+              <label class="form-label" for="fileCover">Category cover</label>
+              <div class="media-upload">
+                <div class="media-preview">
+                  <img
+                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80"
+                    alt="Category cover preview"
+                  />
+                </div>
+                <div class="media-actions">
+                  <p class="media-note">
+                    Recommended 1200 × 640 px or larger. Square artwork also
+                    works in mobile cards.
+                  </p>
+                  <div class="media-controls">
+                    <label
+                      for="fileCover"
+                      class="btn btn-outline-primary btn-sm"
+                    >
+                      <i class="bi bi-upload"></i>
+                      Upload image
+                    </label>
+                    <input
+                      type="file"
+                      class="d-none"
+                      id="fileCover"
+                      name="coverImage"
+                      accept="image/*"
+                    />
+                    <input
+                      type="url"
+                      class="form-control form-control-sm"
+                      name="coverImageUrl"
+                      value=""
+                      placeholder="Or paste an image URL"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </section>
+        </div>
+
+        <section class="form-panel detail-block d-none" id="panelHero">
+          <div class="form-section">
+            <label for="txtHeroSubtitle" class="form-label">Subtitle </label>
+            <textarea
+              class="form-control tinymce"
+              id="txtHeroSubtitle"
+              name="heroSubtitle"
+              rows="3"
+            >Tiny MCE</textarea>
+          </div>
+        </section>
+
+        <!-- Rich detail (detail-blocks) -->
+        <div class="rich-grid detail-block d-none" id="panelRich">
+          <section class="rich-panel">
+            <div class="panel-header">
+              <h6>Course description</h6>
+              <p>Provide the long-form overview shown on the category detail
+                page.</p>
+            </div>
+            <textarea
+              class="form-control tinymce"
+              id="txtDescription"
+              name="description"
+              rows="6"
+            >TinyMCE</textarea>
+          </section>
+
+          <section class="rich-panel">
+            <div class="panel-header">
+              <h6>Benefits when joining</h6>
+              <p>List the outcomes or perks learners unlock after enrolling.</p>
+            </div>
+            <textarea
+              class="form-control tinymce"
+              id="txtBenefits"
+              name="benefits"
+              rows="6"
+            >TinyMCE</textarea>
+          </section>
+
+          <section class="rich-panel wide">
+            <div class="panel-header">
+              <h6>Curriculum outline</h6>
+              <p>Sketch the core modules or playlists powering this category.</p>
+            </div>
+            <textarea
+              class="form-control tinymce"
+              id="txtCurriculum"
+              name="curriculum"
+              rows="6"
+            >TinyMCE</textarea>
+          </section>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="action-buttons">
+          <a
+            class="btn btn-outline-success"
+            href="/admin/categories/list"
+            role="button"
+          >
+            <i class="bi bi-arrow-left"></i>
+            Back
+          </a>
+          <div class="secondary-actions">
+            <button type="reset" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-counterclockwise"></i>
+              Reset
+            </button>
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check2"></i>
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{{#section "scripts"}}
+  <script defer src="/static/add.js"></script>
+{{/section}}
