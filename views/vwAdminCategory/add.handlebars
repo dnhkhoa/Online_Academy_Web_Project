@@ -3,7 +3,6 @@
 {{/section}}
 
 <div class="category-add-container">
-
   <div class="content-grid single-column">
     <form
       id="frmAddCategory"
@@ -12,150 +11,207 @@
       class="card shadow-sm category-form-card"
     >
       <div class="card-header">
-        <h5 class="card-title mb-0">New Category</h5>
+        <h5 class="card-title mb-0">Add Category / Course</h5>
       </div>
 
       <div class="card-body">
-        <div class="form-grid">
-          <section class="form-panel">
 
-            <!-- Parent category FIRST -->
-            <div class="form-section parent-category">
-              <label for="selParent" class="form-label mb-0">Parent category</label>
-              <p class="field-hint mb-2">
-                Choose an existing parent to add a course into it, or select
-                <em>No parent</em>
-                to create a new parent category.
-              </p>
-              <select class="form-select" id="selParent" name="parentId">
-                <option value="0">No parent</option>
-                <option value="analytics">A</option>
-                <option value="innovation">B</option>
-                <option value="professional">C</option>
-                <option value="creative">D</option>
-              </select>
-            </div>
+        <section class="form-panel">
 
-            <!-- Category/Course name -->
-            <div class="form-section">
-              <label for="txtCatName" class="form-label" id="lblCatName">Parent
-                category name</label>
+          <!-- Level 1 -->
+          <div class="form-section">
+            <label class="form-label" for="selL1">Level 1 (Parent category)</label>
+            <select class="form-select" id="selL1" name="l1catid">
+
+            </select>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label" for="txtNewL1">Or create new Level 1</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtNewL1"
+              name="newL1Name"
+              placeholder="e.g. IT"
+            />
+
+          </div>
+
+          <!-- Level 2 -->
+          <div class="form-section">
+            <label class="form-label" for="selL2">Level 2 (Child category)</label>
+            <select class="form-select" id="selL2" name="l2catid" disabled>
+              <option value="">-- Select L2 --</option>
+            </select>
+
+          </div>
+
+          <div class="form-section">
+            <label class="form-label" for="txtNewL2">Or create new Level 2 under
+              selected L1</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtNewL2"
+              name="newL2Name"
+              placeholder="e.g. Lập trình Web"
+            />
+
+          </div>
+        </section>
+
+        <!-- 2) COURSE SWITCH -->
+        <section class="form-panel">
+          <div class="panel-header">
+            <h6>Add Course</h6>
+            <p>Turn on to create L2 courses; turn off if you only want to create
+              categories.</p>
+          </div>
+
+          <div class="form-section toggles">
+            <div class="form-check form-switch">
               <input
-                type="text"
-                class="form-control"
-                id="txtCatName"
-                name="catname"
-                value=""
-                autofocus
+                class="form-check-input"
+                type="checkbox"
+                id="switchCourseMode"
               />
-              <!-- 1 = creating parent, 0 = creating course -->
-              <input type="hidden" id="isParent" name="isParent" value="1" />
+              <label class="form-check-label" for="switchCourseMode">Add course
+                details</label>
             </div>
-          </section>
+          </div>
 
-          <!-- Media & visibility (detail-block) -->
-          <section class="form-panel detail-block d-none" id="panelMedia">
-            <div class="panel-header">
-              <h6>Media &amp; visibility</h6>
-              <p>Upload a cover image and manage how the category appears.</p>
-            </div>
+          <!-- Tiêu đề course (khóa học) -->
+          <div class="form-section d-none" id="rowCourseTitle">
+            <label class="form-label" for="txtCourseTitle">Course title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtCourseTitle"
+              name="title"
+              placeholder="vd: Lập trình Web cơ bản"
+            />
+          </div>
+        </section>
 
-            <div class="form-section">
-              <label class="form-label" for="fileCover">Category cover</label>
-              <div class="media-upload">
-                <div class="media-preview">
-                  <img
-                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80"
-                    alt="Category cover preview"
+        <!-- 3) MEDIA (COURSE ONLY) -->
+        <section class="form-panel detail-block d-none" id="panelMedia">
+          <div class="panel-header">
+            <h6>Media & visibility</h6>
+            <p>Ảnh bìa cho course (map vào <code>courses.thumbnail</code>).</p>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label" for="fileCover">Course cover</label>
+            <div class="media-upload">
+              <div class="media-preview">
+                <img
+                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80"
+                  alt="Course cover preview"
+                />
+              </div>
+              <div class="media-actions">
+                <p class="media-note">Khuyến nghị 1200×640px hoặc lớn hơn.</p>
+                <div class="media-controls">
+                  <label for="fileCover" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-upload"></i>
+                    Upload image
+                  </label>
+                  <input
+                    type="file"
+                    class="d-none"
+                    id="fileCover"
+                    accept="image/*"
                   />
-                </div>
-                <div class="media-actions">
-                  <p class="media-note">
-                    Recommended 1200 × 640 px or larger. Square artwork also
-                    works in mobile cards.
-                  </p>
-                  <div class="media-controls">
-                    <label
-                      for="fileCover"
-                      class="btn btn-outline-primary btn-sm"
-                    >
-                      <i class="bi bi-upload"></i>
-                      Upload image
-                    </label>
-                    <input
-                      type="file"
-                      class="d-none"
-                      id="fileCover"
-                      name="coverImage"
-                      accept="image/*"
-                    />
-                    <input
-                      type="url"
-                      class="form-control form-control-sm"
-                      name="coverImageUrl"
-                      value=""
-                      placeholder="Or paste an image URL"
-                    />
-                  </div>
+                  <input
+                    type="url"
+                    class="form-control form-control-sm"
+                    id="txtThumbnailUrl"
+                    name="thumbnail"
+                    placeholder="Or paste an image URL"
+                  />
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
-          </section>
-        </div>
-
+        <!-- 4) HERO (COURSE ONLY) -->
         <section class="form-panel detail-block d-none" id="panelHero">
           <div class="form-section">
-            <label for="txtHeroSubtitle" class="form-label">Subtitle </label>
+            <label for="txtTinyDes" class="form-label">Subtitle (tinydes)</label>
             <textarea
               class="form-control tinymce"
-              id="txtHeroSubtitle"
-              name="heroSubtitle"
+              id="txtTinyDes"
+              name="tinydes"
               rows="3"
             >Tiny MCE</textarea>
           </div>
         </section>
 
-        <!-- Rich detail (detail-blocks) -->
+        <!-- 5) RICH (COURSE ONLY) -->
         <div class="rich-grid detail-block d-none" id="panelRich">
           <section class="rich-panel">
             <div class="panel-header">
-              <h6>Course description</h6>
-              <p>Provide the long-form overview shown on the category detail
-                page.</p>
+              <h6>Course description (fulldes)</h6>
+              <p>Mô tả chi tiết của khóa học.</p>
             </div>
             <textarea
               class="form-control tinymce"
-              id="txtDescription"
-              name="description"
+              id="txtFullDes"
+              name="fulldes"
               rows="6"
             >TinyMCE</textarea>
           </section>
 
           <section class="rich-panel">
             <div class="panel-header">
-              <h6>Benefits when joining</h6>
-              <p>List the outcomes or perks learners unlock after enrolling.</p>
+              <h6>Pricing</h6>
+              <p>Map vào
+                <code>courses.price</code>
+                và
+                <code>courses.discount</code>.</p>
             </div>
-            <textarea
-              class="form-control tinymce"
-              id="txtBenefits"
-              name="benefits"
-              rows="6"
-            >TinyMCE</textarea>
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <label class="form-label" for="numPrice">Price</label>
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  id="numPrice"
+                  name="price"
+                  placeholder="e.g. 1200000"
+                />
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="numDiscount">Discount</label>
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  id="numDiscount"
+                  name="discount"
+                  placeholder="e.g. 200000"
+                />
+              </div>
+            </div>
           </section>
 
           <section class="rich-panel wide">
             <div class="panel-header">
-              <h6>Curriculum outline</h6>
-              <p>Sketch the core modules or playlists powering this category.</p>
+              <h6>Status</h6>
+              <p>Map vào
+                <code>courses.status</code>
+                (ví dụ: draft/published/hide).</p>
             </div>
-            <textarea
-              class="form-control tinymce"
-              id="txtCurriculum"
-              name="curriculum"
-              rows="6"
-            >TinyMCE</textarea>
+            <input
+              type="text"
+              class="form-control"
+              id="txtStatus"
+              name="status"
+              placeholder="draft / published"
+            />
           </section>
         </div>
       </div>
@@ -182,6 +238,11 @@
           </div>
         </div>
       </div>
+
+      <!-- hidden to tell backend what we are doing -->
+      <input type="hidden" id="mode" name="mode" value="category-only" />
+      <!-- L2 catid thực sự dùng cho course (khi Add course details) -->
+      <input type="hidden" id="resolvedL2CatId" name="catid" value="" />
     </form>
   </div>
 </div>
