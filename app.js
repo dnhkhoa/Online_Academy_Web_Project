@@ -35,6 +35,10 @@ app.use("/course", courseRouter);
 import categoryRouter from "./routes/category.route.js";
 app.use("/admin/categories", categoryRouter);
 
+app.use(function (req, res) {
+  res.status(404).render("404");
+});
+
 app.listen(3000, function () {
   console.log("Server is running on http://localhost:3000");
 });
