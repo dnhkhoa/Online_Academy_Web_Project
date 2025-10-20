@@ -1,120 +1,83 @@
 import express from 'express';
 import * as categoryModel from '../models/category.model.js';
-
+import * as courseModel from '../models/course.model.js';
 const router = express.Router();
 
-//Danh sách cat tầng 1
-router.get('/', async function (req, res) {
-    const parents = await categoryModel.findAllParents();
-    res.render('vwAdminCategory/parents', {
-        parents: parents
-    });
+// list
+router.get('/list', async (req, res) => {
+  const parents = await categoryModel.findAllParents();
+  const children = {};
+  for (const p of parents) {
+    children[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }
+  res.render('vwAdminCategory/list', { 
+    parents: parents,
+    childrenMap: children });
 });
 
-//Danh sách cat tầng 2
-router.get('/children', async function (req, res) {
-    const parentid = req.query.parentid || 0;
-    const parent = await categoryModel.findById(parentid);
-    let children = [];
-    if (parent) {
-        children = await categoryModel.findChildrenByParent(parentid)
-    }
-    res.render('vwAdminCategory/children', {
-        parent: parent,
-        children: children
-    });
+// add
+router.get('/add', async (req, res) => {
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};                           
+  for (const p of parents) {                        
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }                                                 
+  res.render('vwAdminCategory/add', {
+    parents: parents,
+    childrenMap: childrenMap,                                   
+    presetMode: 'category'                          
+  });
 });
 
-// Thêm cat
-router.get('/add', async function (req, res) {
-    let parentid = null;
-    let parent = null;
-    if (req.query.parentid) {
-        parentid = req.query.parentid;
-        parent = await categoryModel.findById(parentid)
-    }
-    res.render('vwAdminCategory/add', {
-        parent: parent
-    });
+router.post('/add', async (req, res) => {
+  const parentid = req.body.parentid ? Number(req.body.parentid) : null;
+  const category = { catname: req.body.catname, parentid };
+  await categoryModel.add(category);
+  return res.redirect('/admin/categories/list');
 });
-router.post('/add', async function (req, res) {
-    let parentid = null;
-    if(req.body.parentid){
-        parentid = req.body.parentid
-    }
-    const category = {
-        catname: req.body.catname,
-        parentid: parentid? parentid : null
-    };
-    await categoryModel.add(category);
-    if (parentid){
-        res.redirect(`/admin/categories/children?parentid=${parentid} `);
-    } 
-    else {
-        res.redirect('/admin/categories');
-    }
+//Lấy child theo parentid
+router.get('/children.json', async (req, res) => {
+  try {
+    const parentid = Number(req.query.parentid || 0);
+    if (!parentid) return res.json([]);
+    const children = await categoryModel.findChildrenByParent(parentid);
+    res.json(children || []);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
-
 //Chỉnh sửa cat
-router.get('/edit', async function (req, res) {
-    let id = 0;
-    if(req.query.id){
-        id = req.query.id;
-    }
-    const category = await categoryModel.findById(id);
-    if(!category){
-        res.redirect('/admin/categories');
-        return;
-    }
-    let parent = null;
-    if(category.parentid){
-        parent = await categoryModel.findById(category.parentid);
-    }
+router.get('/edit', async (req, res) => {
+  const parentid = Number((req.query.parentid || req.query.id || 0).toString());
+  if (!parentid) return res.redirect('/admin/categories/list');
 
-    res.render('vwAdminCategory/edit',{
-        category:category,
-        parent: parent,
-    });
-});
-router.post('/patch', async function (req, res) {
-    let id = 0;
-    let parentid = null;
-    if(req.body.catid){
-        id = req.body.catid;
-    }
-    if(req.body.parentid){
-        parentid = req.body.parentid;
-    }
-    const changes = {
-        catname: req.body.catname,
-        parentid: parentid,
-    }
-    await categoryModel.patch(id,changes)
-    if (parentid) {
-        res.redirect(`/admin/categories/children?parentid=${parentid}`);
-    } else {
-        res.redirect('/admin/categories')
-    }
+  const parent = await categoryModel.findById(parentid);
+  if (!parent) return res.redirect('/admin/categories/list');
+
+  const children = await categoryModel.findChildrenByParent(parentid);
+  res.render('vwAdminCategory/edit', {
+    parent: parent,
+    children: children
+  });
 });
 
-//Xóa cat
-router.post('/del', async function (req, res) {
-    let id = 0;
-    let parentid = null;
-    if(req.body.catid){
-        id = req.body.catid;
-    }
-    if (req.body.parent){
-        parentid = req.body.parentid;
-    }
-    await categoryModel.del(id);
+router.post('/patch', async (req, res) => {
+  const id = Number((req.body.catid || 0).toString());
+  const catname = (req.body.catname || '').trim();
+  const parentid = (req.body.parentid ?? '').toString().trim();
+  const category = {
+    catname: catname,
+    parentid: parentid ? Number(parentid) : null
+  };
+  await categoryModel.patch(id, category);
 
-    if (parentid){
-        res.redirect(`/admin/categories/children?parentid=${parentid}`);
-    } 
-    else {
-        res.redirect('/admin/categories')
-    }
+  res.redirect('/admin/categories/list');
+});
+
+router.post('/del', async (req, res) => {
+  const id = Number((req.body.catid || 0).toString());
+  if (id) await categoryModel.del(id);
+  res.redirect('/admin/categories/list')
 });
 
 export default router;

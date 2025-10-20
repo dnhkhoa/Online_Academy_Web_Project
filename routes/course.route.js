@@ -4,146 +4,92 @@ import * as categoryModel from '../models/category.model.js';
 
 const router = express.Router();
 
-
-//
+//list
 router.get('/', async function (req, res) {
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};
+  for (const p of parents) {
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }
   const courses = await courseModel.findAll();
-  res.render('vwAdminCourse/list', {
-    courses: courses
+  res.render('vwCourse/byCat', {
+    parents : parents,
+    childrenMap : childrenMap,
+    courses: courses,
   });
 });
 
-//
+//list
 router.get('/byCat', async function (req, res) {
-  let catid = 0;
-  if (req.query.catid) {
-    catid = req.query.catid;
+  let catid = req.query.catid || 0;
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};
+  for (const p of parents) {
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
   }
-  let category = null;
-  if (catid) {
-    category = await categoryModel.findById(catid)
-  }
-  let courses = [];
-  if (category) {
-    courses = await courseModel.findByCat(catid);
-  }
-  res.render('vwAdminCourse/byCat', {
-    category: category,
-    courses: courses
-  })
-});
 
-//
-router.get('/add', async function (req, res) {
   let category = null;
-  if (req.query.catid) {
-    const catid = req.query.catid;
-    category = await categoryModel.findById(catid);
-  }
-  res.render('vwAdminCourse/add', {
-    category: category
+  if (catid) category = await categoryModel.findById(catid);
+  let courses = category
+    ? await courseModel.findByCat(catid)
+    : await courseModel.findAll();
+
+  res.render('vwCourse/byCat', {
+    parents : parents,
+    childrenMap : childrenMap,
+    category : category,
+    courses: courses,
   });
 });
-router.post('/add', async function (req, res) {
-  let catid = null;
-  if (req.body.catid) catid = +req.body.catid;
+
+//add
+router.get('/add', async (req, res) => {
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};
+  for (const p of parents) {
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }
+  res.render('vwAdminCategory/add', {
+    parents: parents,
+    childrenMap : childrenMap,
+    presetMode: 'course' 
+  });
+});
+
+router.post('/add', async (req, res) => {
+  if (req.body.mode !== 'course') 
+    return res.redirect('/admin/categories/add');
+  let catid = Number(req.body.catid) || null;
+
+  if (!catid && req.body.catname?.trim()) {
+    const newCat = {
+      catname: req.body.catname.trim(),
+      parentid: Number(req.body.parentid) || null
+    };
+    const [newId] = await categoryModel.add(newCat);
+    catid = newId;
+  }
+
+  const title = (req.body.title || '').trim();
+  if (!title || !catid)
+    return res.redirect('/course/add?err=missing_title_or_cat&mode=course');
 
   const course = {
-    title: req.body.title,
-    tinydes: req.body.tinydes || null,
-    fulldes: req.body.fulldes || null, // TinyMCE
-    price: req.body.price || 0,
-    discount: req.body.discount || 0,
-    thumbnail: req.body.thumbnail || null,
-    status: req.body.status,
-    catid: catid,
-    instructorid: req.body.instructorid || null,
-    lastupdate: new Date()
-    //Thêm Rating để hoàn thiện database
+    title,
+    price: Number(req.body.price) || 0,
+    discount: Number(req.body.discount) || 0,
+    thumbnail: req.body.thumbnail?.trim() || null,
+    status: req.body.status?.trim() || 'draft',
+    catid,
+    instructorid: Number(req.body.instructorid) || null,
+    lastupdate: new Date(),
+    tinydes: req.body.tinydes?.trim() || null,
+    fulldes: req.body.fulldes?.trim() || null,
   };
-
   await courseModel.add(course);
-
-  if (catid) {
-    return res.redirect(`/admin/courses/byCat?catid=${catid}`);
-  }
-  return res.redirect('/admin/courses');
-});
-
-//
-router.get('/edit', async function (req, res) {
-  let id = 0;
-  if (req.query.id) {
-    id = req.query.id;
-  }
-  const course = await courseModel.findById(id);
-  if (!course) {
-    res.redirect('/admin/courses');
-  }
-  let category = null;
-  if (course.catid) {
-    category = await categoryModel.findById(course.catid);
-  }
-
-  res.render('vwAdminCourse/edit', {
-    course: course,
-    category: category,
-  })
+  res.redirect(`/course/byCat?catid=${catid}`);
 });
 
 
-router.post('/patch', async function (req, res) {
-  let id = 0;
-  if (req.body.courseid) {
-    id = req.body.courseid;
-  }
-  // if (!id) {
-  //   console.error('PATCH course: missing courseid', req.body);
-  //   return res.redirect('/admin/courses');
-  // }
-  let catid = null;
-  if (req.body.catid) {
-    catid = req.body.catid;
-  }
-  const changes = {
-    title: req.body.title || null,
-    tinydes: req.body.tinydes || null,
-    fulldes: req.body.fulldes || null,
-    price: req.body.price || 0,
-    discount: req.body.discount || 0,
-    thumbnail: req.body.thumbnail || null,
-    status: req.body.status || 'draft',
-    lastupdate: new Date()
-  };
-  if (catid) {
-    changes.catid = catid;
-  }
-  await courseModel.patch(id, changes);
-  if (catid) {
-    return res.redirect(`/admin/courses/byCat?catid=${catid}`);
-  }
-  return res.redirect('/admin/courses');
-});
-
-
-//
-router.post('/del', async function (req, res) {
-  let id = 0;
-  let catid = null;
-
-  if (req.body.courseid) {
-    id = req.body.courseid;
-  }
-  if (req.body.catid) {
-    catid = req.body.catid;
-  }
-
-  await courseModel.del(id);
-
-  if (catid) {
-    return res.redirect(`/admin/courses/byCat?catid=${catid}`);
-  }
-  return res.redirect('/admin/courses');
-});
 
 export default router;

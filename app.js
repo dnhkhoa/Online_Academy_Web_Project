@@ -26,11 +26,22 @@ app.get("/", function (req, res) {
   res.render("home");
 });
 
-import categoryRoutes from './routes/category.route.js';
-app.use('/admin/categories', categoryRoutes);
-import courseRoutes from './routes/course.route.js';
-app.use('/admin/courses', courseRoutes);
+import accountRouter from "./routes/account.route.js";
+app.use("/account", accountRouter);
 
+import courseRouter from "./routes/course.route.js";
+app.use("/course", courseRouter);
+
+import categoryRouter from "./routes/category.route.js";
+app.use("/admin/categories", categoryRouter);
+
+
+import tinyRouter from './routes/tiny.route.js';
+app.use('/tiny', tinyRouter);
+
+app.use(function (req, res) {
+  res.status(404).render("404");
+});
 
 app.listen(3000, function () {
   console.log("Server is running on http://localhost:3000");

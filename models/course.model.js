@@ -9,7 +9,7 @@ export function findById(id) {
 }
 
 export function add(course) {
-    return db('courses').insert(course)
+    return db('courses').insert(course).returning(['courseid'])
 }
 
 export function patch(id, course) {
