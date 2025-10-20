@@ -136,70 +136,46 @@
       }
     });
 
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
+form.addEventListener("submit", function (event) {
+  // KHÔNG preventDefault
+  let isValid = true;
 
-      let isValid = true;
+  if (fullName.value.trim() === "") {
+    showError(fullName, "Full name cannot be empty.");
+    isValid = false;
+  }
 
-      // Full name
-      if (fullName.value.trim() === "") {
-        showError(fullName, "Full name cannot be empty.");
-        isValid = false;
-      }
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email.value.trim())) {
+    showError(email, "Please enter a valid email address.");
+    isValid = false;
+  }
 
-      // Email
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email.value.trim())) {
-        showError(email, "Please enter a valid email address.");
-        isValid = false;
-      }
+  if (password.value.length < 6) {
+    showError(password, "Password must be at least 6 characters.");
+    isValid = false;
+  }
 
-      // Password
-      if (password.value.length < 6) {
-        showError(password, "Password must be at least 6 characters.");
-        isValid = false;
-      }
+  if (confirmPassword.value !== password.value || confirmPassword.value === "") {
+    showError(confirmPassword, "Passwords do not match.");
+    isValid = false;
+  }
 
-      // Confirm password
-      if (confirmPassword.value !== password.value || confirmPassword.value === "") {
-        showError(confirmPassword, "Passwords do not match.");
-        isValid = false;
-      }
+  if (!terms.checked) {
+    showError(terms, "You must agree to the Terms and Privacy Policy.");
+    isValid = false;
+  }
 
-      // Terms
-      if (!terms.checked) {
-        showError(terms, "You must agree to the Terms and Privacy Policy.");
-        isValid = false;
-      }
-
-      // Nếu có lỗi => hiện SweetAlert
-      if (!isValid) {
-        Swal.fire({
-          icon: "error",
-          title: "Form validation error",
-          text: "Please fix the highlighted fields and try again.",
-        });
-        return;
-      }
-
-      Swal.fire({
-        title: "Register account confirmation?",
-        text: "Do you want to create this account?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes, create it!",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          form.submit();
-          Swal.fire({
-            icon: "success",
-            title: "Account created!",
-            text: "Your account has been successfully registered.",
-          });
-        }
-      });
+  if (!isValid) {
+    Swal.fire({
+      icon: "error",
+      title: "Form validation error",
+      text: "Please fix the highlighted fields and try again.",
     });
+    event.preventDefault(); // CHỈ chặn khi lỗi
+  }
+  // nếu hợp lệ → KHÔNG chặn => form tự submit -> sang OTP
+});
   });
 </script>
 

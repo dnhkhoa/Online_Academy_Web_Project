@@ -2,6 +2,8 @@ import express from "express";
 import bcryptjs from "bcryptjs";
 import * as userModel from "../models/user.model.js";
 import supabase from "../config/supabase.js";
+import crypto from "crypto";
+import { transporter } from "../utils/mail.js";
 
 const router = express.Router();
 
@@ -10,16 +12,71 @@ router.get("/signup", (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
+  const { fullName, email, password, userName } = req.body;
+
   const hash_password = bcryptjs.hashSync(req.body.password, 10);
-  const user = {
-    fullname: req.body.fullName,
-    username: req.body.userName,
-    email: req.body.email,
-    password: hash_password,
-  };
-  await userModel.addNewUser(user);
+
+  // create OTP
+  const otp = crypto.randomInt(100000, 999999).toString();
+  const otp_exp = Date.now() + 3 * 60 * 1000; // 3 phút
+
+  // save pending user + otp vào session
+  req.session.pendingUser = { fullName, email, userName, hash_password };
+  req.session.otp = otp;
+  req.session.otpExp = otp_exp;
+
+  // send mail
+  await transporter.sendMail({
+    from: process.env.MAIL_USER,
+    to: email,
+    subject: "Your OTP code",
+    text: `Your OTP is: ${otp}`
+  });
+
+  res.render("vwAccount/verify-otp");
+
+
+});
+
+
+//POST: /verify-otp
+router.post("/verify-otp", async (req, res) => {
+  const userOtp = req.body.otp;
+
+  if (!req.session.otp || !req.session.pendingUser) {
+    return res.render("vwAccount/verify-otp", { error: "Session expired" });
+  }
+
+  if (Date.now() > req.session.otpExp) {
+    return res.render("vwAccount/verify-otp", { error: "OTP expired" });
+  }
+
+  if (userOtp !== req.session.otp) {
+    return res.render("vwAccount/verify-otp", { error: "Invalid OTP" });
+  }
+
+  // OTP hợp lệ -> insert user vào DB bằng hàm userModel
+  const pending = req.session.pendingUser;
+  const { data, error } = await userModel.addNewUser({
+    fullname: pending.fullName,
+    username: pending.userName,            
+    email: pending.email,
+    password: pending.hash_password,
+  });
+
+  if (error) {
+    console.log("ADD USER ERROR:", error);
+    return res.render("vwAccount/verify-otp", { error: "Database error" });
+  }
+
+  // clear session otp
+  delete req.session.otp;
+  delete req.session.otpExp;
+  delete req.session.pendingUser;
+
   res.redirect("/account/signin");
 });
+
 
 router.get("/is-available", async (req, res) => {
   const username = req.query.u;
