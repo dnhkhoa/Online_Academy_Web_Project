@@ -51,15 +51,18 @@
             </ul>
           </div>
         </nav>
-        <div class="d-none d-lg-flex gap-2">
-          <a
-            href="/account/signup"
-            class="btn btn-outline-dark rounded-pill px-4"
-          >Signup
-          </a>
-          <a href="/account/signin" class="btn btn-dark rounded-pill px-4">Login
-          </a>
-        </div>
+        {{#unless isAuthenticated}}
+          <div class="d-none d-lg-flex gap-2">
+            <a
+              href="/account/signup"
+              class="btn btn-outline-dark rounded-pill px-4"
+            >Signup
+            </a>
+            <a href="/account/signin" class="btn btn-dark rounded-pill px-4">Login
+            </a>
+          </div>
+
+        {{/unless}}
         <button
           class="btn btn-outline-secondary d-lg-none rounded-circle"
           type="button"

@@ -74,6 +74,35 @@
         });
     });
 
+    email.addEventListener("blur", () => {
+      const emailValue = email.value.trim();
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (emailValue === "") {
+        showError(email, "Email cannot be empty.");
+        return;
+      }
+
+      if (!emailPattern.test(emailValue)) {
+        showError(email, "Please enter a valid email address.");
+        return;
+      }
+
+      // Check email availability
+      fetch(`/account/check-email?email=${emailValue}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.available) {
+            clearError(email);
+          } else {
+            showError(email, "This email is already registered. Please use another email.");
+          }
+        })
+        .catch(() => {
+          showError(email, "Unable to check email availability. Please try again later.");
+        });
+    });
+
     password.addEventListener("input", () => {
       if (password.value.length < 6) {
         showError(password, "Password must be at least 6 characters.");

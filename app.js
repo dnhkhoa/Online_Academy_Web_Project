@@ -43,6 +43,16 @@ app.use(
   })
 );
 
+app.use(async function (req, res, next) {
+  if (req.session.isAuthenticated) {
+    res.locals.isAuthenticated = true;
+    res.locals.authUser = req.session.authUser;
+  } else {
+    res.locals.isAuthenticated = false;
+  }
+  next();
+});
+
 app.use("/auth", authRoutes);
 app.use("/account", accountRouter);
 

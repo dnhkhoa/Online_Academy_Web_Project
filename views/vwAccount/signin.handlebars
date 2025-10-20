@@ -18,15 +18,15 @@
               </div>
             </div>
 
-            <form method="post" action="/account/signin" novalidate>
+            <form method="post" action="/account/signin" novalidate id="signinForm">
               <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">Username</label>
                 <input
-                  type="email"
+                  type="text"
                   class="form-control form-control-lg"
-                  id="email"
-                  name="email"
-                  placeholder="you@example.com"
+                  id="userName"
+                  name="userName"
+                  placeholder=""
                   required
                 />
               </div>
@@ -41,7 +41,7 @@
                   class="form-control form-control-lg"
                   id="password"
                   name="password"
-                  placeholder="••••••••"
+                  placeholder=""
                   required
                 />
               </div>
