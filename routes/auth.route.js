@@ -1,5 +1,6 @@
 import express from "express";
 import supabase from "../config/supabase.js";
+import passport from "passport";
 
 const router = express.Router();
 
@@ -13,5 +14,21 @@ router.get("/test", async (req, res) => {
 
   res.json(data);
 });
+
+// bắt đầu auth google
+router.get("/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// callback
+router.get("/google/callback",
+  passport.authenticate("google", { failureRedirect: "/account/signin" }),
+  (req, res) => {
+        req.session.isAuthenticated = true;
+    req.session.authUser = req.user;
+    res.redirect("/");
+  }
+);
+
 
 export default router;

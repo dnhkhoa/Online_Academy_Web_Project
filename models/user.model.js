@@ -32,3 +32,23 @@ export async function findUserByUsername(username) {
     .single();
   return { data, error };
 }
+
+export async function findUserByEmail(email) {
+  const emailNorm = (email || "").trim().toLowerCase();
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .ilike("email", emailNorm) 
+    .single();
+  return { data, error };
+}
+
+export async function findUserById(id) {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("userid", id)   // vì PK là userid
+    .single();
+
+  return { data, error };
+}

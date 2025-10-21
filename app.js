@@ -10,6 +10,9 @@ import supabase from "./config/supabase.js";
 import authRoutes from "./routes/auth.route.js";
 import accountRouter from "./routes/account.route.js";
 
+import passport from "passport";
+import "./config/passport.google.js";
+
 dotenv.config();
 
 // __dirname fix cho ESM
@@ -42,6 +45,17 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+
+// passport init
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  // req.user do passport gắn sau deserialize
+  res.locals.authUser = req.user || null;
+  next();
+});
 
 app.use(async function (req, res, next) {
   if (req.session.isAuthenticated) {
