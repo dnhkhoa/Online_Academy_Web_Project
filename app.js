@@ -13,6 +13,8 @@ app.engine(
       format_number(value) {
         return new Intl.NumberFormat("en-US").format(value);
       },
+      calcOriginal: (price, discount) => (Number(price) || 0) + (Number(discount) || 0),
+
     },
   })
 );

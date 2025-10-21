@@ -89,7 +89,26 @@ router.post('/add', async (req, res) => {
   await courseModel.add(course);
   res.redirect(`/course/byCat?catid=${catid}`);
 });
+router.get('/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (!id) return res.redirect('/course/byCat');
 
+  const course = await courseModel.findById(id);
+  if (!course) return res.status(404).send('Course not found');
+
+  // 🔹 Lấy dữ liệu category cho sidebar (y như byCat)
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};
+  for (const p of parents) {
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }
+
+  res.render('vwCourse/details', {
+    course,
+    parents,
+    childrenMap,
+  });
+});
 
 
 export default router;
