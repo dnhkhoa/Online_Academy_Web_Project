@@ -1,5 +1,5 @@
 {{#section "styles"}}
-  <link rel="stylesheet" href="/static/byCat.css" />
+  <link rel="stylesheet" href="/static/listLesson.css" />
 {{/section}}
 
 <section class="py-5">
@@ -7,13 +7,10 @@
     <div class="row g-4">
       <aside class="col-lg-3">
         <div class="card shadow-sm border-0 rounded-4">
-
-          <!-- Sidebar: Categories (L1) -> Subcategories (L2) -> Courses -->
           <div class="accordion" id="categoryAccordion">
             <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of
               courses</h5>
 
-            <!-- L1: Category 101 -->
             <div class="accordion-item">
               <h2 class="accordion-header" id="heading-101">
                 <div class="header-content">
@@ -36,7 +33,6 @@
                 data-bs-parent="#categoryAccordion"
               >
                 <div class="accordion-body p-0">
-                  <!-- Nested L2 accordion -->
                   <div
                     class="accordion accordion-flush ms-3"
                     id="subAccordion-101"
@@ -63,11 +59,11 @@
                         <div class="accordion-body p-0">
                           <div class="list-group list-group-flush">
                             <a
-                              href="/admin/courses/201"
+                              href="/course/lesson/201"
                               class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
                             >aaa</a>
                             <a
-                              href="/admin/courses/202"
+                              href="/course/lesson/202"
                               class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
                             >bbb</a>
                           </div>
@@ -75,7 +71,6 @@
                       </div>
                     </div>
 
-                    <!-- Có thể nhân bản thêm L2 nếu cần -->
                     <div class="accordion-item">
                       <h2 class="accordion-header" id="sub-heading-101-2">
                         <button
@@ -98,7 +93,7 @@
                         <div class="accordion-body p-0">
                           <div class="list-group list-group-flush">
                             <a
-                              href="/admin/courses/203"
+                              href="/course/lesson/203"
                               class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
                             >ccc</a>
                           </div>
@@ -106,7 +101,6 @@
                       </div>
                     </div>
                   </div>
-                  <!-- /Nested L2 accordion -->
                 </div>
               </div>
             </div>
@@ -134,7 +128,6 @@
                 data-bs-parent="#categoryAccordion"
               >
                 <div class="accordion-body p-0">
-                  <!-- Nested L2 accordion -->
                   <div
                     class="accordion accordion-flush ms-3"
                     id="subAccordion-102"
@@ -161,11 +154,11 @@
                         <div class="accordion-body p-0">
                           <div class="list-group list-group-flush">
                             <a
-                              href="/admin/courses/301"
+                              href="/course/lesson/301"
                               class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
                             >ddd</a>
                             <a
-                              href="/admin/courses/302"
+                              href="/course/lesson/302"
                               class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
                             >eee</a>
                           </div>
@@ -173,7 +166,6 @@
                       </div>
                     </div>
                   </div>
-                  <!-- /Nested L2 accordion -->
                 </div>
               </div>
             </div>
@@ -201,7 +193,6 @@
                 data-bs-parent="#categoryAccordion"
               >
                 <div class="accordion-body p-0">
-                  <!-- Nested L2 accordion -->
                   <div
                     class="accordion accordion-flush ms-3"
                     id="subAccordion-103"
@@ -228,11 +219,11 @@
                         <div class="accordion-body p-0">
                           <div class="list-group list-group-flush">
                             <a
-                              href="/admin/courses/401"
+                              href="/course/lesson/401"
                               class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
                             >fff</a>
                             <a
-                              href="/admin/courses/402"
+                              href="/course/lesson/402"
                               class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
                             >ggg</a>
                           </div>
@@ -240,150 +231,154 @@
                       </div>
                     </div>
                   </div>
-                  <!-- /Nested L2 accordion -->
                 </div>
               </div>
             </div>
-
           </div>
-          <!-- /Sidebar: Categories (L1) -> Subcategories (L2) -> Courses -->
-
         </div>
       </aside>
 
+      <!-- Main Content -->
+
       <div class="col-lg-9">
-        <div
-          class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4"
-        >
-          <div>
-            <h2 class="h4 fw-semibold mb-1">Courses</h2>
-          </div>
-        </div>
 
-        <div class="row g-4">
-          <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-            <div class="card" style="width: 18rem;">
-              <img
-                src="https://picsum.photos/seed/course-detail/640/420"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-              </div>
-              <div class="card-footer">
+        <div class="lesson-brief card border-0 shadow-sm rounded-4 mb-4">
+          <div
+            class="card-body d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3"
+          >
+            <div>
+
+              <h2 class="h5 mb-1 fw-semibold">Course: A....</h2>
+              <div class="d-flex flex-wrap align-items-center gap-2">
                 <a
-                  href="/course/details"
-                  class="btn btn-sm btn-outline-primary"
+                  class="btn btn-primary btn-sm"
+                  href="/course/addlesson"
+                  role="button"
                 >
-                  <i class="bi bi-eye"></i>
-                  View Details
-                </a>
-                <a href="#" class="btn btn-sm btn-outline-success">
-                  <i class="bi bi-cart-plus"></i>
-                  Add to Cart
-                </a>
-                <a
-                  href="/course/lesson"
-                  class="btn btn-sm btn-outline-primary mt-2"
-                >
-                  <i class="bi bi-plus-square"></i>
-                  Add Lessons
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-            <div class="card" style="width: 18rem;">
-              <img
-                src="https://picsum.photos/seed/course-detail/640/420"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-              </div>
-              <div class="card-footer">
-                <a
-                  href="/course/details"
-                  class="btn btn-sm btn-outline-primary"
-                >
-                  <i class="bi bi-eye"></i>
-                  View Details
-                </a>
-                <a href="#" class="btn btn-sm btn-outline-success">
-                  <i class="bi bi-cart-plus"></i>
-                  Add to Cart
-                </a>
-                <a
-                  href="/course/lesson"
-                  class="btn btn-sm btn-outline-primary mt-2"
-                >
-                  <i class="bi bi-plus-square"></i>
-                  Add Lessons
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-            <div class="card" style="width: 18rem;">
-              <img
-                src="https://picsum.photos/seed/course-detail/640/420"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-              </div>
-              <div class="card-footer">
-                <a
-                  href="/course/details"
-                  class="btn btn-sm btn-outline-primary"
-                >
-                  <i class="bi bi-eye"></i>
-                  View Details
-                </a>
-                <a href="#" class="btn btn-sm btn-outline-success">
-                  <i class="bi bi-cart-plus"></i>
-                  Add to Cart
-                </a>
-                <a
-                  href="/course/lesson"
-                  class="btn btn-sm btn-outline-primary mt-2"
-                >
-                  <i class="bi bi-plus-square"></i>
-                  Add Lessons
+                  <i class="bi bi-plus-circle"></i>
+                  Add Lesson
                 </a>
               </div>
             </div>
           </div>
         </div>
+        <!-- Accordion -->
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+          <!-- Item 1 -->
+          <div class="accordion-item rounded-3 overflow-hidden">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseOne"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseOne"
+              >
+                Accordion Item #1
+              </button>
+              <div class="text-end ms-2">
+                <a
+                  class="btn btn-outline-primary btn-sm"
+                  href="/course/editlesson"
+                  role="button"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+              </div>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseOne"
+              class="accordion-collapse collapse"
+            >
+              <div class="accordion-body">
+                aaa
+              </div>
+            </div>
+          </div>
 
-        <nav aria-label="Page navigation example">
-          <ul class="pagination mt-4 justify-content-center">
-            <li class="page-item"><a
-                class="page-link"
-                href="#"
-              >Previous</a></li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
-        </nav>
+          <!-- Item 2 -->
+          <div class="accordion-item rounded-3 overflow-hidden">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseTwo"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseTwo"
+              >
+                Accordion Item #2
+              </button>
+              <div class="text-end ms-2">
+                <a
+                  class="btn btn-outline-primary btn-sm"
+                  href="/course/editlesson"
+                  role="button"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+              </div>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseTwo"
+              class="accordion-collapse collapse"
+            >
+              <div class="accordion-body">
+                bbb
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="accordion-item rounded-3 overflow-hidden">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseThree"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseThree"
+              >
+                Accordion Item #3
+              </button>
+              <div class="text-end ms-2">
+                <a
+                  class="btn btn-outline-primary btn-sm"
+                  href="/course/editlesson"
+                  role="button"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+              </div>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseThree"
+              class="accordion-collapse collapse"
+            >
+              <div class="accordion-body">
+                ccc
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <a class="btn btn-outline-success" href="/course/byCat" role="button">
+            <i class="bi bi-arrow-left"></i>
+            Back
+          </a>
+        </div>
       </div>
+
     </div>
   </div>
 </section>
+
+{{#section "scripts"}}
+  <script src="/static/listLesson.js"></script>
+{{/section}}

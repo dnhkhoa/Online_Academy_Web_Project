@@ -1,0 +1,76 @@
+.lesson-edit-container {
+  padding: 2rem 0;
+}
+.content-grid.single-column {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.lesson-form-card .card-header {
+  padding: 1rem 1.25rem;
+}
+.lesson-form-card .card-body {
+  padding: 1.25rem;
+}
+.lesson-form-card .card-footer {
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border-top: 1px solid #f1f3f5;
+}
+
+.form-panel {
+  margin-bottom: 1.5rem;
+}
+.panel-soft {
+  background: #fafbfc;
+  border: 1px solid #eef0f2;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.panel-header h6 {
+  font-weight: 700;
+}
+.panel-header p {
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.form-section {
+  margin-bottom: 1rem;
+}
+.form-control,
+.form-select,
+.btn,
+.input-group-text {
+  border-radius: 0.75rem;
+}
+
+.lesson-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 0.5rem;
+}
+.lesson-item {
+  border-radius: 0.75rem;
+}
+.lesson-item .card-body {
+  padding: 1rem 1rem 0.5rem 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.secondary-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Khi section bị đánh dấu xoá: mờ đi phần nhập liệu */
+.section-deleting #sectionPanel,
+.section-deleting #lessonsPanel {
+  opacity: 0.6;
+  pointer-events: none;
+}
