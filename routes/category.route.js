@@ -4,7 +4,7 @@ import * as courseModel from '../models/course.model.js';
 const router = express.Router();
 
 // list
-router.get('/list', async (req, res) => {
+router.get('/list', async function (req, res)  {
   const parents = await categoryModel.findAllParents();
   const children = {};
   for (const p of parents) {
@@ -16,7 +16,7 @@ router.get('/list', async (req, res) => {
 });
 
 // add
-router.get('/add', async (req, res) => {
+router.get('/add', async function (req, res) {
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};                           
   for (const p of parents) {                        
@@ -29,14 +29,14 @@ router.get('/add', async (req, res) => {
   });
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', async function (req, res) {
   const parentid = req.body.parentid ? Number(req.body.parentid) : null;
   const category = { catname: req.body.catname, parentid };
   await categoryModel.add(category);
   return res.redirect('/admin/categories/list');
 });
 //Lấy child theo parentid
-router.get('/children.json', async (req, res) => {
+router.get('/children.json', async function (req, res)  {
   try {
     const parentid = Number(req.query.parentid || 0);
     if (!parentid) return res.json([]);
@@ -47,7 +47,7 @@ router.get('/children.json', async (req, res) => {
   }
 });
 //Chỉnh sửa cat
-router.get('/edit', async (req, res) => {
+router.get('/edit', async function(req, res)  {
   const parentid = Number((req.query.parentid || req.query.id || 0).toString());
   if (!parentid) return res.redirect('/admin/categories/list');
 
@@ -61,7 +61,7 @@ router.get('/edit', async (req, res) => {
   });
 });
 
-router.post('/patch', async (req, res) => {
+router.post('/patch', async function (req, res)  {
   const id = Number((req.body.catid || 0).toString());
   const catname = (req.body.catname || '').trim();
   const parentid = (req.body.parentid ?? '').toString().trim();
@@ -74,7 +74,7 @@ router.post('/patch', async (req, res) => {
   res.redirect('/admin/categories/list');
 });
 
-router.post('/del', async (req, res) => {
+router.post('/del', async function(req, res)  {
   const id = Number((req.body.catid || 0).toString());
   if (id) await categoryModel.del(id);
   res.redirect('/admin/categories/list')

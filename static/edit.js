@@ -1,23 +1,17 @@
 (function () {
   function onReady(fn) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fn);
-    } else {
-      fn();
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+    else fn();
   }
 
   onReady(function () {
     const form = document.getElementById("frmEditCategory");
     if (!form) return;
 
-    // ====== ELEMENTS ======
-    // Parent
+    // ===== ELEMENTS =====
     const txtParentName = form.querySelector("#txtParentName");
     const parentId = form.querySelector("#parentId");
-    const txtParentId = document.getElementById("txtParentId");
 
-    // Toggle child
     const toggleChild = form.querySelector("#toggleChild");
     const childPicker = form.querySelector("#childPicker");
     const filterChild = form.querySelector("#filterChild");
@@ -27,17 +21,15 @@
     const btnDeleteChild = form.querySelector("#btnDeleteChild");
     const boundChildId = form.querySelector("#boundChildId");
 
-    // Toggle course
     const courseToggleRow = form.querySelector("#courseToggleRow");
     const toggleCourse = form.querySelector("#toggleCourse");
     const coursePicker = form.querySelector("#coursePicker");
     const filterCourse = form.querySelector("#filterCourse");
-    const selCourse = form.querySelector("#selCourse");
+    const selCourse = form.querySelector("#selCourse"); // select KHÔNG có name
     const isEditingCourseHidden = form.querySelector("#isEditingCourseHidden");
     const btnDeleteCourse = form.querySelector("#btnDeleteCourse");
-    const boundCourseId = form.querySelector("#boundCourseId");
+    const boundCourseId = form.querySelector("#boundCourseId"); // hidden có name="courseId"
 
-    // Course fields
     const panelMedia = document.getElementById("panelMedia");
     const panelCourseMain = document.getElementById("panelCourseMain");
     const panelRich = document.getElementById("panelRich");
@@ -50,33 +42,47 @@
     const numDiscount = document.getElementById("numDiscount");
     const txtStatus = document.getElementById("txtStatus");
 
-    // Action buttons & hidden bindings (KHAI BÁO TRƯỚC KHI GẮN LISTENER)
     const btnSave = form.querySelector("#btnSave");
     const btnDeleteParent = form.querySelector("#btnDeleteParent");
     const hidCatId = form.querySelector("#hidCatId");
     const hidParentId = form.querySelector("#hidParentId");
     const hidCatName = form.querySelector("#hidCatName");
 
-    // ===== MOCK DATA (demo; có thể bỏ khi tích hợp API thật) =====
-    const COURSES = {
-      11: [
-        { courseid: "201", title: "Web cơ bản", tinydes: "Tiny MCE", fulldes: "TinyMCE", price: 1200000, discount: 200000, thumbnail: "", status: "published" },
-        { courseid: "202", title: "Web nâng cao", tinydes: "Tiny MCE", fulldes: "TinyMCE", price: 2200000, discount: 0, thumbnail: "", status: "draft" },
-      ],
-      12: [
-        { courseid: "301", title: "Android Kotlin", tinydes: "Tiny MCE", fulldes: "TinyMCE", price: 2400000, discount: 300000, thumbnail: "", status: "published" },
-      ],
-      13: [],
-    };
-    // ============================================================
-
-    // ====== UTILS ======
-    function show(el, on) {
-      if (!el) return;
-      el.classList.toggle("d-none", !on);
+    // ===== UTILS =====
+    function show(el, on) { if (el) el.classList.toggle("d-none", !on); }
+    function syncTinyMCE() { try { if (window.tinymce?.triggerSave) tinymce.triggerSave(); } catch (_) { } }
+    function ensureHidden(name, value) {
+      let ip = form.querySelector(`input[name="${CSS.escape(name)}"]`);
+      if (!ip) { ip = document.createElement("input"); ip.type = "hidden"; ip.name = name; form.appendChild(ip); }
+      ip.value = value;
     }
 
-    // ====== CHILD (L2) ======
+    // ===== DATA =====
+    const COURSE_CACHE = new Map(); // key = childId
+
+    async function loadCourses(childId) {
+      const key = String(childId || "");
+      if (!key) return [];
+      if (COURSE_CACHE.has(key)) return COURSE_CACHE.get(key);
+      try {
+        const url = `/course/byChild.json?childid=${encodeURIComponent(key)}`; // dùng prefix /course
+        console.log('[Edit] fetch', url);
+        const res = await fetch(url, { headers: { Accept: "application/json" } });
+        if (!res.ok) {
+          console.error('[Edit] API error status =', res.status);
+          return [];
+        }
+        const list = (await res.json()) || [];
+        console.log('[Edit] API result length =', list.length, 'sample:', list[0]);
+        COURSE_CACHE.set(key, list);
+        return list;
+      } catch (e) {
+        console.error('loadCourses error:', e);
+        return [];
+      }
+    }
+
+    // ===== CHILD =====
     function filterChildOptions(keyword = "") {
       const kw = (keyword || "").toLowerCase().trim();
       Array.from(selChild.options).forEach((opt) => {
@@ -91,21 +97,19 @@
     }
 
     function onToggleChild() {
-      const on = !!(toggleChild && toggleChild.checked);
+      const on = !!toggleChild?.checked;
       if (isEditingChildHidden) isEditingChildHidden.value = on ? "1" : "0";
 
       show(childPicker, on);
       show(courseToggleRow, on);
 
       if (!on) {
-        if (selChild) selChild.value = "";
-        if (filterChild) filterChild.value = "";
-        if (txtChildName) txtChildName.value = "";
-        if (boundChildId) boundChildId.value = "";
-
+        selChild && (selChild.value = "");
+        filterChild && (filterChild.value = "");
+        txtChildName && (txtChildName.value = "");
+        boundChildId && (boundChildId.value = "");
         if (toggleCourse) toggleCourse.checked = false;
         onToggleCourse();
-
         show(btnDeleteChild, false);
         show(courseToggleRow, false);
         return;
@@ -119,7 +123,7 @@
     }
 
     function onFilterChild() {
-      if (!toggleChild || !toggleChild.checked) return;
+      if (!toggleChild?.checked) return;
       filterChildOptions(filterChild.value);
       onSelectChild();
     }
@@ -130,44 +134,53 @@
       const opt = selChild.options[selChild.selectedIndex];
       const hasChild = !!(opt && opt.value);
 
-      if (txtChildName) txtChildName.value = hasChild ? (opt.textContent || "") : "";
-      if (boundChildId) boundChildId.value = hasChild ? id : "";
+      txtChildName && (txtChildName.value = hasChild ? (opt.textContent || "") : "");
+      boundChildId && (boundChildId.value = hasChild ? id : "");
+      console.log('[Edit] boundChildId =', boundChildId?.value);
 
       show(courseToggleRow, hasChild);
-      show(btnDeleteChild, !!(toggleChild && toggleChild.checked && hasChild));
+      show(btnDeleteChild, !!(toggleChild?.checked && hasChild));
 
-      if (toggleCourse && toggleCourse.checked) populateCourses();
+      if (toggleCourse?.checked) populateCourses();
     }
 
-    // ====== COURSE ======
-    function populateCourses(keyword = "") {
+    // ===== COURSE =====
+    async function populateCourses(keyword = "") {
       const childId = boundChildId ? boundChildId.value : "";
-      const list = COURSES[childId] || [];
+      const list = await loadCourses(childId);
       const kw = (keyword || "").toLowerCase();
 
       if (!selCourse) return;
       selCourse.innerHTML = "";
-      list
-        .filter((c) => !kw || (c.title || "").toLowerCase().includes(kw))
-        .forEach((c) => {
-          const opt = document.createElement("option");
-          opt.value = c.courseid;
-          opt.textContent = `${c.courseid} — ${c.title}`;
-          selCourse.appendChild(opt);
-        });
 
-      if (selCourse.options.length) {
-        selCourse.disabled = false;
-        selCourse.selectedIndex = 0;
-        onSelectCourse();
-      } else {
+      const filtered = list.filter(c => !kw || (c.title || "").toLowerCase().includes(kw));
+
+      if (!filtered.length) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = list.length === 0
+          ? "(No course returned by API for this child)"
+          : "(No course matched by filter)";
+        selCourse.appendChild(opt);
         selCourse.disabled = true;
         fillCourseFields(null);
+        return;
       }
+
+      filtered.forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = String(c.courseid);
+        opt.textContent = `${c.courseid} — ${c.title}`;
+        selCourse.appendChild(opt);
+      });
+
+      selCourse.disabled = false;
+      selCourse.selectedIndex = 0;
+      onSelectCourse();
     }
 
     function onToggleCourse() {
-      const on = !!(toggleCourse && toggleCourse.checked && boundChildId && boundChildId.value);
+      const on = !!(toggleCourse?.checked && boundChildId && boundChildId.value);
       if (isEditingCourseHidden) isEditingCourseHidden.value = on ? "1" : "0";
 
       show(coursePicker, on);
@@ -180,46 +193,51 @@
       else fillCourseFields(null);
     }
 
-    function onFilterCourse() {
-      if (!toggleCourse || !toggleCourse.checked) return;
-      populateCourses(filterCourse.value);
+    async function onFilterCourse() {
+      if (!toggleCourse?.checked) return;
+      await populateCourses(filterCourse.value);
     }
 
-    function onSelectCourse() {
+    async function onSelectCourse() {
       if (!selCourse || !boundChildId) return;
-      const id = selCourse.value;
-      const childId = boundChildId.value;
-      const list = COURSES[childId] || [];
-      const course = list.find((x) => x.courseid === id) || null;
+      const id = String(selCourse.value || "");
+      const childId = String(boundChildId.value || "");
+      const list = await loadCourses(childId);
+      const course = list.find((x) => String(x.courseid) === id) || null;
+      console.log('[Edit] selected course =', course);
       fillCourseFields(course);
     }
 
     function fillCourseFields(course) {
       if (!course) {
-        if (boundCourseId) boundCourseId.value = "";
-        if (txtCourseTitle) txtCourseTitle.value = "";
-        if (txtThumbnailUrl) txtThumbnailUrl.value = "";
+        boundCourseId && (boundCourseId.value = "");
+        txtCourseTitle && (txtCourseTitle.value = "");
+        txtThumbnailUrl && (txtThumbnailUrl.value = "");
         if (previewImg)
           previewImg.src = "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80";
-        if (txtTinyDes) txtTinyDes.value = "Tiny MCE";
-        if (txtFullDes) txtFullDes.value = "TinyMCE";
-        if (numPrice) numPrice.value = "";
-        if (numDiscount) numDiscount.value = "";
-        if (txtStatus) txtStatus.value = "";
+        txtTinyDes && (txtTinyDes.value = "Tiny MCE");
+        txtFullDes && (txtFullDes.value = "TinyMCE");
+        numPrice && (numPrice.value = "");
+        numDiscount && (numDiscount.value = "");
+        txtStatus && (txtStatus.value = "");
         return;
       }
-      if (boundCourseId) boundCourseId.value = course.courseid;
-      if (txtCourseTitle) txtCourseTitle.value = course.title || "";
-      if (txtThumbnailUrl) txtThumbnailUrl.value = course.thumbnail || "";
-      if (previewImg && course.thumbnail) previewImg.src = course.thumbnail;
-      if (txtTinyDes) txtTinyDes.value = course.tinydes || "Tiny MCE";
-      if (txtFullDes) txtFullDes.value = course.fulldes || "TinyMCE";
-      if (numPrice) numPrice.value = course.price ?? "";
-      if (numDiscount) numDiscount.value = course.discount ?? "";
-      if (txtStatus) txtStatus.value = course.status || "";
+      boundCourseId && (boundCourseId.value = course.courseid);
+      txtCourseTitle && (txtCourseTitle.value = course.title || "");
+      txtThumbnailUrl && (txtThumbnailUrl.value = course.thumbnail || "");
+      if (previewImg) {
+        previewImg.src = (course.thumbnail && String(course.thumbnail).trim())
+          ? course.thumbnail
+          : "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80";
+      }
+      txtTinyDes && (txtTinyDes.value = course.tinydes || "Tiny MCE");
+      txtFullDes && (txtFullDes.value = course.fulldes || "TinyMCE");
+      numPrice && (numPrice.value = course.price ?? "");
+      numDiscount && (numDiscount.value = course.discount ?? "");
+      txtStatus && (txtStatus.value = course.status || "");
     }
 
-    // Preview khi nhập URL thumbnail
+    // Preview thumbnail
     if (txtThumbnailUrl && previewImg) {
       txtThumbnailUrl.addEventListener("input", () => {
         const url = (txtThumbnailUrl.value || "").trim();
@@ -227,12 +245,12 @@
       });
     }
 
-    // ====== CLICK HANDLERS (gán payload ngay khi bấm nút) ======
+    // ===== SUBMIT =====
     btnDeleteParent?.addEventListener("click", () => {
-      if (!parentId || !parentId.value) return;
+      if (!parentId?.value) return;
       if (!hidCatId || !hidParentId || !hidCatName) return;
-      hidCatId.value = parentId.value; // catid = parent
-      hidParentId.value = "";          // null tại BE
+      hidCatId.value = parentId.value;
+      hidParentId.value = "";
       hidCatName.value = "";
     });
 
@@ -245,22 +263,44 @@
         alert("Hãy chọn child (L2) để xóa.");
         return;
       }
-      hidCatId.value = childId;        // catid = child
+      hidCatId.value = childId;
       hidParentId.value = pId || "";
       hidCatName.value = "";
     });
 
     form.addEventListener("submit", (e) => {
-      const isChildEditing = isEditingChildHidden && isEditingChildHidden.value === "1";
+      const submitter = e.submitter;
+      const isChildEditing = isEditingChildHidden?.value === "1";
+      const isCourseEditing = isEditingCourseHidden?.value === "1";
+
+      syncTinyMCE();
+
       const isSaving =
-        e.submitter === btnSave ||
-        (e.submitter && e.submitter.formAction && e.submitter.formAction.endsWith("/admin/categories/patch"));
+        submitter === btnSave ||
+        (submitter && submitter.formAction && submitter.formAction.endsWith("/admin/categories/patch"));
 
       if (isSaving) {
-        if (!parentId || !hidCatId || !hidParentId || !hidCatName) return;
+        if (!parentId) return;
+
+        if (isCourseEditing) {
+          const childId = boundChildId?.value || "";
+          const courseId = boundCourseId?.value || "";
+          if (!childId || !courseId) {
+            e.preventDefault();
+            alert("Hãy chọn child (L2) và course để lưu.");
+            return;
+          }
+          if (submitter) submitter.formAction = "/course/patch";
+          form.action = "/course/patch";
+
+          ensureHidden("parentId", parentId.value || "");
+          ensureHidden("childId", childId);
+          ensureHidden("catid", childId);
+          ensureHidden("courseId", courseId);
+          return;
+        }
 
         if (isChildEditing) {
-          // === SAVE CHILD ===
           const childId = selChild ? selChild.value : "";
           if (!childId) {
             e.preventDefault();
@@ -268,28 +308,45 @@
             return;
           }
           const childText =
-            (txtChildName && txtChildName.value.trim()) ||
-            (selChild && selChild.options[selChild.selectedIndex]
-              ? selChild.options[selChild.selectedIndex].textContent.trim()
-              : "");
+            (txtChildName?.value || "").trim() ||
+            (selChild?.options[selChild.selectedIndex]?.textContent || "").trim();
 
-          hidCatId.value = childId;             // catid = child
-          hidParentId.value = parentId.value;   // parentid = parent
-          hidCatName.value = childText;         // catname
-        } else {
-          // === SAVE PARENT ===
-          hidCatId.value = parentId.value;              // catid = parent
-          hidParentId.value = "";                       // parentid = NULL
-          hidCatName.value = (txtParentName?.value || "").trim(); // catname
+          hidCatId.value = childId;
+          hidParentId.value = parentId.value;
+          hidCatName.value = childText;
+
+          if (submitter) submitter.formAction = "/admin/categories/patch";
+          form.action = "/admin/categories/patch";
+          return;
         }
+
+        // save parent
+        hidCatId.value = parentId.value;
+        hidParentId.value = "";
+        hidCatName.value = (txtParentName?.value || "").trim();
+
+        if (submitter) submitter.formAction = "/admin/categories/patch";
+        form.action = "/admin/categories/patch";
+        return;
       }
 
+      // Delete course
+      if (submitter === btnDeleteCourse ||
+        (submitter && submitter.formAction && submitter.formAction.endsWith("/course/del"))) {
+        const courseId = boundCourseId?.value || "";
+        if (!courseId) {
+          e.preventDefault();
+          alert("Hãy chọn course để xóa.");
+          return;
+        }
+        ensureHidden("parentId", parentId?.value || "");
+        ensureHidden("courseId", courseId);
+        return;
+      }
 
       // Delete child
-      if (
-        e.submitter === btnDeleteChild ||
-        (e.submitter && e.submitter.formAction && e.submitter.formAction.endsWith("/admin/categories/del") && editingChild && e.submitter.id === "btnDeleteChild")
-      ) {
+      if (submitter === btnDeleteChild ||
+        (submitter && submitter.formAction && submitter.formAction.endsWith("/admin/categories/del"))) {
         const childId = selChild ? selChild.value : "";
         if (!childId) {
           e.preventDefault();
@@ -297,14 +354,13 @@
           return;
         }
         hidCatId.value = childId;
-        hidParentId.value = pId;
+        hidParentId.value = parentId?.value || "";
         hidCatName.value = "";
+        return;
       }
     });
 
-    // ====== INIT ======
-    if (txtParentId && parentId) txtParentId.textContent = parentId.value;
-
+    // INIT
     toggleChild && toggleChild.addEventListener("change", onToggleChild);
     filterChild && filterChild.addEventListener("input", onFilterChild);
     selChild && selChild.addEventListener("change", onSelectChild);
@@ -313,7 +369,7 @@
     filterCourse && filterCourse.addEventListener("input", onFilterCourse);
     selCourse && selCourse.addEventListener("change", onSelectCourse);
 
-    onToggleChild();  // mặc định: chỉnh parent
-    onToggleCourse(); // đảm bảo panel course tắt khi chưa có child
+    onToggleChild();
+    onToggleCourse();
   });
 })();

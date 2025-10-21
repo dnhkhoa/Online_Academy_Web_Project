@@ -24,3 +24,8 @@ export function del(id) {
 export function findByCat(catid) {
   return db('courses').where('catid', catid).orderBy('courseid');
 }
+
+export async function findByCats(catids = []) {
+  if (!catids.length) return [];
+  return db('courses').whereIn('catid', catids).orderBy('courseid');
+}

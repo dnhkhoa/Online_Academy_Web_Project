@@ -43,7 +43,7 @@ router.get('/byCat', async function (req, res) {
 });
 
 //add
-router.get('/add', async (req, res) => {
+router.get('/add', async function (req, res)  {
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
@@ -56,7 +56,7 @@ router.get('/add', async (req, res) => {
   });
 });
 
-router.post('/add', async (req, res) => {
+router.post('/add', async function(req, res) {
   if (req.body.mode !== 'course') 
     return res.redirect('/admin/categories/add');
   let catid = Number(req.body.catid) || null;
@@ -89,14 +89,24 @@ router.post('/add', async (req, res) => {
   await courseModel.add(course);
   res.redirect(`/course/byCat?catid=${catid}`);
 });
-router.get('/:id', async (req, res) => {
+router.get('/byChild.json', async function (req, res)  {
+  const catid = Number(req.query.childid || req.query.catid || 0);
+  if (!catid) return res.json([]);
+  let list = await courseModel.findByCat(catid);
+  if (!list?.length) {
+    const children = await categoryModel.findChildrenByParent(catid);
+    const ids = children.map(c => Number(c.catid)).filter(Boolean);
+    if (ids.length) list = await courseModel.findByCats(ids);
+  }
+  res.json(list || []);
+});
+
+router.get('/:id', async function (req, res)  {
   const id = Number(req.params.id);
   if (!id) return res.redirect('/course/byCat');
 
   const course = await courseModel.findById(id);
   if (!course) return res.status(404).send('Course not found');
-
-  // 🔹 Lấy dữ liệu category cho sidebar (y như byCat)
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
@@ -104,11 +114,45 @@ router.get('/:id', async (req, res) => {
   }
 
   res.render('vwCourse/details', {
-    course,
-    parents,
-    childrenMap,
+    course: course,
+    parents: parents,
+    childrenMap: childrenMap,
   });
 });
 
+//patch
+router.post('/patch', async function (req, res)  {
+  const courseid = Number(req.body.courseId || req.body.courseid || 0);
+  if (!courseid) return res.redirect('back');
+  const course = {
+    title: (req.body.title || '').trim(),
+    tinydes: (req.body.tinydes || '').trim() || null,
+    fulldes: (req.body.fulldes || '').trim() || null,
+    price: Number(req.body.price) || 0,
+    discount: Number(req.body.discount) || 0,
+    status: (req.body.status || 'draft').trim(),
+    thumbnail: (req.body.thumbnail || '').trim() || null,
+    catid: Number(req.body.catid) || null,
+    lastupdate: new Date(),
+  };
+
+  await courseModel.patch(courseid, course);
+
+  const parentid = Number(req.body.parentId || req.body.parentid || 0);
+  res.redirect(`/admin/categories/edit?parentid=${parentid || ''}`);
+});
+
+//delete
+router.post('/del', async function (req, res)  {
+  try {
+    const courseid = Number(req.body.courseId || req.body.courseid || 0);
+    if (courseid) await courseModel.del(courseid);
+    const parentid = Number(req.body.parentId || req.body.parentid || 0);
+    return res.redirect(`/admin/categories/edit?parentid=${parentid || ''}`);
+  } catch (e) {
+    console.error(e);
+    return res.redirect('back');
+  }
+});
 
 export default router;
