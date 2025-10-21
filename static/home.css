@@ -35,6 +35,23 @@ body {
   }
 }
 
+/* Section Backgrounds */
+section:nth-of-type(2) {
+  background-color: #fff9f0;
+}
+
+section:nth-of-type(3) {
+  background-color: #f0f8ff;
+}
+
+section:nth-of-type(4) {
+  background-color: #f5f3ff;
+}
+
+section:nth-of-type(5) {
+  background-color: #f0fdf4;
+}
+
 /*  Section heading  */
 .section-heading small {
   letter-spacing: 0.32em;
