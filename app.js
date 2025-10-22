@@ -35,6 +35,9 @@ app.use("/course", courseRouter);
 import categoryRouter from "./routes/category.route.js";
 app.use("/admin/categories", categoryRouter);
 
+import cartRouter from "./routes/cart.route.js";
+app.use("/cart", cartRouter);
+
 app.use(function (req, res) {
   res.status(404).render("404");
 });
