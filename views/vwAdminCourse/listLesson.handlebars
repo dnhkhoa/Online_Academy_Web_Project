@@ -1,0 +1,165 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/listLesson.css" />
+{{/section}}
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- SIDEBAR: Categories -> Subcategories -> Courses -->
+      <aside class="col-lg-3">
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="accordion" id="categoryAccordion">
+            <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of courses</h5>
+
+            {{#each parents}}
+              {{!-- L1 --}}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-{{this.catid}}">
+                  <div class="header-content">
+                    <button
+                      class="accordion-button collapsed flex-grow-1"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapse-{{this.catid}}"
+                      aria-expanded="false"
+                      aria-controls="collapse-{{this.catid}}">
+                      {{this.catname}}
+                    </button>
+                  </div>
+                </h2>
+
+                <div id="collapse-{{this.catid}}" class="accordion-collapse collapse"
+                     aria-labelledby="heading-{{this.catid}}"
+                     data-bs-parent="#categoryAccordion">
+                  <div class="accordion-body p-0">
+                    <div class="accordion accordion-flush ms-3" id="subAccordion-{{this.catid}}">
+                      {{#each (lookup ../childrenMap this.catid)}}
+                        {{!-- L2 --}}
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="sub-heading-{{../this.catid}}-{{this.catid}}">
+                            <button
+                              class="accordion-button collapsed py-2"
+                              type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#sub-collapse-{{../this.catid}}-{{this.catid}}"
+                              aria-expanded="false"
+                              aria-controls="sub-collapse-{{../this.catid}}-{{this.catid}}">
+                              {{this.catname}}
+                            </button>
+                          </h2>
+                          <div id="sub-collapse-{{../this.catid}}-{{this.catid}}"
+                               class="accordion-collapse collapse"
+                               aria-labelledby="sub-heading-{{../this.catid}}-{{this.catid}}"
+                               data-bs-parent="#subAccordion-{{../this.catid}}">
+                            <div class="accordion-body p-0">
+                              <div class="list-group list-group-flush">
+                                {{#each (lookup ../../coursesMap this.catid)}}
+                                  <a href="/course/lesson?courseid={{this.courseid}}"
+                                     class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center">
+                                    {{this.title}}
+                                  </a>
+                                {{else}}
+                                  <div class="px-3 py-2 text-muted small">No courses</div>
+                                {{/each}}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {{else}}
+                        <div class="px-3 py-2 text-muted small">No subcategories</div>
+                      {{/each}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN: Sections & Lessons -->
+      <div class="col-lg-9">
+
+        <div class="lesson-brief card border-0 shadow-sm rounded-4 mb-4">
+          <div class="card-body d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+            <div>
+              <h2 class="h5 mb-1 fw-semibold">
+                {{#if course}}Course: {{course.title}}{{else}}Select a course on the left{{/if}}
+              </h2>
+              {{#if course}}
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <a class="btn btn-primary btn-sm" href="/course/addlesson{{#if course}}?courseid={{course.courseid}}{{/if}}" role="button">
+                    <i class="bi bi-plus-circle"></i> Add Lesson
+                  </a>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+
+        {{#if course}}
+          <div class="accordion" id="accordionPanelsStayOpenExample">
+            {{#each sections}}
+              <div class="accordion-item rounded-3 overflow-hidden">
+                <h2 class="accordion-header d-flex align-items-center">
+                  <button
+                    class="accordion-button collapsed flex-grow-1"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#sec-{{this.sectionid}}"
+                    aria-expanded="false"
+                    aria-controls="sec-{{this.sectionid}}">
+                    {{this.title}}
+                  </button>
+                  <div class="text-end ms-2">
+                    <a class="btn btn-outline-primary btn-sm" href="/course/editlesson?sectionid={{this.sectionid}}" role="button" title="Edit section">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                  </div>
+                </h2>
+                <div id="sec-{{this.sectionid}}" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    {{#each (lookup ../lessonMap this.sectionid)}}
+                      <div class="d-flex justify-content-between align-items-center border rounded-3 px-3 py-2 mb-2">
+                        <div class="me-3">
+                          <div class="fw-semibold">{{this.title}}</div>
+                          {{#if this.preview}}
+                            <span class="badge bg-success">Preview</span>
+                          {{/if}}
+                          {{#if this.video_url}}
+                            <span class="badge bg-secondary">Video</span>
+                          {{/if}}
+                        </div>
+                        <div class="d-flex gap-2">
+                          <a class="btn btn-outline-secondary btn-sm" href="/course/editlesson?lessonid={{this.lessonid}}">Edit</a>
+                          <a class="btn btn-outline-primary btn-sm" href="/lesson/watch?lessonid={{this.lessonid}}">Watch</a>
+                        </div>
+                      </div>
+                    {{else}}
+                      <div class="text-muted">No lessons in this section.</div>
+                    {{/each}}
+                  </div>
+                </div>
+              </div>
+            {{else}}
+              <div class="text-muted">This course has no sections.</div>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        <div class="mt-4 text-center">
+          <a class="btn btn-outline-success" href="/course/byCat" role="button">
+            <i class="bi bi-arrow-left"></i> Back
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{{#section "scripts"}}
+  <script src="/static/listLesson.js"></script>
+{{/section}}

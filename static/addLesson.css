@@ -1,0 +1,65 @@
+/* Bố cục tương tự add.css */
+.lesson-add-container {
+  padding: 2rem 0;
+}
+.content-grid.single-column {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.lesson-form-card .card-header {
+  padding: 1rem 1.25rem;
+}
+.lesson-form-card .card-body {
+  padding: 1.25rem;
+}
+.lesson-form-card .card-footer {
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border-top: 1px solid #f1f3f5;
+}
+
+.form-panel {
+  margin-bottom: 1.5rem;
+}
+.form-section {
+  margin-bottom: 1rem;
+}
+
+.form-control,
+.form-select,
+.btn,
+.input-group-text {
+  border-radius: 0.75rem;
+}
+
+/* Panel mềm (giống screenshot mẫu) */
+.panel-soft {
+  background: #f8f9fa;
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+/* Lessons table */
+.lesson-table th,
+.lesson-table td {
+  vertical-align: middle;
+}
+.lesson-table input {
+  height: 42px;
+}
+.lesson-toolbar .btn {
+  border-radius: 0.6rem;
+}
+
+/* Footer actions */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.secondary-actions {
+  display: flex;
+  gap: 0.5rem;
+}

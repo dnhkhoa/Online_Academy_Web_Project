@@ -1,8 +1,8 @@
 import express from 'express';
 import * as courseModel from '../models/course.model.js';
 import * as categoryModel from '../models/category.model.js';
-
-const router = express.Router();
+import * as sectionModel from '../models/courseSections.model.js';
+import * as lessonModel from '../models/lesson.model.js';const router = express.Router();
 
 //list
 router.get('/', async function (req, res) {
@@ -100,24 +100,93 @@ router.get('/byChild.json', async function (req, res)  {
   }
   res.json(list || []);
 });
+//lesson list
+router.get("/lesson", async function (req, res) {
+  const courseid = Number(req.query.courseid || 0);
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};
+  for (const p of parents) {
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }
+  const coursesMap = {};
+  for (const p of parents) {
+    const children = childrenMap[p.catid] || [];
+    for (const c of children) {
+      coursesMap[c.catid] = await courseModel.findByCat(c.catid);
+    }
+  }
+  let course = null;
+  let sections = [];
+  let lessonMap = {};
+  if (courseid) {
+    course = await courseModel.findById(courseid);
+    if (!course) return res.redirect('/course/byCat');
+    sections = await sectionModel.findByCourse(courseid);
+    const sectionIds = sections.map(s => s.sectionid);
+    const lessons = await lessonModel.findBySections(sectionIds);
+    lessonMap = {};
+    for (const s of sections) lessonMap[s.sectionid] = [];
+    for (const l of lessons) (lessonMap[l.sectionid] || (lessonMap[l.sectionid] = [])).push(l);
+  }
 
-router.get('/:id', async function (req, res)  {
-  const id = Number(req.params.id);
-  if (!id) return res.redirect('/course/byCat');
+  res.render("vwAdminCourse/listLesson", {
+    parents:parents,
+    childrenMap: childrenMap,
+    coursesMap: coursesMap,
+    course: course,
+    sections: sections,
+    lessonMap: lessonMap,
+  });
+});
+//addlesson
+router.get("/addlesson", async function (req, res) {
+  const courseid = Number(req.query.courseid || 0);
 
-  const course = await courseModel.findById(id);
-  if (!course) return res.status(404).send('Course not found');
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
     childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
   }
 
-  res.render('vwCourse/details', {
-    course: course,
+  let course = null;
+  let sections = [];
+  if (courseid) {
+    course = await courseModel.findById(courseid);
+    if (!course) return res.redirect('/course/byCat');
+    sections = await sectionModel.findByCourse(courseid);
+  }
+
+  res.render("vwAdminCourse/addLesson", {
     parents: parents,
     childrenMap: childrenMap,
+    course: course,
+    sections: sections,
   });
+});
+router.post("/addlesson", async function (req, res) {
+  const courseid = Number(req.body.courseid);
+  let sectionid = Number(req.body.sectionId);
+  const newSectionName = (req.body.newSectionName || '').trim();
+  const title = (req.body.title || '').trim();
+
+  if (!sectionid && newSectionName) {
+    const [sec] = await sectionModel.add({
+      courseid,
+      title: newSectionName,
+      order: 1,
+    });
+    sectionid = sec.sectionid;
+  }
+
+  await lessonModel.add({
+    sectionid,
+    title,
+    content: req.body.content || '',
+    video_url: (req.body.video_url || '').trim(),
+    preview: req.body.preview === 'on',
+  });
+
+  res.redirect(`/course/lesson?courseid=${courseid}`);
 });
 
 //patch
@@ -154,5 +223,23 @@ router.post('/del', async function (req, res)  {
     return res.redirect('back');
   }
 });
+//
+router.get('/:id', async function (req, res)  {
+  const id = Number(req.params.id);
+  if (!id) return res.redirect('/course/byCat');
 
+  const course = await courseModel.findById(id);
+  if (!course) return res.status(404).send('Course not found');
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};
+  for (const p of parents) {
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }
+
+  res.render('vwCourse/details', {
+    course: course,
+    parents: parents,
+    childrenMap: childrenMap,
+  });
+});
 export default router;
