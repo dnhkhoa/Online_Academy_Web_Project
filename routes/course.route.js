@@ -201,6 +201,7 @@ router.get('/watch', async function (req, res) {
     }
   });
 });
+//edit lesson
 router.get('/lesson/edit', async function (req, res) {
   const sectionid = Number(req.query.sectionid || 0);
   if (!sectionid) return res.redirect('/course/lesson');
@@ -235,26 +236,38 @@ router.post('/section/edit', async function (req, res) {
 });
 
 router.post('/lesson/editLesson', async function (req, res) {
+  const sectionid = Number(req.body.sectionId || 0);
   const courseid = Number(req.body.courseId || 0);
   const lessonId = Number(req.body.targetLessonId || 0);
-  if (!lessonId) return res.redirect(`/course/lesson?courseid=${courseid||''}`);
 
-  const titles   = req.body.lessonTitles || {};
-  const urls     = req.body.videoUrls    || {};
-  const previews = req.body.previews     || {};
-  const contents = req.body.contents     || {};                   // [ADDED]
-
-  const title    = (titles[lessonId]   ?? '').trim();
-  const videoUrl = (urls[lessonId]     ?? '').trim();
-  const preview  = String(previews[lessonId] ?? '0') === '1';
-  const content  = (contents[lessonId] ?? '').trim();             // [ADDED]
+  const title = (req.body.lessonTitles?.[lessonId] || '').trim();
+  const videoUrl = (req.body.videoUrls?.[lessonId] || '').trim();
+  const preview = String(req.body.previews?.[lessonId] || '0') === '1';
 
   await lessonModel.patch(lessonId, {
     title,
     video_url: videoUrl,
-    preview,
-    content,                                                      // [ADDED]
+    preview
   });
+
+  return res.redirect(`/course/lesson?courseid=${courseid}`);
+});
+//delete section
+router.post('/section/delete', async function (req, res) {
+  const sectionid = Number(req.body.sectionId || 0);
+  const courseid  = Number(req.body.courseId  || 0);
+
+  await lessonModel.delBySection(sectionid);
+  await sectionModel.del(sectionid);
+
+  return res.redirect(`/course/lesson?courseid=${courseid}`);
+});
+//delete lesson
+router.post('/lesson/deleteOne', async function (req, res)  {
+  const courseid = Number(req.body.courseId || 0);
+  const lessonId = Number(req.body.targetLessonId || 0);
+
+  await lessonModel.del(lessonId);
 
   return res.redirect(`/course/lesson?courseid=${courseid}`);
 });

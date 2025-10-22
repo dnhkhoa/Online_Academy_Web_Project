@@ -19,3 +19,10 @@ export function add(lesson) {
 export function patch(lessonid, lesson) {
   return db('lessons').where({ lessonid }).update(lesson).returning('*');
 }
+
+export function del(lessonid) {
+  return db('lessons').where({ lessonid }).del();
+}
+export function delBySection(sectionid) {
+  return db('lessons').where({ sectionid }).del();
+}

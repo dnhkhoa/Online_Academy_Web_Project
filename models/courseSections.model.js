@@ -15,3 +15,7 @@ export function add(section) {
 export function patch(sectionid, section) {
   return db('course_sections').where({ sectionid }).update(section).returning('*');
 }
+
+export function del(sectionid) {
+  return db('course_sections').where({ sectionid }).del();
+}
