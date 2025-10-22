@@ -188,6 +188,19 @@ router.post("/addlesson", async function (req, res) {
 
   res.redirect(`/course/lesson?courseid=${courseid}`);
 });
+//watch
+router.get('/watch', async (req, res) => {
+  const lessonid = Number(req.query.lessonid || 0);
+  const lesson = await lessonModel.findOne(lessonid);
+  const src = (lesson.video_url || '').trim();
+  res.render('vwAdminCourse/watchLesson', {
+    lesson: lesson,
+    player: {
+      src: src,
+      type: 'video/youtube'
+    }
+  });
+});
 
 //patch
 router.post('/patch', async function (req, res)  {
