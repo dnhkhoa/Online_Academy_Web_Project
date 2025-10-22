@@ -12,3 +12,6 @@ export function findBySectionId(sectionid) {
 export function add(section) {
   return db('course_sections').insert(section).returning('*');
 }
+export function patch(sectionid, section) {
+  return db('course_sections').where({ sectionid }).update(section).returning('*');
+}

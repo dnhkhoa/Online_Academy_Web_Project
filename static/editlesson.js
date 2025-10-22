@@ -1,55 +1,41 @@
 (function () {
-  const form = document.getElementById("frmEditLesson");
-  const lessonList = document.getElementById("lessonList");
-  const removedBin = document.getElementById("removedLessonsBin");
-  const btnDeleteSection = document.getElementById("btnDeleteSection");
-  const deleteSectionInput = document.getElementById("deleteSection");
-  const sectionDeleteNote = document.getElementById("sectionDeleteNote");
+  function ready(fn) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+    else fn();
+  }
 
-  // Validate
-  form.addEventListener("submit", function (e) {
-    if (!form.checkValidity()) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    form.classList.add("was-validated");
-  });
+  ready(function () {
+    const form = document.getElementById('frmEditLesson');
+    if (!form) return;
 
-  // Remove single lesson (no add)
-  lessonList.addEventListener("click", function (e) {
-    const btn = e.target.closest(".btnRemoveLesson");
-    if (!btn) return;
+    const targetInput = form.querySelector('#targetLessonId');
 
-    const card = btn.closest(".lesson-item");
-    const lessonId = card?.getAttribute("data-lesson-id") || "";
-    const title =
-      card?.querySelector('input[type="text"]')?.value || "this lesson";
+    document.getElementById('btnEditSection')?.addEventListener('click', function () {
+      form.setAttribute('action', '/course/section/edit');
+      targetInput.value = '';
+      form.submit();
+    });
 
-    if (!confirm(`Remove "${title}"?`)) return;
+    form.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btnSaveLesson');
+      if (!btn) return;
 
-    // mark for deletion -> append hidden input; then remove from UI
-    if (lessonId) {
-      const hidden = document.createElement("input");
-      hidden.type = "hidden";
-      hidden.name = "removedLessonIds[]";
-      hidden.value = lessonId;
-      removedBin.appendChild(hidden);
-    }
-    card.remove();
-  });
+      const lid = btn.getAttribute('data-lesson-id');
+      if (!lid) return;
 
-  // Delete ENTIRE section
-  btnDeleteSection.addEventListener("click", function () {
-    const ok = confirm(
-      "This will DELETE the entire section and ALL its lessons. Continue?"
-    );
-    if (!ok) return;
+      form.setAttribute('action', '/course/lesson/editLesson');
+      targetInput.value = lid;
 
-    // Đánh dấu xoá section
-    deleteSectionInput.value = "1";
-
-    // Hiển thị cảnh báo & khóa UI nhập liệu (nhưng vẫn cho Back/Reset/Save)
-    sectionDeleteNote.classList.remove("d-none");
-    document.body.classList.add("section-deleting");
+      const cb = form.querySelector(`.lesson-item[data-lesson-id="${lid}"] input[type="checkbox"][name="previews[${lid}]"]`);
+      if (!cb || !cb.checked) {
+        form.querySelectorAll(`input[name="previews[${lid}]"][type="hidden"]`).forEach(n => n.remove());
+        const h = document.createElement('input');
+        h.type = 'hidden';
+        h.name = `previews[${lid}]`;
+        h.value = '0';
+        form.appendChild(h);
+      }
+      form.submit();
+    });
   });
 })();

@@ -101,10 +101,8 @@
                 {{this.title}}
               </button>
               <div class="text-end ms-2">
-                <a class="btn btn-outline-primary btn-sm" href="/course/editlesson?sectionid={{this.sectionid}}"
-                  role="button" title="Edit section">
-                  <i class="bi bi-pencil-square"></i>
-                </a>
+                <a href="/course/lesson/edit?sectionid={{this.sectionid}}"
+                      class="btn btn-outline-primary btn-sm">Edit</a>
               </div>
             </h2>
             <div id="sec-{{this.sectionid}}" class="accordion-collapse collapse">
@@ -121,8 +119,8 @@
                     {{/if}}
                   </div>
                   <div class="d-flex gap-2">
-                    <a class="btn btn-outline-secondary btn-sm"
-                      href="/course/editlesson?lessonid={{this.lessonid}}">Edit</a>
+                   
+
                     <a href="/course/watch?lessonid={{this.lessonid}}" class="btn btn-sm btn-outline-primary">
                       Watch
                     </a>

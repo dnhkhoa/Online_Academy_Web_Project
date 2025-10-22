@@ -16,3 +16,6 @@ export function findBySection(sectionid) {
 export function add(lesson) {
   return db('lessons').insert(lesson)
 }
+export function patch(lessonid, lesson) {
+  return db('lessons').where({ lessonid }).update(lesson).returning('*');
+}

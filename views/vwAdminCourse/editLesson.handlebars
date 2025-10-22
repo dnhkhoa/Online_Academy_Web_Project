@@ -1,199 +1,117 @@
 {{#section "styles"}}
-  <link rel="stylesheet" href="/static/editLesson.css" />
+<link rel="stylesheet" href="/static/editLesson.css" />
 {{/section}}
 
 <div class="lesson-edit-container">
   <div class="content-grid single-column">
-    <form
-      id="frmEditLesson"
-      method="post"
-      enctype="multipart/form-data"
-      class="card shadow-sm lesson-form-card"
-    >
-      <div
-        class="card-header d-flex align-items-center justify-content-between"
-      >
+    <form id="frmEditLesson" method="post" class="card shadow-sm lesson-form-card" action="/course/section/edit">
+      <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title mb-0">Edit Course Section / Lessons</h5>
 
-        <!-- Delete ENTIRE section -->
-        <button
-          type="button"
-          id="btnDeleteSection"
-          class="btn btn-outline-danger btn-sm"
-        >
-          <i class="bi bi-trash"></i>
-          Delete Section
-        </button>
+        <div class="d-flex gap-2">
+          <button type="button" id="btnDeleteSection" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-trash"></i>
+            Delete Section
+          </button>
+          <button type="submit" id="btnEditSection" class="btn btn-primary btn-sm">
+            <i class="bi bi-check2"></i> Edit Section
+          </button>
+        </div>
       </div>
 
       <div class="card-body">
-        <!-- COURSE SECTION  -->
         <section class="form-panel panel-soft" id="sectionPanel">
           <div class="panel-header">
             <h6>Course Section</h6>
-
           </div>
 
           <div class="form-section">
             <label class="form-label" for="txtSectionName">Section name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="txtSectionName"
-              placeholder="e.g., Section A: Fundamentals"
-              value="Section A: Fundamentals"
-              required
-            />
+            <input type="text" class="form-control" id="txtSectionName" placeholder="e.g., Section A: Fundamentals"
+              value="{{section.title}}" name="sectionName" required />
             <div class="invalid-feedback">Section name is required.</div>
           </div>
-
+          
           <div class="alert alert-danger d-none mt-2" id="sectionDeleteNote">
-            This section is
-            <strong>marked for deletion</strong>. Saving will remove the section
-            and all its lessons.
+            This section is <strong>marked for deletion</strong>. Saving will remove the section and all its lessons.
           </div>
         </section>
 
-        <!-- LESSONS -->
         <section class="form-panel panel-soft" id="lessonsPanel">
           <div class="panel-header">
             <h6 class="mb-1">Lessons</h6>
-
           </div>
+
           <div id="removedLessonsBin" class="d-none"></div>
 
           <div class="lesson-list" id="lessonList">
-            <!-- Lesson #1 -->
-            <div
-              class="lesson-item card shadow-sm border-0"
-              data-lesson-id="l1"
-            >
+            {{#each lessons}}
+            <div class="lesson-item card shadow-sm border-0" data-lesson-id="{{this.lessonid}}">
               <div class="card-body">
-                <div
-                  class="d-flex align-items-center justify-content-between mb-2"
-                >
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <button type="button" class="btn btn-sm btn-outline-danger btnRemoveLesson">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
 
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-danger btnRemoveLesson"
-                  >
-                    <i class="bi bi-trash"></i>
-                    Remove
+                  <button type="button" class="btn btn-sm btn-outline-primary btnSaveLesson"
+                    data-lesson-id="{{this.lessonid}}">
+                    Edit
                   </button>
                 </div>
+
+                <input type="hidden" name="lessonIds[]" value="{{this.lessonid}}" />
+
                 <div class="form-section">
                   <label class="form-label">Lesson Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    value="Introduction"
-                    required
-                  />
+                  <input type="text" class="form-control" value="{{this.title}}" name="lessonTitles[{{this.lessonid}}]"
+                    required />
                 </div>
+
                 <div class="row g-3">
-                  <div class="col-sm-4">
-                    <div class="form-section">
-                      <label class="form-label">Duration</label>
-                      <input type="text" class="form-control" value="07:15" />
-                    </div>
-                  </div>
+                  
                   <div class="col-sm-8">
                     <div class="form-section">
                       <label class="form-label">YouTube URL (optional)</label>
-                      <input
-                        type="url"
-                        class="form-control"
-                        value="https://youtu.be/xxxxxxx"
-                      />
+                      <input type="url" class="form-control" value="{{this.video_url}}"
+                        name="videoUrls[{{this.lessonid}}]" />
                     </div>
                   </div>
+                </div>
+
+                <div class="form-check mt-2">
+                  <input class="form-check-input" type="checkbox" id="prev-{{@index}}"
+                    name="previews[{{this.lessonid}}]" value="1" {{#if this.preview}}checked{{/if}} />
+                  <label class="form-check-label" for="prev-{{@index}}">Preview</label>
                 </div>
               </div>
             </div>
-
-            <!-- Lesson #2 -->
-            <div
-              class="lesson-item card shadow-sm border-0"
-              data-lesson-id="l2"
-            >
-              <div class="card-body">
-                <div
-                  class="d-flex align-items-center justify-content-between mb-2"
-                >
-
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-danger btnRemoveLesson"
-                  >
-                    <i class="bi bi-trash"></i>
-                    Remove
-                  </button>
-                </div>
-                <div class="form-section">
-                  <label class="form-label">Lesson Name</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    value="Installation & Setup"
-                    required
-                  />
-                </div>
-                <div class="row g-3">
-                  <div class="col-sm-4">
-                    <div class="form-section">
-                      <label class="form-label">Duration</label>
-                      <input type="text" class="form-control" value="12:30" />
-                    </div>
-                  </div>
-                  <div class="col-sm-8">
-                    <div class="form-section">
-                      <label class="form-label">YouTube URL (optional)</label>
-                      <input
-                        type="url"
-                        class="form-control"
-                        value="https://www.youtube.com/watch?v=yyyyyyy"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            {{/each}}
           </div>
         </section>
       </div>
 
       <div class="card-footer">
         <div class="action-buttons">
-          <a
-            class="btn btn-outline-success"
-            href="/course/lesson"
-            role="button"
-          >
-            <i class="bi bi-arrow-left"></i>
-            Back
+          <a class="btn btn-outline-success" href="/course/lesson?courseid={{section.courseid}}" role="button">
+            <i class="bi bi-arrow-left"></i> Back
           </a>
           <div class="secondary-actions">
             <button type="reset" class="btn btn-outline-secondary">
-              <i class="bi bi-arrow-counterclockwise"></i>
-              Reset
-            </button>
-            <button type="submit" class="btn btn-success">
-              <i class="bi bi-check2"></i>
-              Save
+              <i class="bi bi-arrow-counterclockwise"></i> Reset
             </button>
           </div>
         </div>
       </div>
 
-      <!-- hidden: backend có thể đọc nếu cần -->
-      <input type="hidden" id="sectionId" name="sectionId" value="s1" />
-      <input type="hidden" id="deleteSection" name="deleteSection" value="0" />
-      <!-- mỗi lesson xóa sẽ append <input name="removedLessonIds[]" value="..."> vào #removedLessonsBin -->
+      <input type="hidden" id="sectionId" name="sectionId" value="{{section.sectionid}}" />
+      <input type="hidden" id="courseId" name="courseId" value="{{section.courseid}}" />
+      <input type="hidden" id="targetLessonId" name="targetLessonId" value="" />
     </form>
   </div>
 </div>
 
 {{#section "scripts"}}
-  <script defer src="/static/editLesson.js"></script>
+  <script src="https://cdn.tiny.cloud/1/mmaq3rslqswh6rx02556bksjien4alrpawgfc7mupcl85zag/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="/static/tinymce-init.js?v=2"></script> 
+  <script defer src="/static/editlesson.js"></script>
 {{/section}}

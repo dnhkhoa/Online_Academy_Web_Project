@@ -2,7 +2,7 @@ import express from 'express';
 import * as courseModel from '../models/course.model.js';
 import * as categoryModel from '../models/category.model.js';
 import * as sectionModel from '../models/courseSections.model.js';
-import * as lessonModel from '../models/lesson.model.js';const router = express.Router();
+import * as lessonModel from '../models/lesson.model.js'; const router = express.Router();
 
 //list
 router.get('/', async function (req, res) {
@@ -13,8 +13,8 @@ router.get('/', async function (req, res) {
   }
   const courses = await courseModel.findAll();
   res.render('vwCourse/byCat', {
-    parents : parents,
-    childrenMap : childrenMap,
+    parents: parents,
+    childrenMap: childrenMap,
     courses: courses,
   });
 });
@@ -35,15 +35,15 @@ router.get('/byCat', async function (req, res) {
     : await courseModel.findAll();
 
   res.render('vwCourse/byCat', {
-    parents : parents,
-    childrenMap : childrenMap,
-    category : category,
+    parents: parents,
+    childrenMap: childrenMap,
+    category: category,
     courses: courses,
   });
 });
 
 //add
-router.get('/add', async function (req, res)  {
+router.get('/add', async function (req, res) {
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
@@ -51,13 +51,13 @@ router.get('/add', async function (req, res)  {
   }
   res.render('vwAdminCategory/add', {
     parents: parents,
-    childrenMap : childrenMap,
-    presetMode: 'course' 
+    childrenMap: childrenMap,
+    presetMode: 'course'
   });
 });
 
-router.post('/add', async function(req, res) {
-  if (req.body.mode !== 'course') 
+router.post('/add', async function (req, res) {
+  if (req.body.mode !== 'course')
     return res.redirect('/admin/categories/add');
   let catid = Number(req.body.catid) || null;
 
@@ -89,7 +89,7 @@ router.post('/add', async function(req, res) {
   await courseModel.add(course);
   res.redirect(`/course/byCat?catid=${catid}`);
 });
-router.get('/byChild.json', async function (req, res)  {
+router.get('/byChild.json', async function (req, res) {
   const catid = Number(req.query.childid || req.query.catid || 0);
   if (!catid) return res.json([]);
   let list = await courseModel.findByCat(catid);
@@ -130,7 +130,7 @@ router.get("/lesson", async function (req, res) {
   }
 
   res.render("vwAdminCourse/listLesson", {
-    parents:parents,
+    parents: parents,
     childrenMap: childrenMap,
     coursesMap: coursesMap,
     course: course,
@@ -189,7 +189,7 @@ router.post("/addlesson", async function (req, res) {
   res.redirect(`/course/lesson?courseid=${courseid}`);
 });
 //watch
-router.get('/watch', async (req, res) => {
+router.get('/watch', async function (req, res) {
   const lessonid = Number(req.query.lessonid || 0);
   const lesson = await lessonModel.findOne(lessonid);
   const src = (lesson.video_url || '').trim();
@@ -201,9 +201,65 @@ router.get('/watch', async (req, res) => {
     }
   });
 });
+router.get('/lesson/edit', async function (req, res) {
+  const sectionid = Number(req.query.sectionid || 0);
+  if (!sectionid) return res.redirect('/course/lesson');
 
+  const section = await sectionModel.findBySectionId(sectionid);
+  if (!section) return res.redirect('/course/lesson');
+
+  const lessons = await lessonModel.findBySection(sectionid);
+  const course = await courseModel.findById(section.courseid);
+  const parents = await categoryModel.findAllParents();
+  const childrenMap = {};
+  for (const p of parents) {
+    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
+  }
+
+  res.render('vwAdminCourse/editLesson', {
+    section,
+    lessons,
+    course,
+    parents,
+    childrenMap,
+  });
+});
+
+router.post('/section/edit', async function (req, res) {
+  const sectionid = Number(req.body.sectionId || 0);
+  const courseid = Number(req.body.courseId || 0);
+  const name = (req.body.sectionName || '').trim();
+  if (name) await sectionModel.patch(sectionid, { title: name });
+
+  return res.redirect(`/course/lesson?courseid=${courseid}`);
+});
+
+router.post('/lesson/editLesson', async function (req, res) {
+  const courseid = Number(req.body.courseId || 0);
+  const lessonId = Number(req.body.targetLessonId || 0);
+  if (!lessonId) return res.redirect(`/course/lesson?courseid=${courseid||''}`);
+
+  const titles   = req.body.lessonTitles || {};
+  const urls     = req.body.videoUrls    || {};
+  const previews = req.body.previews     || {};
+  const contents = req.body.contents     || {};                   // [ADDED]
+
+  const title    = (titles[lessonId]   ?? '').trim();
+  const videoUrl = (urls[lessonId]     ?? '').trim();
+  const preview  = String(previews[lessonId] ?? '0') === '1';
+  const content  = (contents[lessonId] ?? '').trim();             // [ADDED]
+
+  await lessonModel.patch(lessonId, {
+    title,
+    video_url: videoUrl,
+    preview,
+    content,                                                      // [ADDED]
+  });
+
+  return res.redirect(`/course/lesson?courseid=${courseid}`);
+});
 //patch
-router.post('/patch', async function (req, res)  {
+router.post('/patch', async function (req, res) {
   const courseid = Number(req.body.courseId || req.body.courseid || 0);
   if (!courseid) return res.redirect('back');
   const course = {
@@ -225,7 +281,7 @@ router.post('/patch', async function (req, res)  {
 });
 
 //delete
-router.post('/del', async function (req, res)  {
+router.post('/del', async function (req, res) {
   try {
     const courseid = Number(req.body.courseId || req.body.courseid || 0);
     if (courseid) await courseModel.del(courseid);
@@ -237,7 +293,7 @@ router.post('/del', async function (req, res)  {
   }
 });
 //
-router.get('/:id', async function (req, res)  {
+router.get('/:id', async function (req, res) {
   const id = Number(req.params.id);
   if (!id) return res.redirect('/course/byCat');
 
