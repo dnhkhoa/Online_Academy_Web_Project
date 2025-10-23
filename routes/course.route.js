@@ -3,6 +3,27 @@ import * as courseModel from '../models/course.model.js';
 import * as categoryModel from '../models/category.model.js';
 import * as sectionModel from '../models/courseSections.model.js';
 import * as lessonModel from '../models/lesson.model.js'; const router = express.Router();
+// --- ADD: at top of course.route.js ---
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+//multer config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'static/temp_uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+const upload = multer({ storage });
+router.post('/upload', upload.array('photos', 5), function (req, res) {
+  res.json({
+    success: true,
+    files: req.files
+  });
+});
+
 
 //list
 router.get('/', async function (req, res) {
@@ -57,19 +78,15 @@ router.get('/add', async function (req, res) {
 });
 
 router.post('/add', async function (req, res) {
-  if (req.body.mode !== 'course')
-    return res.redirect('/admin/categories/add');
+  if (req.body.mode !== 'course') return res.redirect('/admin/categories/add');
   let catid = Number(req.body.catid) || null;
-
   if (!catid && req.body.catname?.trim()) {
-    const newCat = {
+    const [newId] = await categoryModel.add({
       catname: req.body.catname.trim(),
       parentid: Number(req.body.parentid) || null
-    };
-    const [newId] = await categoryModel.add(newCat);
+    });
     catid = newId;
   }
-
   const title = (req.body.title || '').trim();
   if (!title || !catid)
     return res.redirect('/course/add?err=missing_title_or_cat&mode=course');
@@ -78,16 +95,47 @@ router.post('/add', async function (req, res) {
     title,
     price: Number(req.body.price) || 0,
     discount: Number(req.body.discount) || 0,
-    thumbnail: req.body.thumbnail?.trim() || null,
-    status: req.body.status?.trim() || 'draft',
+    thumbnail: (req.body.thumbnail || '').trim() || null, 
+    status: (req.body.status || 'draft').trim(),
     catid,
     instructorid: Number(req.body.instructorid) || null,
     lastupdate: new Date(),
-    tinydes: req.body.tinydes?.trim() || null,
-    fulldes: req.body.fulldes?.trim() || null,
+    tinydes: (req.body.tinydes || '').trim() || null,
+    fulldes: (req.body.fulldes || '').trim() || null,
   };
-  await courseModel.add(course);
-  res.redirect(`/course/byCat?catid=${catid}`);
+  const ret = await courseModel.add(course);
+
+  try {
+    const courseid =
+      (Array.isArray(ret) && typeof ret[0] === 'object' && ret[0] && (ret[0].courseid ?? ret[0].id)) ||
+      (Array.isArray(ret) && typeof ret[0] !== 'object' && ret[0]) ||
+      ret.insertId || ret.courseid || ret.id;
+
+    if (req.body.photos) {
+      const dirPath = path.join('static', 'imgs', 'course', String(courseid));
+      if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
+
+      const photos = JSON.parse(req.body.photos);
+      let i = 0;
+      for (const p of photos) {
+        const name = path.basename(p);
+        const src  = path.join('static', 'temp_uploads', name);
+
+        if (i === 0) {
+          fs.copyFileSync(src, path.join(dirPath, 'main.jpg'));
+          fs.copyFileSync(src, path.join(dirPath, 'main_thumbs.jpg'));
+        } else {
+          fs.copyFileSync(src, path.join(dirPath, `${i}.jpg`));
+          fs.copyFileSync(src, path.join(dirPath, `${i}_thumbs.jpg`));
+        }
+        try { fs.unlinkSync(src); } catch {}
+        i++;
+      }
+    }
+  } catch (err) {
+    console.error('[course/add] move images error:', err);
+  }
+  return res.redirect(`/course/byCat?catid=${catid}`);
 });
 router.get('/byChild.json', async function (req, res) {
   const catid = Number(req.query.childid || req.query.catid || 0);
@@ -255,7 +303,7 @@ router.post('/lesson/editLesson', async function (req, res) {
 //delete section
 router.post('/section/delete', async function (req, res) {
   const sectionid = Number(req.body.sectionId || 0);
-  const courseid  = Number(req.body.courseId  || 0);
+  const courseid = Number(req.body.courseId || 0);
 
   await lessonModel.delBySection(sectionid);
   await sectionModel.del(sectionid);
@@ -263,7 +311,7 @@ router.post('/section/delete', async function (req, res) {
   return res.redirect(`/course/lesson?courseid=${courseid}`);
 });
 //delete lesson
-router.post('/lesson/deleteOne', async function (req, res)  {
+router.post('/lesson/deleteOne', async function (req, res) {
   const courseid = Number(req.body.courseId || 0);
   const lessonId = Number(req.body.targetLessonId || 0);
 

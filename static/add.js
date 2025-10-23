@@ -22,7 +22,11 @@
     const hidCatname = form.querySelector("#catname");
     const hidParentid = form.querySelector("#parentid");
 
-    // helper render options
+     const fileCover = document.getElementById("fileCover");
+    const imgPreview = document.getElementById("imgCourseCoverPreview");
+    const txtThumbnailUrl = document.getElementById("txtThumbnailUrl");
+    const hidPhotos = document.getElementById("photos");
+
     function renderL2Options(children) {
       const opts = ['<option value="">-- Select L2 --</option>'];
       for (const c of (children || [])) {
@@ -32,7 +36,6 @@
       selL2.disabled = selL2.options.length <= 1;
     }
 
-    // load từ template ẩn
     function loadChildrenFromTemplates(parentid) {
       selL2.innerHTML = `<option value="">-- Select L2 --</option>`;
       selL2.disabled = true;
@@ -46,7 +49,6 @@
       return false;
     }
 
-    // fallback: gọi API
     async function loadChildrenFallbackAPI(parentid) {
       try {
         const res = await fetch(`/admin/categories/children.json?parentid=${encodeURIComponent(parentid)}`);
@@ -55,7 +57,7 @@
         renderL2Options(children);
       } catch (e) {
         console.error('Load L2 via API failed:', e);
-        renderL2Options([]);
+        renderL2Options([]); 
       }
     }
 
@@ -90,7 +92,6 @@
       const on = switchCourseMode.checked;
       toggleCourseUI(on);
       if (on && window.initTinyOnce) {
-        // đợi DOM áp css xong rồi mới init
         setTimeout(() => window.initTinyOnce(), 30);
       }
     }
@@ -99,6 +100,43 @@
       if (txtNewL2.value.trim()) {
         selL2.value = "";
         resolvedL2CatId.value = "";
+      }
+    });
+
+    txtThumbnailUrl?.addEventListener('input', function(){
+      if (txtThumbnailUrl.value.trim()) {
+        hidPhotos.value = "";                 
+        imgPreview && (imgPreview.src = txtThumbnailUrl.value.trim());
+      }
+    });
+
+    fileCover?.addEventListener('change', async function(){
+      if (!fileCover.files || !fileCover.files.length) return;
+
+      if (!switchCourseMode.checked) {
+        switchCourseMode.checked = true;
+        onSwitchCourse();
+      }
+
+      const fd = new FormData();
+      for (const f of fileCover.files) fd.append('photos', f);
+      try {
+        const res = await fetch('/course/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!data?.success) throw new Error('Upload failed');
+
+        const filenames = (data.files || []).map(f => f.filename);
+        hidPhotos.value = JSON.stringify(filenames);  
+        txtThumbnailUrl.value = "";                  
+
+        if (filenames.length > 0 && imgPreview) {
+          imgPreview.src = `/static/temp_uploads/${filenames[0]}`;
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Upload ảnh thất bại, thử lại nhé!');
+      } finally {
+        fileCover.value = '';
       }
     });
 
@@ -121,6 +159,9 @@
         const newL2 = (txtNewL2?.value || "").trim();
 
         if (!title) { e.preventDefault(); alert("Vui lòng nhập Course title."); return; }
+
+    
+
         if (l2Selected) { resolvedL2CatId.value = l2Selected; hidCatname.value = ""; hidParentid.value = ""; return; }
         if (newL2 && l1Selected) { resolvedL2CatId.value = ""; hidCatname.value = newL2; hidParentid.value = l1Selected; return; }
 
@@ -134,7 +175,6 @@
     onChangeL1();
     toggleCourseUI(false);
 
-    // preset mode từ server/query
     const preset = form.dataset.preset || new URLSearchParams(location.search).get("mode");
     if (preset === "course") {
       switchCourseMode.checked = true;
@@ -144,13 +184,8 @@
       }
     }
 
-    // bind
     selL1.addEventListener("change", onChangeL1);
     selL2.addEventListener("change", onChangeL2);
     switchCourseMode.addEventListener("change", onSwitchCourse);
-
-    
   });
-
-  
 })();
