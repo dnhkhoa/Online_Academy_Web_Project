@@ -29,3 +29,7 @@ export async function findByCats(catids = []) {
   if (!catids.length) return [];
   return db('courses').whereIn('catid', catids).orderBy('courseid');
 }
+
+export function countByCat(catid) {
+  return db('courses').where('catid', catid).count('* as total').first();
+}

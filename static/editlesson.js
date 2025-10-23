@@ -1,4 +1,3 @@
-// /static/editLesson.js
 (function () {
   function ready(fn) {
     if (document.readyState === "loading")
@@ -14,7 +13,6 @@
     const courseIdInput = form.querySelector("#courseId");
     const targetInput = form.querySelector("#targetLessonId");
 
-    // ====== EDIT SECTION ======
     document.getElementById("btnEditSection")?.addEventListener("click", function (e) {
       e.preventDefault();
       form.setAttribute("action", "/course/section/edit");
@@ -22,7 +20,6 @@
       form.submit();
     });
 
-    // ====== DELETE SECTION ======
     document.getElementById("btnDeleteSection")?.addEventListener("click", function (e) {
       e.preventDefault();
       if (!sectionIdInput?.value) return;
@@ -33,10 +30,8 @@
       form.submit();
     });
 
-    // ====== DELEGATION TRONG LIST LESSONS ======
     const lessonList = document.getElementById("lessonList");
 
-    // 1) EDIT 1 LESSON
     lessonList?.addEventListener("click", function (e) {
       const btn = e.target.closest(".btnSaveLesson");
       if (!btn) return;
@@ -46,7 +41,6 @@
       const lid = btn.getAttribute("data-lesson-id");
       if (!lid) return;
 
-      // Đảm bảo khi checkbox không tick, vẫn gửi previews[lid] = 0
       const cb = form.querySelector(
         `.lesson-item[data-lesson-id="${lid}"] input[type="checkbox"][name="previews[${lid}]"]`
       );
@@ -66,7 +60,6 @@
       form.submit();
     });
 
-    // 2) DELETE 1 LESSON
     lessonList?.addEventListener("click", function (e) {
       const btn = e.target.closest(".btnRemoveLesson");
       if (!btn) return;
