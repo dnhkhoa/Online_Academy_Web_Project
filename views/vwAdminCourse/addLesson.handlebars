@@ -1,0 +1,146 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/addLesson.css" />
+{{/section}}
+
+<div class="lesson-add-container">
+  <div class="content-grid single-column">
+    <form
+      id="frmAddLesson"
+      method="post"
+      enctype="multipart/form-data"
+      class="card shadow-sm lesson-form-card"
+    >
+      <div class="card-header">
+        <h5 class="card-title mb-0">Add Course Section/Lessons</h5>
+      </div>
+
+      <div class="card-body">
+        <!--COURSE SECTION -->
+        <section class="form-panel panel-soft">
+          <div class="form-section">
+            <label class="form-label" for="selCourseSection">Course Section
+            </label>
+            <select class="form-select" id="selCourseSection">
+              <option value="">-- Select section --</option>
+              <option value="s1">Section A: Fundamentals</option>
+              <option value="s2">Section B: Advanced Topics</option>
+              <option value="s3">Section C: Deployment</option>
+            </select>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label" for="txtNewSectionName">Or create new
+              Course Section</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtNewSectionName"
+              placeholder="e.g. React Basics"
+            />
+
+          </div>
+        </section>
+
+        <!--LESSONS -->
+        <section class="form-panel panel-soft" id="lessonsPanel">
+          <div
+            class="panel-header d-flex align-items-center justify-content-between"
+          >
+            <div>
+              <h6 class="mb-1">Lessons</h6>
+
+            </div>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary"
+              id="btnAddLesson"
+            >
+              <i class="bi bi-plus-lg"></i>
+              Add lesson
+            </button>
+          </div>
+
+          <!-- danh sách lesson dạng thẻ, giống form-section -->
+          <div class="lesson-list" id="lessonList">
+            <!-- Lesson item mẫu 1 -->
+            <div class="lesson-item card shadow-sm border-0">
+              <div class="card-body">
+                <div class="form-section">
+                  <label class="form-label">Lesson Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="e.g., Introduction"
+                    required
+                  />
+                </div>
+                <div class="row g-3">
+                  <div class="col-sm-4">
+                    <div class="form-section">
+                      <label class="form-label">Duration</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="e.g., 07:15"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-sm-8">
+                    <div class="form-section">
+                      <label class="form-label">YouTube URL (optional)</label>
+                      <input
+                        type="url"
+                        class="form-control"
+                        placeholder="https://youtu.be/..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer bg-white d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger btnRemoveLesson"
+                >
+                  <i class="bi bi-trash"></i>
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="card-footer">
+        <div class="action-buttons">
+          <a
+            class="btn btn-outline-success"
+            href="/course/lesson"
+            role="button"
+          >
+            <i class="bi bi-arrow-left"></i>
+            Back
+          </a>
+          <div class="secondary-actions">
+            <button type="reset" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-counterclockwise"></i>
+              Reset
+            </button>
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check2"></i>
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ẩn: backend có thể đọc nếu muốn -->
+      <input type="hidden" id="resolvedSectionId" name="sectionId" value="" />
+    </form>
+  </div>
+</div>
+
+{{#section "scripts"}}
+  <script defer src="/static/addLesson.js"></script>
+{{/section}}

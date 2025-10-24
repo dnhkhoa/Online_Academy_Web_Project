@@ -1,0 +1,378 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/details.css" />
+{{/section}}
+
+<section class="course-detail-section py-5">
+  <div class="container">
+    <div class="row g-4">
+      <aside class="col-lg-3">
+        <div class="card shadow-sm border-0 rounded-4 course-detail-sidebar">
+          <div class="accordion" id="categoryAccordion">
+            <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of
+              courses</h5>
+
+            <!-- L1: Category 101 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-101">
+                <div class="header-content">
+                  <button
+                    class="accordion-button collapsed flex-grow-1"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-101"
+                    aria-expanded="false"
+                    aria-controls="collapse-101"
+                  >
+                    Accordion Item #1
+                  </button>
+                </div>
+              </h2>
+              <div
+                id="collapse-101"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading-101"
+                data-bs-parent="#categoryAccordion"
+              >
+                <div class="accordion-body p-0">
+                  <!-- Nested L2 accordion -->
+                  <div
+                    class="accordion accordion-flush ms-3"
+                    id="subAccordion-101"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-101-1">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-101-1"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-101-1"
+                        >
+                          Subcategory #1
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-101-1"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-101-1"
+                        data-bs-parent="#subAccordion-101"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/admin/courses/201"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >aaa</a>
+                            <a
+                              href="/admin/courses/202"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >bbb</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Có thể nhân bản thêm L2 nếu cần -->
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-101-2">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-101-2"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-101-2"
+                        >
+                          Subcategory #2
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-101-2"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-101-2"
+                        data-bs-parent="#subAccordion-101"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/admin/courses/203"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >ccc</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Nested L2 accordion -->
+                </div>
+              </div>
+            </div>
+
+            <!-- L1: Category 102 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-102">
+                <div class="header-content">
+                  <button
+                    class="accordion-button collapsed flex-grow-1"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-102"
+                    aria-expanded="false"
+                    aria-controls="collapse-102"
+                  >
+                    Accordion Item #2
+                  </button>
+                </div>
+              </h2>
+              <div
+                id="collapse-102"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading-102"
+                data-bs-parent="#categoryAccordion"
+              >
+                <div class="accordion-body p-0">
+                  <!-- Nested L2 accordion -->
+                  <div
+                    class="accordion accordion-flush ms-3"
+                    id="subAccordion-102"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-102-1">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-102-1"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-102-1"
+                        >
+                          Subcategory #1
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-102-1"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-102-1"
+                        data-bs-parent="#subAccordion-102"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/admin/courses/301"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >ddd</a>
+                            <a
+                              href="/admin/courses/302"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >eee</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Nested L2 accordion -->
+                </div>
+              </div>
+            </div>
+
+            <!-- L1: Category 103 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-103">
+                <div class="header-content">
+                  <button
+                    class="accordion-button collapsed flex-grow-1"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-103"
+                    aria-expanded="false"
+                    aria-controls="collapse-103"
+                  >
+                    Accordion Item #3
+                  </button>
+                </div>
+              </h2>
+              <div
+                id="collapse-103"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading-103"
+                data-bs-parent="#categoryAccordion"
+              >
+                <div class="accordion-body p-0">
+                  <!-- Nested L2 accordion -->
+                  <div
+                    class="accordion accordion-flush ms-3"
+                    id="subAccordion-103"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-103-1">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-103-1"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-103-1"
+                        >
+                          Subcategory #1
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-103-1"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-103-1"
+                        data-bs-parent="#subAccordion-103"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/admin/courses/401"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >fff</a>
+                            <a
+                              href="/admin/courses/402"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >ggg</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Nested L2 accordion -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </aside>
+
+      <div class="col-lg-9">
+        <div class="card border-0 shadow-sm rounded-4 course-detail-hero mb-4">
+          <div class="row g-0">
+            <div class="col-md-5">
+              <div class="course-detail-hero__cover h-100">
+                <img
+                  src="https://picsum.photos/seed/course-detail/640/420"
+                  alt="Course cover"
+                  class="img-fluid w-100 h-100"
+                />
+              </div>
+            </div>
+            <div class="col-md-7">
+              <div class="course-detail-hero__body p-4">
+
+                <h1 class="h4 fw-semibold mb-2">
+                  Ten khoa hoc
+                </h1>
+                <p class="text-muted mb-3">
+                  Tiny MCE
+                </p>
+                <ul
+                  class="course-detail-hero__meta list-unstyled d-flex flex-wrap gap-3 mb-4"
+                >
+                  <li>
+                    <i class="bi bi-clock me-1"></i>
+                    Tiny MCE
+                  </li>
+                  <li>
+                    <i class="bi bi-collection-play me-1"></i>
+                    Tiny MCE
+                  </li>
+                  <li>
+                    <i class="bi bi-calendar-check me-1"></i>
+                    Tiny MCE
+                  </li>
+                </ul>
+                <div class="course-detail-hero__pricing mb-4">
+                  <div class="d-flex align-items-end gap-3">
+                    <span class="price-current">Tiny MCE</span>
+                    <span
+                      class="price-original text-muted text-decoration-line-through"
+                    >
+                      Tiny MCE
+                    </span>
+                  </div>
+                  <p class="text-success small mb-0">
+                    Tiny MCE
+                  </p>
+                </div>
+                <div class="course-detail-hero__actions d-flex flex-wrap gap-2">
+
+                  <a href="#" class="btn btn-outline-primary">
+                    <i class="bi bi-cart-plus me-1"></i>
+                    Them vao gio
+                  </a>
+                  <a href="#" class="btn btn-primary">
+                    <i class="bi bi-lightning-charge me-1"></i>
+                    Thanh toan ngay
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div
+              class="card border-0 shadow-sm rounded-4 course-detail-content mb-4"
+            >
+              <div class="card-body">
+                <h2 class="h5 fw-semibold mb-3">Mo ta khoa hoc</h2>
+                <div class="course-detail-content__description">
+                  <p>
+                    Tiny MCE
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="card border-0 shadow-sm rounded-4 course-detail-content"
+            >
+              <div class="card-body">
+                <h2 class="h5 fw-semibold mb-3">Chuong trinh hoc</h2>
+                <div class="course-detail-content__curriculum">
+                  <ul>
+                    <li>Tiny MCE</li>
+                    <li>Tiny MCE</li>
+                    <li>Tiny MCE</li>
+                    <li>Tiny MCE</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div
+              class="card border-0 shadow-sm rounded-4 course-detail-benefits mb-4"
+            >
+              <div class="card-body">
+                <h3 class="h6 fw-semibold text-uppercase text-muted mb-3">
+                  Loi ich khi tham gia
+                </h3>
+                <ul class="course-detail-benefits__list list-unstyled mb-0">
+                  <li class="d-flex align-items-start">
+                    <i class="bi bi-check2-circle text-success me-2"></i>
+                    <span>Tiny MCE</span>
+                  </li>
+                  <li class="d-flex align-items-start">
+                    <i class="bi bi-check2-circle text-success me-2"></i>
+                    <span>Tiny MCE</span>
+                  </li>
+                  <li class="d-flex align-items-start">
+                    <i class="bi bi-check2-circle text-success me-2"></i>
+                    <span>Tiny MCE</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

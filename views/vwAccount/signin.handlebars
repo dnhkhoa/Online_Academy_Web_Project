@@ -1,0 +1,82 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/signin.css" />
+{{/section}}
+
+<div class="auth-page container py-5 min-vh-100 d-flex align-items-center">
+  <div class="row w-100 justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8 col-xxl-7">
+      <div class="auth-card shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="row g-0">
+          <div class="col-lg-6 d-none d-lg-block auth-visual">
+            <div class="auth-visual-inner h-100 w-100"></div>
+          </div>
+          <div class="col-12 col-lg-6 p-4 p-md-5">
+            <div class="auth-header d-flex align-items-center gap-3 mb-4">
+              <div>
+                <div class="small text-muted">Welcome back</div>
+                <h1 class="h4 mb-0">Sign in</h1>
+              </div>
+            </div>
+
+            <form method="post" action="/account/signin" novalidate>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control form-control-lg"
+                  id="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label for="password" class="form-label mb-0">Password</label>
+                  <a href="#" class="small text-decoration-none">Forgot
+                    password?</a>
+                </div>
+                <input
+                  type="password"
+                  class="form-control form-control-lg"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
+              <div
+                class="d-flex align-items-center justify-content-between mb-4"
+              >
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value="1"
+                    id="remember"
+                    name="remember"
+                  />
+                  <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-dark btn-lg w-100 rounded-pill"
+              >Sign In</button>
+
+              <p class="text-center text-muted mt-4 mb-0">
+                Don’t have an account?
+                <a href="/account/signup" class="text-decoration-none">
+                  Create one
+                </a>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

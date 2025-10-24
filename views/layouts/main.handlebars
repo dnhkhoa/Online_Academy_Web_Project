@@ -1,0 +1,153 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Academy</title>
+
+    <!--Bootstrap-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <!--Bootstrap icons-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+
+    <link rel="stylesheet" href="/static/main.css" />
+
+    {{{_sections.styles}}}
+  </head>
+  <body class="bg-white text-body">
+    <header class="border-bottom site-header sticky-header" role="banner">
+      <div
+        class="container py-3 py-lg-4 d-flex align-items-center justify-content-between gap-3"
+      >
+        <a
+          href="/"
+          class="text-decoration-none text-dark fs-4 fs-lg-2 fw-semibold flex-shrink-0"
+        >
+          Online Academy
+        </a>
+
+        <!-- Search bar -->
+        <div class="d-none d-lg-block flex-grow-1" style="max-width: 550px;">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search"
+              aria-label="Search courses"
+            />
+            <button class="btn btn-outline-secondary" type="button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
+
+        <nav
+          class="d-none d-lg-flex gap-4 align-items-center flex-shrink-0"
+          role="navigation"
+          aria-label="Primary"
+        >
+          <a
+            href="/course/byCat"
+            class="text-decoration-none text-dark"
+          >Courses</a>
+          <a
+            href="/admin/categories/list"
+            class="text-decoration-none text-dark"
+          >Categories</a>
+          <a href="/cart/cart" class="text-decoration-none text-dark"><i
+              class="bi bi-cart4"
+            ></i></a>
+        </nav>
+
+        <div class="d-none d-lg-flex gap-2 flex-shrink-0">
+          <a
+            href="/account/signup"
+            class="btn btn-outline-dark rounded-pill px-4"
+          >Signup</a>
+          <a
+            href="/account/signin"
+            class="btn btn-dark rounded-pill px-4"
+          >Login</a>
+        </div>
+
+        <button
+          class="btn btn-outline-secondary d-lg-none rounded-circle flex-shrink-0"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mobileNav"
+          aria-controls="mobileNav"
+          aria-label="Open menu"
+        >
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile off-canvas -->
+    <div
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      id="mobileNav"
+      aria-labelledby="mobileNavLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="mobileNavLabel">Menu</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body d-flex flex-column gap-3">
+        <!-- Mobile Search -->
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search"
+            aria-label="Search courses"
+          />
+          <button class="btn btn-outline-secondary" type="button">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+
+        <a
+          href="/course/byCat"
+          class="text-decoration-none text-dark"
+        >Courses</a>
+        <a
+          href="/admin/categories/list"
+          class="text-decoration-none text-dark"
+        >Categories</a>
+
+        <div class="d-flex gap-2 mt-auto">
+          <a
+            href="/account/signup"
+            class="btn btn-outline-dark flex-grow-1"
+          >Signup</a>
+          <a href="/account/signin" class="btn btn-dark flex-grow-1">Login</a>
+        </div>
+      </div>
+    </div>
+
+    {{{body}}}
+
+    <!-- Scripts -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+
+    {{{_sections.scripts}}}
+  </body>
+</html>

@@ -1,0 +1,384 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/listLesson.css" />
+{{/section}}
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <aside class="col-lg-3">
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="accordion" id="categoryAccordion">
+            <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of
+              courses</h5>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-101">
+                <div class="header-content">
+                  <button
+                    class="accordion-button collapsed flex-grow-1"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-101"
+                    aria-expanded="false"
+                    aria-controls="collapse-101"
+                  >
+                    Accordion Item #1
+                  </button>
+                </div>
+              </h2>
+              <div
+                id="collapse-101"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading-101"
+                data-bs-parent="#categoryAccordion"
+              >
+                <div class="accordion-body p-0">
+                  <div
+                    class="accordion accordion-flush ms-3"
+                    id="subAccordion-101"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-101-1">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-101-1"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-101-1"
+                        >
+                          Subcategory #1
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-101-1"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-101-1"
+                        data-bs-parent="#subAccordion-101"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/course/lesson/201"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >aaa</a>
+                            <a
+                              href="/course/lesson/202"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >bbb</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-101-2">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-101-2"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-101-2"
+                        >
+                          Subcategory #2
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-101-2"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-101-2"
+                        data-bs-parent="#subAccordion-101"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/course/lesson/203"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >ccc</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- L1: Category 102 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-102">
+                <div class="header-content">
+                  <button
+                    class="accordion-button collapsed flex-grow-1"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-102"
+                    aria-expanded="false"
+                    aria-controls="collapse-102"
+                  >
+                    Accordion Item #2
+                  </button>
+                </div>
+              </h2>
+              <div
+                id="collapse-102"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading-102"
+                data-bs-parent="#categoryAccordion"
+              >
+                <div class="accordion-body p-0">
+                  <div
+                    class="accordion accordion-flush ms-3"
+                    id="subAccordion-102"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-102-1">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-102-1"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-102-1"
+                        >
+                          Subcategory #1
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-102-1"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-102-1"
+                        data-bs-parent="#subAccordion-102"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/course/lesson/301"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >ddd</a>
+                            <a
+                              href="/course/lesson/302"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >eee</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- L1: Category 103 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-103">
+                <div class="header-content">
+                  <button
+                    class="accordion-button collapsed flex-grow-1"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-103"
+                    aria-expanded="false"
+                    aria-controls="collapse-103"
+                  >
+                    Accordion Item #3
+                  </button>
+                </div>
+              </h2>
+              <div
+                id="collapse-103"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading-103"
+                data-bs-parent="#categoryAccordion"
+              >
+                <div class="accordion-body p-0">
+                  <div
+                    class="accordion accordion-flush ms-3"
+                    id="subAccordion-103"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-103-1">
+                        <button
+                          class="accordion-button collapsed py-2"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#sub-collapse-103-1"
+                          aria-expanded="false"
+                          aria-controls="sub-collapse-103-1"
+                        >
+                          Subcategory #1
+                        </button>
+                      </h2>
+                      <div
+                        id="sub-collapse-103-1"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="sub-heading-103-1"
+                        data-bs-parent="#subAccordion-103"
+                      >
+                        <div class="accordion-body p-0">
+                          <div class="list-group list-group-flush">
+                            <a
+                              href="/course/lesson/401"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >fff</a>
+                            <a
+                              href="/course/lesson/402"
+                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                            >ggg</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+
+      <div class="col-lg-9">
+
+        <div class="lesson-brief card border-0 shadow-sm rounded-4 mb-4">
+          <div
+            class="card-body d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3"
+          >
+            <div>
+
+              <h2 class="h5 mb-1 fw-semibold">Course: A....</h2>
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <a
+                  class="btn btn-primary btn-sm"
+                  href="/course/addlesson"
+                  role="button"
+                >
+                  <i class="bi bi-plus-circle"></i>
+                  Add Lesson
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Accordion -->
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+          <!-- Item 1 -->
+          <div class="accordion-item rounded-3 overflow-hidden">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseOne"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseOne"
+              >
+                Accordion Item #1
+              </button>
+              <div class="text-end ms-2">
+                <a
+                  class="btn btn-outline-primary btn-sm"
+                  href="/course/editlesson"
+                  role="button"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+              </div>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseOne"
+              class="accordion-collapse collapse"
+            >
+              <div class="accordion-body">
+                aaa
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="accordion-item rounded-3 overflow-hidden">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseTwo"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseTwo"
+              >
+                Accordion Item #2
+              </button>
+              <div class="text-end ms-2">
+                <a
+                  class="btn btn-outline-primary btn-sm"
+                  href="/course/editlesson"
+                  role="button"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+              </div>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseTwo"
+              class="accordion-collapse collapse"
+            >
+              <div class="accordion-body">
+                bbb
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="accordion-item rounded-3 overflow-hidden">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseThree"
+                aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseThree"
+              >
+                Accordion Item #3
+              </button>
+              <div class="text-end ms-2">
+                <a
+                  class="btn btn-outline-primary btn-sm"
+                  href="/course/editlesson"
+                  role="button"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+              </div>
+            </h2>
+            <div
+              id="panelsStayOpen-collapseThree"
+              class="accordion-collapse collapse"
+            >
+              <div class="accordion-body">
+                ccc
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <a class="btn btn-outline-success" href="/course/byCat" role="button">
+            <i class="bi bi-arrow-left"></i>
+            Back
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{{#section "scripts"}}
+  <script src="/static/listLesson.js"></script>
+{{/section}}

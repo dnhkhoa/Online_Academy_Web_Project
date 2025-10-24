@@ -1,0 +1,340 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/edit.css" />
+{{/section}}
+
+<div class="category-edit-container">
+  <div class="content-grid single-column">
+    <form
+      id="frmEditCategory"
+      method="post"
+      enctype="multipart/form-data"
+      class="card shadow-sm category-form-card"
+    >
+      <div
+        class="card-header d-flex justify-content-between align-items-center"
+      >
+        <h5 class="card-title mb-0">Edit Parent / Child / Course</h5>
+
+      </div>
+
+      <div class="card-body">
+        <div class="form-grid">
+
+          <section class="form-panel">
+
+            <!-- Parent name -->
+            <div class="form-section">
+              <label for="txtParentName" class="form-label">Parent category</label>
+              <input
+                type="text"
+                class="form-control"
+                id="txtParentName"
+                name="parentName"
+                value="Parent Sample"
+                autofocus
+              />
+              <input
+                type="hidden"
+                id="parentId"
+                name="parentId"
+                value="P-101"
+              />
+            </div>
+
+            <!-- Toggle: chỉnh child -->
+            <div class="form-section">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="toggleChild"
+                />
+                <label class="form-check-label" for="toggleChild">Edit a child
+                  category (L2)</label>
+              </div>
+
+            </div>
+
+            <!-- Child picker (L2) -->
+            <div class="form-section d-none" id="childPicker">
+              <label for="filterChild" class="form-label">Find child (L2) in
+                this parent</label>
+              <input
+                type="text"
+                id="filterChild"
+                class="form-control"
+                placeholder="Type to filter (optional)"
+              />
+
+              <label for="selChild" class="form-label mt-2">Child category</label>
+              <select class="form-select" id="selChild" name="childId"></select>
+
+              <label for="txtChildName" class="form-label mt-3">Child category
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="txtChildName"
+                name="childName"
+                value=""
+              />
+
+              <input
+                type="hidden"
+                id="isEditingChild"
+                name="isEditingChild"
+                value="0"
+              />
+            </div>
+
+            <!-- Toggle: chỉnh Course thuộc L2 -->
+            <div class="form-section d-none" id="courseToggleRow">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="toggleCourse"
+                />
+                <label class="form-check-label" for="toggleCourse">Edit a course
+                  of this child</label>
+              </div>
+
+            </div>
+
+            <!-- Course picker -->
+            <div class="form-section d-none" id="coursePicker">
+              <label for="filterCourse" class="form-label">Find course in this
+                child</label>
+              <input
+                type="text"
+                id="filterCourse"
+                class="form-control"
+                placeholder="Type to filter (optional)"
+              />
+
+              <label for="selCourse" class="form-label mt-2">Course</label>
+              <select
+                class="form-select"
+                id="selCourse"
+                name="courseId"
+              ></select>
+            </div>
+          </section>
+
+          <!-- PANEL PHẢI: MEDIA (courses.thumbnail) -->
+          <section class="form-panel d-none" id="panelMedia">
+            <div class="panel-header">
+              <h6>Media (Course)</h6>
+              <p>Ảnh bìa map vào <code>courses.thumbnail</code>.</p>
+            </div>
+            <div class="form-section">
+              <label class="form-label" for="fileCover">Course cover</label>
+              <div class="media-upload">
+                <div class="media-preview">
+                  <img
+                    id="previewImg"
+                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80"
+                    alt="Course cover preview"
+                  />
+                </div>
+                <div class="media-actions">
+                  <p class="media-note">Khuyến nghị 1200×640px hoặc lớn hơn.</p>
+                  <div class="media-controls">
+                    <label
+                      for="fileCover"
+                      class="btn btn-outline-primary btn-sm"
+                    >
+                      <i class="bi bi-upload"></i>
+                      Upload image
+                    </label>
+                    <input
+                      type="file"
+                      class="d-none"
+                      id="fileCover"
+                      accept="image/*"
+                    />
+                    <input
+                      type="url"
+                      class="form-control form-control-sm"
+                      id="txtThumbnailUrl"
+                      name="thumbnail"
+                      placeholder="Or paste an image URL"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- COURSE FIELDS -->
+        <section class="form-panel d-none" id="panelCourseMain">
+          <div class="panel-header">
+            <h6>Course basics</h6>
+            <p>Các trường chính của bảng <code>courses</code>.</p>
+          </div>
+
+          <div class="form-section">
+            <label for="txtCourseTitle" class="form-label">Title (courses.title)</label>
+            <input
+              type="text"
+              class="form-control"
+              id="txtCourseTitle"
+              name="title"
+              value=""
+            />
+          </div>
+
+          <div class="form-section">
+            <label for="txtTinyDes" class="form-label">Subtitle
+              (courses.tinydes)</label>
+            <textarea
+              class="form-control tinymce"
+              id="txtTinyDes"
+              name="tinydes"
+              rows="3"
+            >Tiny MCE</textarea>
+          </div>
+        </section>
+
+        <div class="rich-grid d-none" id="panelRich">
+          <section class="rich-panel">
+            <div class="panel-header">
+              <h6>Full description (courses.fulldes)</h6>
+              <p>Mô tả dài cho khóa học.</p>
+            </div>
+            <textarea
+              class="form-control tinymce"
+              id="txtFullDes"
+              name="fulldes"
+              rows="6"
+            >TinyMCE</textarea>
+          </section>
+
+          <section class="rich-panel">
+            <div class="panel-header">
+              <h6>Pricing</h6>
+              <p>Map vào
+                <code>courses.price</code>
+                và
+                <code>courses.discount</code>.</p>
+            </div>
+            <div class="row g-2">
+              <div class="col-sm-6">
+                <label class="form-label" for="numPrice">Price (int8)</label>
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  id="numPrice"
+                  name="price"
+                />
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label" for="numDiscount">Discount (int8)</label>
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  id="numDiscount"
+                  name="discount"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section class="rich-panel wide">
+            <div class="panel-header">
+              <h6>Status</h6>
+              <p>Map vào <code>courses.status</code> (vd: draft/published).</p>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              id="txtStatus"
+              name="status"
+              placeholder="draft / published"
+            />
+          </section>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="action-buttons">
+          <a
+            class="btn btn-outline-success"
+            href="/admin/categories/list"
+            role="button"
+          >
+            <i class="bi bi-arrow-left"></i>
+            Back
+          </a>
+          <div class="secondary-actions">
+            <!-- Xóa Parent (L1) -->
+            <button
+              type="submit"
+              class="btn btn-outline-danger"
+              formaction="/admin/categories/del-parent"
+            >
+              <i class="bi bi-trash"></i>
+              Delete parent
+            </button>
+            <!-- Xóa Child (L2) -->
+            <button
+              type="submit"
+              class="btn btn-danger d-none"
+              id="btnDeleteChild"
+              formaction="/admin/categories/del-child"
+            >
+              <i class="bi bi-trash"></i>
+              Delete child
+            </button>
+            <!-- Xóa Course -->
+            <button
+              type="submit"
+              class="btn btn-danger d-none"
+              id="btnDeleteCourse"
+              formaction="/admin/courses/del"
+            >
+              <i class="bi bi-trash"></i>
+              Delete course
+            </button>
+
+            <button type="reset" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-counterclockwise"></i>
+              Reset
+            </button>
+            <button
+              type="submit"
+              class="btn btn-success"
+              formaction="/admin/categories/patch"
+            >
+              <i class="bi bi-check2"></i>
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hidden binding cho server -->
+      <input
+        type="hidden"
+        id="isEditingChildHidden"
+        name="isEditingChild"
+        value="0"
+      />
+      <input
+        type="hidden"
+        id="isEditingCourseHidden"
+        name="isEditingCourse"
+        value="0"
+      />
+      <input type="hidden" id="boundChildId" name="childId" value="" />
+      <input type="hidden" id="boundCourseId" name="courseId" value="" />
+    </form>
+  </div>
+</div>
+
+{{#section "scripts"}}
+  <script defer src="/static/edit.js"></script>
+{{/section}}

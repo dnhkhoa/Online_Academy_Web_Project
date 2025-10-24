@@ -1,0 +1,74 @@
+{{#section "styles"}}
+  <style>
+    .pay-card{max-width:720px;margin:0 auto}
+    .muted{color:#6c757d}
+  </style>
+{{/section}}
+
+<section class="py-5">
+  <div class="container">
+    <div class="card shadow-sm border-0 rounded-4 pay-card">
+      <div class="card-body">
+        <h4 class="mb-3">Thanh toán</h4>
+
+        {{#if returned}}
+          {{#if momoSuccess}}
+            <div class="alert alert-success" role="alert">
+              Thanh toán MoMo thành công. Mã đơn: <strong>{{orderId}}</strong>,
+              Số tiền: <strong>{{amount}}</strong>. Giao dịch: {{transId}}.
+            </div>
+          {{else}}
+            <div class="alert alert-danger" role="alert">
+              Thanh toán MoMo thất bại. {{momoMessage}}
+            </div>
+          {{/if}}
+          <a href="/course/byCat" class="btn btn-outline-primary">Tiếp tục mua sắm</a>
+        {{else}}
+          {{#if amount}}
+            <div class="mb-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="muted small">Tổng thanh toán</div>
+                  <div class="fs-3 fw-semibold" id="amountDisplay"></div>
+                </div>
+                <div class="text-end">
+                  <div class="muted small">Phương thức</div>
+                  <div class="fw-medium text-uppercase" id="methodDisplay">{{method}}</div>
+                </div>
+              </div>
+            </div>
+
+            <input type="hidden" id="amountInput" value="{{amount}}" />
+
+            <div class="d-grid gap-2">
+              <button id="btnMomoPay" class="btn btn-primary btn-lg" type="button">
+                Thanh toán với MoMo
+              </button>
+              <a href="/cart" class="btn btn-outline-secondary">Quay lại giỏ hàng</a>
+            </div>
+          {{else}}
+            <div class="alert alert-warning" role="alert">
+              Không có dữ liệu thanh toán. Vui lòng chọn khóa học trong giỏ hàng.
+            </div>
+            <a href="/cart" class="btn btn-primary">Về giỏ hàng</a>
+          {{/if}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="/static/momo.js"></script>
+<script>
+  (function () {
+    const amount = Number(document.getElementById('amountInput')?.value || 0);
+    const amountEl = document.getElementById('amountDisplay');
+    if (amountEl) {
+      try {
+        amountEl.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+      } catch {
+        amountEl.textContent = amount + ' VND';
+      }
+    }
+  })();
+</script>

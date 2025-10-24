@@ -1,25 +1,50 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { port } from './config.js';
+import express from "express";
+import { engine } from "express-handlebars";
+import hsb_sections from "express-handlebars-sections";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+const __dirname = import.meta.dirname;
 const app = express();
+
+app.engine(
+  "handlebars",
+  engine({
+    helpers: {
+      section: hsb_sections(),
+      format_number(value) {
+        return new Intl.NumberFormat("en-US").format(value);
+      },
+    },
+  })
+);
+app.set("view engine", "handlebars");
+app.set("views", "./views");
+
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use("/static", express.static("static"));
 
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views'));
-
-app.get('/', (req, res) => {
-  res.render('index', { title: 'MoMo Payment (DB mapped)' });
+app.get("/", function (req, res) {
+  res.render("home");
 });
 
-import paymentsRouter from './routes/payments.js';
-app.use('/payments', paymentsRouter);
+import accountRouter from "./routes/account.route.js";
+app.use("/account", accountRouter);
 
-app.listen(port, () => {
-  console.log('Server running on port', port);
+import courseRouter from "./routes/course.route.js";
+app.use("/course", courseRouter);
+
+import categoryRouter from "./routes/category.route.js";
+app.use("/admin/categories", categoryRouter);
+
+import cartRouter from "./routes/cart.route.js";
+app.use("/cart", cartRouter);
+
+import paymentRouter from "./routes/payment.route.js";
+app.use("/payment", paymentRouter);
+
+app.use(function (req, res) {
+  res.status(404).render("404");
+});
+
+app.listen(3000, function () {
+  console.log("Server is running on http://localhost:3000");
 });

@@ -1,0 +1,969 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/home.css" />
+{{/section}}
+
+<main class="pb-5">
+
+  <!-- HERO CAROUSEL -->
+  <section class="py-0">
+    <div class="container-fluid px-0">
+      <div
+        id="carouselExampleAutoplaying"
+        class="carousel slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img
+              src="https://picsum.photos/seed/online-academy-1/1600/500"
+              class="d-block w-100"
+              alt="Learn skills that transform your career"
+            />
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://picsum.photos/seed/online-academy-2/1600/500"
+              class="d-block w-100"
+              alt="Top industry experts"
+            />
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://picsum.photos/seed/online-academy-3/1600/500"
+              class="d-block w-100"
+              alt="Project-based learning"
+            />
+          </div>
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselExampleAutoplaying"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselExampleAutoplaying"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Featured</small>
+        <h2 class="display-6">Top courses this week</h2>
+        <p class="text-muted mb-0">Discover the most engaging and high-quality
+          courses from industry experts.</p>
+      </div>
+
+      <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/python-beginners/640/420"
+                    class="card-img-top"
+                    alt="Python for beginners"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Python for beginners</h5>
+                    <p class="card-text">Start from zero and build real projects
+                      while learning core Python concepts.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/web-masterclass/640/420"
+                    class="card-img-top"
+                    alt="Web development masterclass"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Web development masterclass</h5>
+                    <p class="card-text">Build modern web apps with a
+                      professional stack and best practices.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/mobile-dev/640/420"
+                    class="card-img-top"
+                    alt="Mobile app development"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Mobile app development</h5>
+                    <p class="card-text">Create professional iOS/Android apps
+                      with solid architecture.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-item">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/nodejs-course/640/420"
+                    class="card-img-top"
+                    alt="Node.js Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Node.js Complete Guide</h5>
+                    <p class="card-text">Master backend development with Node.js
+                      and Express framework.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/docker-course/640/420"
+                    class="card-img-top"
+                    alt="Docker Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Docker & Kubernetes</h5>
+                    <p class="card-text">Learn containerization and
+                      orchestration for modern apps.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/aws-course/640/420"
+                    class="card-img-top"
+                    alt="AWS Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">AWS Cloud Practitioner</h5>
+                    <p class="card-text">Get certified and master Amazon Web
+                      Services fundamentals.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#featuredCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#featuredCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOST VIEWED -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Popular</small>
+        <h2 class="display-6">Most viewed courses</h2>
+        <p class="text-muted mb-0">Explore the courses that learners are
+          watching most this week.</p>
+      </div>
+
+      <div
+        id="mostViewedCarousel"
+        class="carousel slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/python-bootcamp/640/420"
+                    class="card-img-top"
+                    alt="Complete Python bootcamp"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Complete Python bootcamp</h5>
+                    <p class="card-text">From basics to advanced topics with
+                      lots of practice.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/js-fundamentals/640/420"
+                    class="card-img-top"
+                    alt="JavaScript fundamentals"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">JavaScript fundamentals</h5>
+                    <p class="card-text">Master modern JS patterns and the
+                      runtime model.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/react-dev/640/420"
+                    class="card-img-top"
+                    alt="React development"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">React development</h5>
+                    <p class="card-text">Build interactive UIs with components
+                      and hooks.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-item">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/vue-course/640/420"
+                    class="card-img-top"
+                    alt="Vue.js Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Vue.js Complete Course</h5>
+                    <p class="card-text">Build modern web applications with
+                      Vue.js framework.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/angular-course/640/420"
+                    class="card-img-top"
+                    alt="Angular Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Angular Masterclass</h5>
+                    <p class="card-text">Enterprise-level applications with
+                      Angular framework.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/typescript-course/640/420"
+                    class="card-img-top"
+                    alt="TypeScript Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">TypeScript for Professionals</h5>
+                    <p class="card-text">Write safer and scalable JavaScript
+                      code with TypeScript.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#mostViewedCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#mostViewedCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Fresh</small>
+        <h2 class="display-6">Latest courses</h2>
+        <p class="text-muted mb-0">Discover brand new courses across multiple
+          disciplines.</p>
+      </div>
+
+      <div id="latestCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/ai-fundamentals/640/420"
+                    class="card-img-top"
+                    alt="AI fundamentals"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">AI fundamentals</h5>
+                    <p class="card-text">Intro to AI & ML with clear, practical
+                      examples.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/cyber-basics/640/420"
+                    class="card-img-top"
+                    alt="Cybersecurity basics"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Cybersecurity basics</h5>
+                    <p class="card-text">Essential network defense and safe
+                      practices.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/cloud-essentials/640/420"
+                    class="card-img-top"
+                    alt="Cloud computing essentials"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Cloud computing essentials</h5>
+                    <p class="card-text">Deploy and manage apps on the cloud
+                      confidently.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-item">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/blockchain-course/640/420"
+                    class="card-img-top"
+                    alt="Blockchain Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Blockchain Development</h5>
+                    <p class="card-text">Learn blockchain technology and smart
+                      contracts.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/iot-course/640/420"
+                    class="card-img-top"
+                    alt="IoT Course"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Internet of Things</h5>
+                    <p class="card-text">Connect devices and build IoT
+                      applications.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/quantum-course/640/420"
+                    class="card-img-top"
+                    alt="Quantum Computing"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Quantum Computing Basics</h5>
+                    <p class="card-text">Introduction to quantum computing
+                      principles.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#latestCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#latestCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRENDING CATEGORIES -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Trending</small>
+        <h2 class="display-6">Most popular learning categories</h2>
+        <p class="text-muted mb-0">Discover the learning paths that students are
+          most passionate about this week.</p>
+      </div>
+
+      <div id="trendingCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/web-dev/640/420"
+                    class="card-img-top"
+                    alt="Web development"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Web development</h5>
+                    <p class="card-text">Growing demand for modern web
+                      technologies.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/mobile-dev-cat/640/420"
+                    class="card-img-top"
+                    alt="Mobile development"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Mobile development</h5>
+                    <p class="card-text">Increasing interest in mobile app
+                      creation.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/data-science/640/420"
+                    class="card-img-top"
+                    alt="Data science"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Data science</h5>
+                    <p class="card-text">Rising popularity of data analysis and
+                      machine learning.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-item">
+            <div class="row g-4">
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/design-cat/640/420"
+                    class="card-img-top"
+                    alt="Design"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Design & UX</h5>
+                    <p class="card-text">Creative skills for digital products
+                      and experiences.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/business-cat/640/420"
+                    class="card-img-top"
+                    alt="Business"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Business & Marketing</h5>
+                    <p class="card-text">Essential skills for entrepreneurs and
+                      marketers.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="https://picsum.photos/seed/finance-cat/640/420"
+                    class="card-img-top"
+                    alt="Finance"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">Finance & Accounting</h5>
+                    <p class="card-text">Master financial analysis and
+                      accounting principles.</p>
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/details"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-cart-plus"></i>
+                      Add to Cart
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#trendingCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#trendingCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-5 border-top bg-white site-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <a
+            href="/"
+            class="text-decoration-none text-dark fs-3 fw-semibold d-block mb-3"
+          ><img src="/static/LogoUTE.png" alt="Logo" class="site-logo" /></a>
+          <p class="mb-1"><strong>Address</strong></p>
+          <p class="text-muted mb-2">1 Vo Van Ngan, Thu Duc, Tp.HCM</p>
+          <p class="mb-1"><strong>Contact</strong></p>
+          <a
+            href="mailto:onlineacademy@gmail.com"
+            class="text-decoration-none"
+          >onlineacademy@gmail.com</a>
+          <div class="footer-social mt-3">
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i
+                class="bi bi-instagram"
+              ></i></a>
+            <a href="#" aria-label="X"><i class="bi bi-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="row footer-link-group">
+            <div class="col-6">
+              <a href="#">About us</a>
+              <a href="#">Courses</a>
+              <a href="#">Instructors</a>
+              <a href="#">Blog</a>
+              <a href="#">Careers</a>
+            </div>
+            <div class="col-6">
+              <a href="#">Help</a>
+              <a href="#">Community</a>
+              <a href="#">Partners</a>
+              <a href="#">Enterprise</a>
+              <a href="#">Sitemap</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ghost-image" style="min-height: 180px;"></div>
+        </div>
+      </div>
+      <hr class="my-5" />
+      <div
+        class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3"
+      >
+        <span class="text-muted">&copy; Online Academy. All rights reserved.</span>
+        <div class="d-flex gap-3">
+          <a href="#" class="text-decoration-none text-muted">Privacy policy</a>
+          <a href="#" class="text-decoration-none text-muted">Terms of service</a>
+          <a href="#" class="text-decoration-none text-muted">Cookies settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</main>
