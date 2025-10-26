@@ -22,11 +22,23 @@ router.get("/google",
 
 // callback
 router.get("/google/callback",
-  passport.authenticate("google", { failureRedirect: "/account/signin" }),
+  passport.authenticate("google", { 
+    failureRedirect: "/account/signin",
+    failureMessage: true 
+  }),
   (req, res) => {
-        req.session.isAuthenticated = true;
+    console.log("Google auth successful, user:", req.user);
+    req.session.isAuthenticated = true;
     req.session.authUser = req.user;
-    res.redirect("/");
+    
+    // Ensure session is saved before redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.redirect("/account/signin");
+      }
+      res.redirect("/");
+    });
   }
 );
 
