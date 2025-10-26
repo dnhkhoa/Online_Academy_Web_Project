@@ -3,23 +3,12 @@
   height: auto;
 }
 
-.footer-link-group a {
-  display: block;
-  color: #212529;
-  text-decoration: none;
-  margin-bottom: 0.25rem;
-}
-
-.footer-link-group a:hover {
-  text-decoration: underline;
-}
-
-.footer-social a {
-  color: #212529;
-  font-size: 1.1rem;
-  margin-right: 0.65rem;
-}
-
-.footer-social a:hover {
-  color: #000;
+/* Sticky Header*/
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 1050;
+  background-color: #fff;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transition: box-shadow 0.25s ease, background-color 0.25s ease;
 }

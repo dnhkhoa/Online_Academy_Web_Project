@@ -1,9 +1,10 @@
 import express from "express";
-import bcryptjs from "bcryptjs";
+import bcryptjs, { compareSync } from "bcryptjs";
 import * as userModel from "../models/user.model.js";
 import supabase from "../config/supabase.js";
 import crypto from "crypto";
 import { transporter } from "../utils/mail.js";
+import { error } from "console";
 
 const router = express.Router();
 
@@ -114,31 +115,30 @@ router.get("/signin", (req, res) => {
   });
 });
 
-router.post("/signin", async (req, res) => {
-  const username = req.body.userName;
-  const user = await userModel.findUserByUsername(username);
-  if (user.error || !user.data) {
-    return res.render("vwAccount/signin", {
-      error: "Invalid username or password.",
+router.post('/signin', async function (req, res) {
+
+  const user = await userModel.findUserByUsername(req.body.userName);
+
+  if (!user) {
+    return res.render('vwAccount/signin', {
+      error: true
     });
   }
-
-  const isValidPassword = bcryptjs.compareSync(
-    req.body.password,
-    user.data.password
-  );
-  if (!isValidPassword) {
-    return res.render("vwAccount/signin", {
-      error: "Invalid username or password.",
+  console.log(user);
+  console.log(req.body);
+  if (!(req.body.password === user.password)) {
+    return res.render('vwAccount/signin', {
+      error: true
     });
   }
 
   req.session.isAuthenticated = true;
-  req.session.user = user.data;
-
-  //console.log(req.session);
-
-  res.redirect("/");
+  req.session.authUser = user;
+  console.log(req.session);
+  // res.redirect('/');
+  const retUrl = req.session.retUrl || '/';
+  delete req.session.retUrl;
+  res.redirect(retUrl);
 });
 
 export default router;

@@ -1,0 +1,112 @@
+{{!-- views/vwCourse/byCat.handlebars --}}
+
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/byCat.css" />
+{{/section}}
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <aside class="col-lg-3">
+        <div class="card shadow-sm border-0 rounded-4">
+
+          <!-- Sidebar: Categories (L1) -> Subcategories (L2) -> Courses -->
+          <div class="accordion" id="categoryAccordion">
+            <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of courses</h5>
+
+            {{!-- [CHANGED] Lặp L1 parents --}}
+            {{#each parents}}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-{{this.catid}}">
+                  <div class="header-content">
+                    <button
+                      class="accordion-button collapsed flex-grow-1"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapse-{{this.catid}}"
+                      aria-expanded="false"
+                      aria-controls="collapse-{{this.catid}}"
+                    >
+                      {{this.catname}}
+                    </button>
+                  </div>
+                </h2>
+                <div
+                  id="collapse-{{this.catid}}"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="heading-{{this.catid}}"
+                  data-bs-parent="#categoryAccordion"
+                >
+                  <div class="accordion-body p-0">
+                    <div class="accordion accordion-flush ms-3" id="subAccordion-{{this.catid}}">
+                      {{!-- [CHANGED] Lặp L2 từ childrenMap[parentId] --}}
+                      {{#each (lookup ../childrenMap this.catid)}}
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="sub-heading-{{this.catid}}">
+                            <a
+                              class="accordion-button collapsed py-2 text-decoration-none"
+                              href="/course/byCat?catid={{this.catid}}"
+                            >
+                              {{this.catname}}
+                            </a>
+                          </h2>
+                        </div>
+                      {{/each}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {{/each}}
+            {{!-- /parents --}}
+          </div>
+          <!-- /Sidebar -->
+
+        </div>
+      </aside>
+
+      <div class="col-lg-9">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+          <div>
+            <h2 class="h4 fw-semibold mb-1">
+              {{#if category}}Courses in {{category.catname}}{{else}}All Courses{{/if}}
+            </h2>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          {{!-- [CHANGED] Lặp courses --}}
+          {{#each courses}}
+            <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+              <div class="card" style="width: 18rem;">
+                <img
+                  src="{{#if this.thumbnail}}{{this.thumbnail}}{{else}}https://picsum.photos/seed/course-{{this.courseid}}/640/420{{/if}}"
+                  class="card-img-top"
+                  alt="{{this.title}}"
+                />
+                <div class="card-body">
+                  <h5 class="card-title">{{this.title}}</h5>
+                  <p class="card-text">
+                    {{#if this.tinydes}}{{this.tinydes}}{{else}}No description{{/if}}
+                  </p>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                  <span class="text-muted">{{format_number this.price}} đ</span>
+                  <a href="/course/{{this.courseid}}" class="btn btn-sm btn-outline-primary">
+                    View Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          {{/each}}
+
+          {{!-- Nếu không có course --}}
+          {{#unless courses.length}}
+            <div class="col-12">
+              <div class="alert alert-warning">No courses found.</div>
+            </div>
+          {{/unless}}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

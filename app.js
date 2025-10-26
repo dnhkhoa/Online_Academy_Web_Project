@@ -1,40 +1,31 @@
 import express from "express";
 import session from "express-session";
-import dotenv from "dotenv";
 import { engine } from "express-handlebars";
-import hbs_sections from "express-handlebars-sections";
-import path from "path";
-import { fileURLToPath } from "url";
-
-import supabase from "./config/supabase.js";
+import dotenv from "dotenv";
+import hsb_sections from "express-handlebars-sections";
 import authRoutes from "./routes/auth.route.js";
-import accountRouter from "./routes/account.route.js";
-
 import passport from "passport";
 import "./config/passport.google.js";
-
 dotenv.config();
 
-// __dirname fix cho ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+const __dirname = import.meta.dirname;
 const app = express();
 
-// Template engine
 app.engine(
   "handlebars",
   engine({
     helpers: {
-      section: hbs_sections(),
+      section: hsb_sections(),
       format_number(value) {
         return new Intl.NumberFormat("en-US").format(value);
       },
+      calcOriginal: (price, discount) => (Number(price) || 0) + (Number(discount) || 0),
+
     },
   })
 );
 app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", "./views");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -45,8 +36,6 @@ app.use(
     saveUninitialized: true,
   })
 );
-
-
 // passport init
 app.use(passport.initialize());
 app.use(passport.session());
@@ -56,6 +45,7 @@ app.use((req, res, next) => {
   res.locals.authUser = req.user || null;
   next();
 });
+
 
 app.use(async function (req, res, next) {
   if (req.session.isAuthenticated) {
@@ -70,12 +60,28 @@ app.use(async function (req, res, next) {
 app.use("/auth", authRoutes);
 app.use("/account", accountRouter);
 
-app.get("/", (req, res) => {
+app.get("/", function (req, res) {
   res.render("home");
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(` Server running at http://localhost:${PORT}`);
+import accountRouter from "./routes/account.route.js";
+app.use("/account", accountRouter);
+
+import courseRouter from "./routes/course.route.js";
+app.use("/course", courseRouter);
+
+import categoryRouter from "./routes/category.route.js";
+import * as authMiddleware from './middlewares/auth.mdw.js';
+app.use("/admin/categories",authMiddleware.requireAuth ,authMiddleware.restrictInstructorAndAdmin, categoryRouter);
+
+
+import tinyRouter from './routes/tiny.route.js';
+app.use('/tiny', tinyRouter);
+
+app.use(function (req, res) {
+  res.status(404).render("404");
 });
- 
+
+app.listen(3000, function () {
+  console.log("Server is running on http://localhost:3000");
+});

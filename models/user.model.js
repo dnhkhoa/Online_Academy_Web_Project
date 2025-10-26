@@ -24,13 +24,7 @@ import db from '../utils/db.js';
 
 export async function findUserByUsername(username) {
   // use case-insensitive match (ilike) and ensure trimmed lowercase
-  const usernameNorm = (username || "").trim();
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .ilike("username", usernameNorm) // ilike does case-insensitive match
-    .single();
-  return { data, error };
+  return db('users').where('username', username).first();
 }
 
 export async function findUserByEmail(email) {
