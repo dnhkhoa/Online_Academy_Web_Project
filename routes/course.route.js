@@ -4,9 +4,41 @@ import * as categoryModel from '../models/category.model.js';
 import * as sectionModel from '../models/courseSections.model.js';
 import * as lessonModel from '../models/lesson.model.js'; 
 import * as authMiddleware from '../middlewares/auth.mdw.js';
+import * as feedbackModel from '../models/feedback.model.js';
+import * as feedbackService from "../services/feedback.service.js";
+import { renderStars } from '../utils/rating.js';
+
 
 
 const router = express.Router();
+
+//const featured = await courseModel.getFeatured();
+
+// FB
+router.post('/:id/feedback', async function (req, res) {
+  const courseId = Number(req.params.id);
+  if (!courseId) return res.redirect('/course/byCat');
+
+  // TODO: bạn có session user? ví dụ lưu user vào req.session.authUser
+  const user = req.session?.authUser;
+  if (!user) return res.redirect('/auth/signin');
+
+  const { rating, comment } = req.body;
+  if (!rating) return res.redirect(`/course/${courseId}`); // không đánh giá thì quay lại
+
+  await feedbackModel.insert({
+    userid: user.userid,
+    courseid: courseId,
+    rating: Number(rating),
+    comment: comment || null,
+  });
+
+  return res.redirect(`/course/${courseId}`);
+});
+
+
+
+
 
 //list
 router.get('/byCat', async function (req, res) {
@@ -22,6 +54,21 @@ router.get('/byCat', async function (req, res) {
   let courses = category
     ? await courseModel.findByCat(catid)
     : await courseModel.findAll();
+
+    // ****
+  for (const c of courses) {
+  const list = await feedbackModel.findByCourse(c.courseid);
+  if (!list?.length) {
+    c.fbAvg = 0;
+    c.fbCount = 0;
+  } else {
+    const sum = list.reduce((s,r)=>s+r.rating,0);
+    c.fbAvg = Number((sum/list.length).toFixed(1));
+    c.fbCount = list.length;
+  }
+}
+
+
 
   res.render('vwCourse/byCat', {
     parents: parents,
@@ -343,6 +390,19 @@ router.get('/:id', async function (req, res) {
 
   const course = await courseModel.findById(id);
   if (!course) return res.status(404).send('Course not found');
+
+  // ==== LẤY FEEDBACK SUMMARY ====
+  const list = await feedbackModel.findByCourse(id); // bạn sẽ có hàm này hoặc t sẽ viết sau
+  let fb = { avg: 0, count: 0, comments: [] };
+
+  if (list && list.length) {
+    const sum = list.reduce((s,r)=>s+r.rating,0);
+    fb.avg = Number((sum/list.length).toFixed(1));
+    fb.count = list.length;
+    fb.comments = list; // chứa rating, comment, userid, create_at
+  }
+
+  // === Lấy categories ===
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
@@ -350,9 +410,10 @@ router.get('/:id', async function (req, res) {
   }
 
   res.render('vwCourse/details', {
-    course: course,
-    parents: parents,
-    childrenMap: childrenMap,
+    course,
+    parents,
+    childrenMap,
+    fb
   });
 });
 

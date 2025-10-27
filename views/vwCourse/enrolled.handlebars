@@ -76,42 +76,48 @@
           <div class="carousel-item active">
             <div class="row g-4">
                 {{#each courses}}
-                <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-                    <div class="card" style="width: 18rem;">
-                    <img
-                        src="https://picsum.photos/seed/python-beginners/640/420"
-                        class="card-img-top"
-                        alt="Python for beginners"
-                    />
-                    <div class="card-body">
-                        <h5 class="card-title">{{title}}</h5>
-                        <p class="card-text">{{tinydes}}</p>
-                    </div>
-                    <div class="card-footer">
-                        <a
-                        href="/course/details"
-                        class="btn btn-sm btn-outline-primary"
-                        >
-                        <i class="bi bi-eye"></i>
-                        View details
-                        </a>
-                        <a
-                        href="/course/lesson?courseid={{courseid}}"
-                        class="btn btn-sm btn-outline-primary"
-                        >
-                        <i class="bi bi-eye"></i>
-                        View Lessons
-                        </a>
-                        <form action="/account/del-enroll" method="post" style="display:inline;">
-                        <input type="hidden" name="courseid" value="{{courseid}}">
-                        <button class="btn btn-sm btn-outline-danger" type="submit">
-                            <i class="bi bi-trash"></i> Remove
-                        </button>
-                        </form>
-                    </div>
-                </div>
-              </div>
-                {{/each}}
+<div class="col-md-6 col-xl-4 d-flex justify-content-center">
+  <div class="card" style="width: 18rem;">
+
+    <img src="https://picsum.photos/seed/python-beginners/640/420" class="card-img-top"/>
+
+    <div class="card-body">
+      <h5 class="card-title">{{title}}</h5>
+      <p class="card-text">{{tinydes}}</p>
+    </div>
+
+    <div class="card-footer">
+      <a href="/course/details" class="btn btn-sm btn-outline-primary">View details</a>
+      <a href="/course/lesson?courseid={{courseid}}" class="btn btn-sm btn-outline-primary">View Lessons</a>
+
+      <form action="/account/del-enroll" method="post" style="display:inline;">
+        <input type="hidden" name="courseid" value="{{courseid}}">
+        <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Remove</button>
+      </form>
+    </div>
+
+    <!-- FORM FEEDBACK nằm Ở ĐÂY => DƯỚI CÙNG CARD -->
+    <div class="p-3 border-top">
+      <form action="/course/{{courseid}}/feedback" method="post">
+        <select name="rating" class="form-select form-select-sm mb-2">
+          <option value="5">★★★★★</option>
+          <option value="4">★★★★☆</option>
+          <option value="3">★★★☆☆</option>
+          <option value="2">★★☆☆☆</option>
+          <option value="1">★☆☆☆☆</option>
+        </select>
+
+        <textarea name="comment" class="form-control form-control-sm mb-2" placeholder="Nhận xét (tuỳ chọn)"></textarea>
+
+        <button type="submit" class="btn btn-primary btn-sm w-100">Gửi đánh giá</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+{{/each}}
+
+
                 {{/if}}
             </div>
           </div>

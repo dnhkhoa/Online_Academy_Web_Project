@@ -157,3 +157,53 @@ export function removeCartItem(userid, courseid) {
   })
   .del();
 }
+
+
+export async function getTop10ByViews() {
+  return db('courses')
+    .select('*')
+    .orderBy('view', 'desc')
+    .limit(10);
+}
+
+export async function increaseView(courseId) {
+  await db('courses')
+    .where('courseid', courseId)
+    .increment('view', 1);
+}
+
+export async function updateNumEnrolled() {
+  await db('courses').update('numenrolled', 0);
+
+  await db.raw(`
+    UPDATE courses
+    SET numenrolled = sub.count
+    FROM (
+      SELECT courseid, COUNT(*) AS count
+      FROM enrollments
+      GROUP BY courseid
+    ) AS sub
+    WHERE courses.courseid = sub.courseid
+  `);
+}
+
+export async function getTop10ByEnrolled() {
+  return db('courses')
+    .select('*')
+    .orderBy('numenrolled', 'desc')
+    .limit(10);
+}
+
+export async function get10NewestCourses() {
+  return db('courses')
+    .select('*')
+    .orderBy('createdat', 'desc')
+    .limit(10);
+}
+
+export async function get3TopCourses() {
+  return db('courses')
+    .select('*')
+    .orderBy('view', 'desc')
+    .limit(3);
+}

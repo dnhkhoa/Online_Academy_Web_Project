@@ -6,6 +6,8 @@ import hsb_sections from "express-handlebars-sections";
 import authRoutes from "./routes/auth.route.js";
 import passport from "passport";
 import "./config/passport.google.js";
+import { renderStars } from './utils/rating.js';
+import * as courseModel from "./models/course.model.js";
 dotenv.config();
 
 const __dirname = import.meta.dirname;
@@ -20,7 +22,7 @@ app.engine(
         return new Intl.NumberFormat("en-US").format(value);
       },
       calcOriginal: (price, discount) => (Number(price) || 0) + (Number(discount) || 0),
-
+      renderStars,
     },
   })
 );
@@ -62,8 +64,24 @@ app.use(async function (req, res, next) {
 app.use("/auth", authRoutes);
 app.use("/account", accountRouter);
 
-app.get("/", function (req, res) {
-  res.render("home");
+app.get("/", async function (req, res) {
+  // by views
+  const topCourses = await courseModel.getTop10ByViews();
+
+  const top3Courses = await courseModel.get3TopCourses();
+  await courseModel.updateNumEnrolled();
+  //by enrolled
+  const topEnrolledCourses = await courseModel.getTop10ByEnrolled();
+
+  //by latest
+  const topLatestCourses = await courseModel.get10NewestCourses();
+
+  res.render("home",{
+    topcourses : topCourses,
+    topenrolledcourses: topEnrolledCourses,
+    toplatestcourses: topLatestCourses,
+    top3courses: top3Courses
+  });
 });
 
 import accountRouter from "./routes/account.route.js";
