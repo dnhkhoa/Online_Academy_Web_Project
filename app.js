@@ -38,6 +38,9 @@ app.use("/admin/categories", categoryRouter);
 import cartRouter from "./routes/cart.route.js";
 app.use("/cart", cartRouter);
 
+import termRouter from "./routes/term.route.js";
+app.use("/legal", termRouter);
+
 app.use(function (req, res) {
   res.status(404).render("404");
 });
