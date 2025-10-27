@@ -1,0 +1,186 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/home.css" />
+{{/section}}
+
+<main class="pb-5">
+
+  <!-- HERO CAROUSEL -->
+  <section class="py-0">
+    <div class="container-fluid px-0">
+      <div
+        id="carouselExampleAutoplaying"
+        class="carousel slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img
+              src="https://picsum.photos/seed/online-academy-1/1600/500"
+              class="d-block w-100"
+              alt="Learn skills that transform your career"
+            />
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://picsum.photos/seed/online-academy-2/1600/500"
+              class="d-block w-100"
+              alt="Top industry experts"
+            />
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://picsum.photos/seed/online-academy-3/1600/500"
+              class="d-block w-100"
+              alt="Project-based learning"
+            />
+          </div>
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselExampleAutoplaying"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselExampleAutoplaying"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Featured</small>
+        {{#if empty}}
+        <div class="row">
+        <h2 class="display-6">You haven't bought any courses!</h2>
+        </div>
+        {{else}}
+        <h2 class="display-6">Your courses</h2>
+        <p class="text-muted mb-0"></p>
+      </div>
+
+      <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+                {{#each courses}}
+                <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                    <div class="card" style="width: 18rem;">
+                    <img
+                        src="https://picsum.photos/seed/python-beginners/640/420"
+                        class="card-img-top"
+                        alt="Python for beginners"
+                    />
+                    <div class="card-body">
+                        <h5 class="card-title">{{title}}</h5>
+                        <p class="card-text">{{tinydes}}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a
+                        href="/course/details"
+                        class="btn btn-sm btn-outline-primary"
+                        >
+                        <i class="bi bi-eye"></i>
+                        View details
+                        </a>
+                        <a
+                        href="/course/lesson?courseid={{courseid}}"
+                        class="btn btn-sm btn-outline-primary"
+                        >
+                        <i class="bi bi-eye"></i>
+                        View Lessons
+                        </a>
+                        <form action="/account/del-enroll" method="post" style="display:inline;">
+                        <input type="hidden" name="courseid" value="{{courseid}}">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">
+                            <i class="bi bi-trash"></i> Remove
+                        </button>
+                        </form>
+                    </div>
+                </div>
+              </div>
+                {{/each}}
+                {{/if}}
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-5 border-top bg-white site-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <a
+            href="/"
+            class="text-decoration-none text-dark fs-3 fw-semibold d-block mb-3"
+          ><img src="/static/LogoUTE.png" alt="Logo" class="site-logo" /></a>
+          <p class="mb-1"><strong>Address</strong></p>
+          <p class="text-muted mb-2">1 Vo Van Ngan, Thu Duc, Tp.HCM</p>
+          <p class="mb-1"><strong>Contact</strong></p>
+          <a
+            href="mailto:onlineacademy@gmail.com"
+            class="text-decoration-none"
+          >onlineacademy@gmail.com</a>
+          <div class="footer-social mt-3">
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i
+                class="bi bi-instagram"
+              ></i></a>
+            <a href="#" aria-label="X"><i class="bi bi-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="row footer-link-group">
+            <div class="col-6">
+              <a href="#">About us</a>
+              <a href="#">Courses</a>
+              <a href="#">Instructors</a>
+              <a href="#">Blog</a>
+              <a href="#">Careers</a>
+            </div>
+            <div class="col-6">
+              <a href="#">Help</a>
+              <a href="#">Community</a>
+              <a href="#">Partners</a>
+              <a href="#">Enterprise</a>
+              <a href="#">Sitemap</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ghost-image" style="min-height: 180px;"></div>
+        </div>
+      </div>
+      <hr class="my-5" />
+      <div
+        class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3"
+      >
+        <span class="text-muted">&copy; Online Academy. All rights reserved.</span>
+        <div class="d-flex gap-3">
+          <a href="#" class="text-decoration-none text-muted">Privacy policy</a>
+          <a href="#" class="text-decoration-none text-muted">Terms of service</a>
+          <a href="#" class="text-decoration-none text-muted">Cookies settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</main>

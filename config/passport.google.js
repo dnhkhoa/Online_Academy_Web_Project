@@ -1,89 +1,79 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import * as userModel from "../models/user.model.js";
-import supabase from "../config/supabase.js";
-const userCache = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || "/auth/google/callback";
 
 passport.serializeUser((user, done) => {
-  // Only log in development
-  if (process.env.NODE_ENV !== 'production') {
-    console.log("Serializing user:", user.userid);
-  }
   done(null, user.userid); // userid phải đúng tên cột PK trong bảng users
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    // Check cache first
-    const cachedUser = userCache.get(id);
-    if (cachedUser) {
-      return done(null, cachedUser);
-    }
-
     const { data, error } = await userModel.findUserById(id);
-    if (error) {
-      console.error("Deserialize error:", error);
-      return done(error);
-    }
-
-    // Cache the user data
-    userCache.set(id, data);
-    setTimeout(() => userCache.delete(id), CACHE_TTL);
-
+    if (error) return done(error);
     return done(null, data);
   } catch (err) {
-    console.error("Deserialize catch error:", err);
     return done(err);
   }
 });
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: CALLBACK_URL,
-    },
-    async function (accessToken, refreshToken, profile, done) {
-      try {
-        // Check if user exists by email
-        const { data: existingUser, error: findError } = await userModel.findUserByEmail(profile.emails[0].value);
+passport.use(new GoogleStrategy(
+  {
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: CALLBACK_URL,
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      const email = profile.emails?.[0]?.value;
+      const fullName = profile.displayName || "";
 
-        if (findError && findError.code !== "PGRST116") {
-          console.error("Find user error:", findError);
-          return done(findError);
-        }
+      // tìm user theo email
+      let { data: existing, error: findErr } = await userModel.findUserByEmail(email);
 
-        // If user exists, return it
-        if (existingUser) {
-          return done(null, existingUser);
-        }
-
-        // If user doesn't exist, create new user
-        const newUserData = {
-          email: profile.emails[0].value,
-          fullname: profile.displayName,
-          username: profile.emails[0].value.split("@")[0],
-          role: "student"
-        };
-
-        const { data: newUser, error: createError } = await userModel.addNewUser(newUserData);
-
-        if (createError) {
-          console.error("Create user error:", createError);
-          return done(createError);
-        }
-
-        return done(null, newUser);
-      } catch (error) {
-        console.error("Passport Google Strategy error:", error);
-        return done(error);
+      // Nếu lỗi khác PGRST116 thì mới fail
+      if (findErr && findErr.code !== "PGRST116") {
+        console.error("Error finding user by email", findErr);
+        return done(findErr);
       }
+
+      // nếu đã tồn tại -> login
+      if (existing) return done(null, existing);
+
+      // === chưa tồn tại -> tạo account mới ===
+      let baseUsername = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
+      let username = baseUsername;
+      let attempt = 0;
+      while (attempt < 5) {
+        const { data: udata } = await userModel.findUserByUsername(username);
+        if (!udata) break;
+        username = `${baseUsername}${Math.floor(100 + Math.random() * 900)}`;
+        attempt++;
+      }
+
+      const newUserPayload = {
+        fullname: fullName,
+        username,
+        email,
+        password: null, // social login không có password
+      };
+
+      const { error: addErr } = await userModel.addNewUser(newUserPayload);
+      if (addErr) {
+        console.error("Error adding new user", addErr);
+        return done(addErr);
+      }
+
+      // lấy user vừa tạo để login
+      const { data: created } = await userModel.findUserByEmail(email);
+      return done(null, created);
+
+    } catch (err) {
+      console.error("Passport Google Strategy error:", err);
+      return done(err);
     }
-  )
-);
+  }
+));

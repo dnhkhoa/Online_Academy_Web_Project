@@ -30,6 +30,7 @@ router.get("/google/callback",
     console.log("Google auth successful, user:", req.user);
     req.session.isAuthenticated = true;
     req.session.authUser = req.user;
+    req.session.userid = req.user.userid;
     
     // Ensure session is saved before redirect
     req.session.save((err) => {
@@ -41,6 +42,5 @@ router.get("/google/callback",
     });
   }
 );
-
 
 export default router;

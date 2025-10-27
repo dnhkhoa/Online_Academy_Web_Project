@@ -28,18 +28,14 @@ app.set("view engine", "handlebars");
 app.set("views", "./views");
 
 app.use(express.urlencoded({ extended: true }));
+app.use('/static', express.static('static'));
+
 app.use(express.json());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    },
-    rolling: true, // Extends session on activity
+    saveUninitialized: true,
   })
 );
 // passport init
@@ -73,16 +69,19 @@ app.get("/", function (req, res) {
 import accountRouter from "./routes/account.route.js";
 app.use("/account", accountRouter);
 
-import courseRouter from "./routes/course.route.js";
-app.use("/course", courseRouter);
+import courseRoute from './routes/course.route.js';
+app.use("/course", courseRoute);
 
 import categoryRouter from "./routes/category.route.js";
 import * as authMiddleware from './middlewares/auth.mdw.js';
-app.use("/admin/categories",authMiddleware.requireAuth ,authMiddleware.restrictInstructorAndAdmin, categoryRouter);
+app.use("/admin/categories",authMiddleware.requireAuth ,authMiddleware.restrictAdmin ,categoryRouter);
 
 
 import tinyRouter from './routes/tiny.route.js';
 app.use('/tiny', tinyRouter);
+
+import paymentsRouter from './routes/payment.route.js';
+app.use('/payments', paymentsRouter);
 
 app.use(function (req, res) {
   res.status(404).render("404");

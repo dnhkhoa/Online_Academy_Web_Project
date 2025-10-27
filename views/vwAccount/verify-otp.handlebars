@@ -1,0 +1,5 @@
+<form method="POST" action="/account/verify-otp">
+  <input type="text" name="otp" placeholder="Nhập OTP"/>
+  {{#if error}}<p style="color:red">{{error}}</p>{{/if}}
+  <button type="submit">Xác thực</button>
+</form>

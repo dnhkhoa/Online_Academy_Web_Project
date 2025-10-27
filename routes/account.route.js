@@ -1,9 +1,11 @@
 import express from "express";
 import bcryptjs, { compareSync } from "bcryptjs";
+import bcrypt from "bcryptjs";
 import * as userModel from "../models/user.model.js";
 import supabase from "../config/supabase.js";
 import crypto from "crypto";
 import { transporter } from "../utils/mail.js";
+import * as authMiddleware from "../middlewares/auth.mdw.js";
 import { error } from "console";
 
 const router = express.Router();
@@ -115,18 +117,19 @@ router.get("/signin", (req, res) => {
   });
 });
 
+
 router.post('/signin', async function (req, res) {
 
   const user = await userModel.findUserByUsername(req.body.userName);
-
+  console.log(bcrypt.hashSync(user.password));
   if (!user) {
     return res.render('vwAccount/signin', {
       error: true
     });
   }
-  console.log(user);
-  console.log(req.body);
-  if (!(req.body.password === user.password)) {
+  
+  const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
+  if (!isPasswordValid) {
     return res.render('vwAccount/signin', {
       error: true
     });
@@ -134,11 +137,140 @@ router.post('/signin', async function (req, res) {
 
   req.session.isAuthenticated = true;
   req.session.authUser = user;
-  console.log(req.session);
+  req.session.userid = user.userid;
+  console.log(req.session.userid);
   // res.redirect('/');
   const retUrl = req.session.retUrl || '/';
   delete req.session.retUrl;
   res.redirect(retUrl);
+
+});
+
+import * as courseModel from "../models/course.model.js";
+import { create } from "domain";
+import db from "../utils/db.js";
+
+router.get('/watchlist', authMiddleware.requireAuth ,async function (req, res) {
+  const userID = req.session.userid;
+  console.log(userID);
+  const courses = await courseModel.watchlistCoursesByUID(userID);
+  res.render('vwCourse/watchlist'
+    , {
+      courses: courses
+    }
+  );
+});
+
+router.post('/del', async function (req, res) {
+  const userID = req.session.userid;
+  const courseID = req.body.courseid;
+  await courseModel.removeWatchlistItem(userID, courseID);
+  res.redirect('/account/watchlist');
+});
+
+router.post('/del-enroll', async function (req, res) {
+  const userID = req.session.userid;
+  const courseID = req.body.courseid;
+  await courseModel.removeEnrolledItem(userID, courseID);
+  res.redirect('/account/enrolled');
+});
+
+router.post('/add',authMiddleware.requireAuth ,async function (req, res) {
+  const userID = req.session.userid;
+  const courseID = req.body.courseid;
+  await courseModel.addWatchlistItem(userID, courseID);
+  res.redirect('/account/watchlist');
+});
+
+router.post('/add-enroll',authMiddleware.requireAuth ,async function (req, res) {
+  const userID = req.session.userid;
+  const courseID = req.body.courseid;
+  await courseModel.addEnrolledItem(userID, courseID);
+  res.redirect('/account/enrolled');
+});
+
+router.get('/enrolled',authMiddleware.requireAuth ,async function (req, res) {
+  const userID = req.session.userid;
+  const courses = await courseModel.enrolledCoursesByUID(userID);
+  res.render('vwCourse/enrolled'
+    , {
+      courses: courses
+    }
+  );
+});
+
+router.post('/signout', function (req, res) {
+  req.session.isAuthenticated = false;
+  req.session.userid = null;
+  delete req.session.authUser;
+  res.redirect('/');
+});
+
+router.post('/add-cart', authMiddleware.requireAuth ,async function (req, res) {
+  const tax = 5000;
+  const courses = await courseModel.findById(req.body.courseid);
+  console.log(courses);
+  const userID = req.session.userid;
+  const courseID = req.body.courseid;
+  const status = 'pending';
+  await courseModel.addCartItem(userID, courseID, status, courses.price, courses.discount, tax);
+  res.redirect('/account/cart');
+});
+
+router.post('/del-cart', authMiddleware.requireAuth ,async function (req, res) {
+  const userID = req.session.userid;
+  const courseID = req.body.courseid;
+  await courseModel.removeCartItem(userID, courseID);
+  res.redirect('/account/cart');
+});
+
+router.get('/cart', authMiddleware.requireAuth ,async function (req, res) {
+  const userID = req.session.userid;
+  const cartItems = await courseModel.cartItemsByUID(userID);
+  console.log(cartItems);
+  for (const item of cartItems) {
+    console.log(item.courseid);
+    const instructorName = await courseModel.InstructorName(item.courseid);
+    item.instructorName = instructorName;
+  }
+  res.render('vwCart/cart'
+    , {
+      cartItems: cartItems,
+    }
+  );
+});
+
+router.post('/create-order', authMiddleware.requireAuth, async (req, res) => {
+  try {
+    const userId = req.session.userid;
+    const courseId = req.body.orderId;
+
+    // Lấy thông tin khóa học
+    const course = await db('courses').where({ courseid: courseId }).first();
+    if (!course) return res.json({ success: false, message: 'Course not found' });
+
+    const subtotal = Number(course.price);
+    const discount = Number(course.discount || 0);
+    const tax = 5000;
+    const total = subtotal - discount + tax;
+
+    // Tạo đơn hàng
+    const [newOrder] = await db('orders')
+      .insert({
+        userid: userId,
+        courseid: courseId,
+        subtotal,
+        discount,
+        total,
+        status: 'pending',
+      })
+      .returning('orderid');
+
+    return res.json({ success: true, newOrderId: newOrder.orderid });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: err.message });
+  }
 });
 
 export default router;

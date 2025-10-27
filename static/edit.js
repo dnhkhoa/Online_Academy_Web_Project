@@ -249,6 +249,10 @@
     btnDeleteParent?.addEventListener("click", () => {
       if (!parentId?.value) return;
       if (!hidCatId || !hidParentId || !hidCatName) return;
+
+      if (isEditingChildHidden) isEditingChildHidden.value = "0";
+      if (boundChildId) boundChildId.value = "";
+
       hidCatId.value = parentId.value;
       hidParentId.value = "";
       hidCatName.value = "";
@@ -345,8 +349,7 @@
       }
 
       // Delete child
-      if (submitter === btnDeleteChild ||
-        (submitter && submitter.formAction && submitter.formAction.endsWith("/admin/categories/del"))) {
+      if (submitter === btnDeleteChild) {
         const childId = selChild ? selChild.value : "";
         if (!childId) {
           e.preventDefault();
@@ -356,6 +359,15 @@
         hidCatId.value = childId;
         hidParentId.value = parentId?.value || "";
         hidCatName.value = "";
+        return;
+      }
+
+      if (submitter === btnDeleteParent) {
+        hidCatId.value = parentId?.value || "";
+        hidParentId.value = "";
+        hidCatName.value = txtParentName?.value || "";
+        if (isEditingChildHidden) isEditingChildHidden.value = "0"; 
+        if (boundChildId) boundChildId.value = "";
         return;
       }
     });

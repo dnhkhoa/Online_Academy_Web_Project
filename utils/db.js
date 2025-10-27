@@ -1,15 +1,16 @@
-import knex from 'knex';
+import knex from "knex";
 
 const db = knex({
-  client: 'pg',
+  client: "pg",
   connection: {
-    host: 'aws-1-ap-southeast-1.pooler.supabase.com',
-    port: 5432,
-    user: 'postgres.llkbsvszgnqzgeodatog',
-    password: 'BNX3LzSKGijvhNcG',
-    database: 'postgres',
-    pool: { min: 0, max: 15 },
-  }
+    host: process.env.DB_HOST || "aws-1-ap-southeast-1.pooler.supabase.com",
+    port: Number(process.env.DB_PORT || 6543),
+    user: process.env.DB_USER || "postgres.llkbsvszgnqzgeodatog",
+    password: process.env.DB_PASSWORD || "BNX3LzSKGijvhNcG",
+    database: process.env.DB_NAME || "postgres",
+    ssl: { rejectUnauthorized: false },
+  },
+  pool: { min: 0, max: 7 },
 });
 
 export default db;

@@ -23,7 +23,6 @@ import db from '../utils/db.js';
   }
 
 export async function findUserByUsername(username) {
-  // use case-insensitive match (ilike) and ensure trimmed lowercase
   return db('users').where('username', username).first();
 }
 

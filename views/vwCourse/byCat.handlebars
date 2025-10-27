@@ -77,26 +77,39 @@
           {{!-- [CHANGED] Lặp courses --}}
           {{#each courses}}
             <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-              <div class="card" style="width: 18rem;">
-                <img
-                  src="{{#if this.thumbnail}}{{this.thumbnail}}{{else}}https://picsum.photos/seed/course-{{this.courseid}}/640/420{{/if}}"
-                  class="card-img-top"
-                  alt="{{this.title}}"
-                />
-                <div class="card-body">
-                  <h5 class="card-title">{{this.title}}</h5>
-                  <p class="card-text">
-                    {{#if this.tinydes}}{{this.tinydes}}{{else}}No description{{/if}}
-                  </p>
-                </div>
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                  <span class="text-muted">{{format_number this.price}} đ</span>
-                  <a href="/course/{{this.courseid}}" class="btn btn-sm btn-outline-primary">
-                    View Details
-                  </a>
+                    <div class="card" style="width: 18rem;">
+                    <img
+                        src="https://picsum.photos/seed/python-beginners/640/420"
+                        class="card-img-top"
+                        alt="Python for beginners"
+                    />
+                    <div class="card-body">
+                        <h5 class="card-title">{{title}}</h5>
+                        <p class="card-text">{{tinydes}}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a
+                        href="/course/{{this.courseid}}"
+                        class="btn btn-sm btn-outline-primary"
+                        >
+                        <i class="bi bi-eye"></i>
+                        View Details
+                        </a>
+                        <form action="/account/add-cart" method="post">
+                        <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                          <button type="submit" class="btn btn-sm ">
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                          </button>
+                        </form>
+                        <form action="/account/add" method="post">
+                        <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                          <button type="submit" class="btn btn-sm btn btn-outline-danger">
+                            <i class="bi bi-heart"></i>
+                          </button>
+                        </form>
+                    </div>
                 </div>
               </div>
-            </div>
           {{/each}}
 
           {{!-- Nếu không có course --}}

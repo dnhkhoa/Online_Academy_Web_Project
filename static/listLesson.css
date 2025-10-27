@@ -1,0 +1,33 @@
+/* Header: Course - Parent - Child */
+.lesson-brief .badge {
+  font-weight: 500;
+}
+.lesson-brief .badge.text-bg-light {
+  background-color: #fff;
+}
+
+#accordionPanelsStayOpenExample .accordion-item {
+  border: 1px solid #eef0f2;
+  margin-bottom: 12px;
+  border-radius: 0.75rem;
+}
+#accordionPanelsStayOpenExample .accordion-button {
+  font-weight: 600;
+  padding: 1rem 1.25rem;
+}
+#accordionPanelsStayOpenExample .accordion-button:not(.collapsed) {
+  background-color: #f8f9fa;
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.accordion-header .accordion-button {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.accordion-header .edit-btn {
+  white-space: nowrap;
+}
