@@ -6,18 +6,36 @@ import supabase from "../config/supabase.js";
 import crypto from "crypto";
 import { transporter } from "../utils/mail.js";
 import * as authMiddleware from "../middlewares/auth.mdw.js";
+import axios from "axios";
 import { error } from "console";
 
 const router = express.Router();
 
 router.get("/signup", (req, res) => {
-  res.render("vwAccount/signup");
+  res.render("vwAccount/signup", {
+    RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY
+  });
 });
 
 router.post("/signup", async (req, res) => {
   const { fullName, email, password, userName } = req.body;
 
   const hash_password = bcryptjs.hashSync(req.body.password, 10);
+
+  const recaptchaToken = req.body["g-recaptcha-response"];
+  const verifyURL = `https://www.google.com/recaptcha/api/siteverify`;
+
+  const { data } = await axios.post(
+    verifyURL,
+    null,
+    {
+      params: {
+        secret: process.env.RECAPTCHA_SECRET_KEY,
+        response: recaptchaToken,
+        remoteip: req.ip,
+      },
+    }
+  );
 
   // create OTP
   const otp = crypto.randomInt(100000, 999999).toString();
