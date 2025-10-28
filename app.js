@@ -8,10 +8,16 @@ import passport from "passport";
 import "./config/passport.google.js";
 import { renderStars } from './utils/rating.js';
 import * as courseModel from "./models/course.model.js";
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
 dotenv.config();
 
 const __dirname = import.meta.dirname;
 const app = express();
+
+const SECRET_KEY = process.env.SECRET_KEY;
+
+app.use(cookieParser());
 
 app.engine(
   "handlebars",
@@ -44,9 +50,28 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Persistent login middleware
 app.use((req, res, next) => {
-  // req.user do passport gắn sau deserialize
-  res.locals.authUser = req.user || null;
+  if (!req.session.isAuthenticated && req.cookies.remember_token) {
+    try {
+      const payload = jwt.verify(req.cookies.remember_token, SECRET_KEY);
+
+      // tái tạo session từ token
+      req.session.isAuthenticated = true;
+      req.session.authUser = {
+        userid: payload.userid,
+        userName: payload.username,
+        email: payload.email,
+      };
+      req.session.userid = payload.userid;
+
+      res.locals.isAuthenticated = true;
+      res.locals.authUser = req.session.authUser;
+    } catch (err) {
+      // token sai hoặc hết hạn thì xóa cookie
+      res.clearCookie('remember_token');
+    }
+  }
   next();
 });
 

@@ -7,9 +7,13 @@ import crypto from "crypto";
 import { transporter } from "../utils/mail.js";
 import * as authMiddleware from "../middlewares/auth.mdw.js";
 import axios from "axios";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import { error } from "console";
 
 const router = express.Router();
+
+const SECRET_KEY = process.env.SECRET_KEY;
 
 router.get("/signup", (req, res) => {
   res.render("vwAccount/signup", {
@@ -96,6 +100,8 @@ router.post("/verify-otp", async (req, res) => {
   delete req.session.pendingUser;
 
   res.redirect("/account/signin");
+
+
 });
 
 
@@ -137,32 +143,48 @@ router.get("/signin", (req, res) => {
 
 
 router.post('/signin', async function (req, res) {
+  const { userName, password, remember } = req.body;
 
-  const user = await userModel.findUserByUsername(req.body.userName);
-  console.log(bcrypt.hashSync(user.password));
+  const user = await userModel.findUserByUsername(userName);
   if (!user) {
-    return res.render('vwAccount/signin', {
-      error: true
-    });
-  }
-  
-  const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
-  if (!isPasswordValid) {
-    return res.render('vwAccount/signin', {
-      error: true
-    });
+    return res.render('vwAccount/signin', { error: true });
   }
 
+  const isPasswordValid = bcrypt.compareSync(password, user.password);
+  if (!isPasswordValid) {
+    return res.render('vwAccount/signin', { error: true });
+  }
+
+  // === Session login ===
   req.session.isAuthenticated = true;
   req.session.authUser = user;
   req.session.userid = user.userid;
-  console.log(req.session.userid);
-  // res.redirect('/');
+
+  // === Remember Me (JWT cookie) ===
+  if (remember) {
+    const token = jwt.sign(
+      {
+        userid: user.userid,
+        userName: user.username,
+        email: user.email,
+      },
+      SECRET_KEY,
+      { expiresIn: '30d' } // 30 ngày
+    );
+
+    res.cookie('remember_token', token, {
+      httpOnly: true,
+      secure: false, // đổi true nếu deploy HTTPS
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+  }
+
   const retUrl = req.session.retUrl || '/';
   delete req.session.retUrl;
   res.redirect(retUrl);
-
 });
+
 
 import * as courseModel from "../models/course.model.js";
 import { create } from "domain";
@@ -218,10 +240,21 @@ router.get('/enrolled',authMiddleware.requireAuth ,async function (req, res) {
 });
 
 router.post('/signout', function (req, res) {
+  // Xoá cookie remember_token nếu có
+  res.clearCookie('remember_token');
+
+  // Xoá session
   req.session.isAuthenticated = false;
   req.session.userid = null;
   delete req.session.authUser;
-  res.redirect('/');
+
+  // Xoá hẳn session trong store để tránh leak
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error destroying session:", err);
+    }
+    res.redirect('/');
+  });
 });
 
 router.post('/add-cart', authMiddleware.requireAuth ,async function (req, res) {
