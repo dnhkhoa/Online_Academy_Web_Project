@@ -1,0 +1,39 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="https://unpkg.com/video.js/dist/video-js.min.css" />
+{{/section}}
+
+<div class="container py-4">
+  <h1 class="h5 mb-3">{{lesson.title}}</h1>
+
+  {{#if lesson.content}}
+    <article class="card shadow-sm mb-4">
+      <div class="card-body lesson-content">
+        {{{lesson.content}}}  
+      </div>
+    </article>
+  {{/if}}
+
+  <video
+    id="lessonPlayer"
+    class="video-js vjs-default-skin vjs-big-play-centered"
+    controls
+    playsinline
+    preload="auto"
+    data-setup="{}"
+  >
+    <source src="{{player.src}}" type="video/youtube" />
+  </video>
+</div>
+
+{{#section "scripts"}}
+  <script src="https://unpkg.com/video.js/dist/video.min.js"></script>
+  <script src="https://unpkg.com/videojs-youtube/dist/Youtube.min.js"></script>
+  <script>
+    // Bật fluid để Video.js tự giữ tỉ lệ 16:9
+    const player = videojs('lessonPlayer', {
+      techOrder: ['youtube'],
+      fluid: true,
+      youtube: { modestbranding: 1, rel: 0 }
+    });
+  </script>
+{{/section}}

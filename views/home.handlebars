@@ -1,0 +1,335 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/home.css" />
+{{/section}}
+
+<main class="pb-5">
+
+  <!-- HERO CAROUSEL -->
+  <section class="py-0">
+    <div class="container-fluid px-0">
+      <div
+        id="carouselExampleAutoplaying"
+        class="carousel slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img
+              src="https://ocd.vn/wp-content/uploads/2024/08/AI.jpg"
+              class="d-block w-100"
+              alt="Learn skills that transform your career"
+            />
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://flyinglemurgames.com/wp-content/uploads/2021/12/19.jpg"
+              class="d-block w-100"
+              alt="Top industry experts"
+            />
+          </div>
+          <div class="carousel-item">
+            <img
+              src="https://d372kicx7ya6yg.cloudfront.net/upload/content/articles/main/gtn_mitm_top-10-threats_hero.jpg"
+              class="d-block w-100"
+              alt="Project-based learning"
+            />
+          </div>
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselExampleAutoplaying"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselExampleAutoplaying"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Featured</small>
+        <h2 class="display-6">Top courses this week</h2>
+        <p class="text-muted mb-0">Discover the most engaging and high-quality
+          courses from industry experts.</p>
+      </div>
+
+      <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+              {{#each top3courses}}
+              <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="{{thumbnail}}"
+                    class="card-img-top"
+                    alt="Python for beginners"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p class="card-text">{{tinydes}}</p>
+                    {{{ renderStars this.rating }}}
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/{{courseid}}"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <form action="/account/add-cart" method="post">
+                      <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                        <button type="submit" class="btn btn-sm btn-outline-success">
+                          <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                      </form>
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOST VIEWED -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Popular</small>
+        <h2 class="display-6">Most viewed courses</h2>
+        <p class="text-muted mb-0">Explore the courses that learners are
+          watching most this week.</p>
+      </div>
+
+      <div
+        id="mostViewedCarousel"
+        class="carousel slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+              {{#each topcourses}}
+                <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="{{thumbnail}}"
+                    class="card-img-top"
+                    alt=""
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p class="card-text">{{tinydes}}</p>
+                    {{{ renderStars this.rating }}}
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/{{courseid}}"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <form action="/account/add-cart" method="post">
+                      <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                        <button type="submit" class="btn btn-sm btn-outline-success">
+                          <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                      </form>
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>          
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Fresh</small>
+        <h2 class="display-6">Latest courses</h2>
+        <p class="text-muted mb-0">Discover brand new courses across multiple
+          disciplines.</p>
+      </div>
+
+      <div id="latestCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row g-4">
+              {{#each toplatestcourses}}
+                <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="{{thumbnail}}"
+                    class="card-img-top"
+                    alt="AI fundamentals"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p class="card-text">{{tinydes}}</p>
+                    {{{ renderStars this.rating }}}
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/{{courseid}}"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <form action="/account/add-cart" method="post">
+                      <input type="hidden" name="courseid" value="{{courseid}}" />
+                        <button type="submit" class="btn btn-sm btn-outline-success">
+                          <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                      </form>
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRENDING CATEGORIES -->
+  <section class="py-5">
+    <div class="container">
+      <div class="section-heading text-center mb-5">
+        <small>Trending</small>
+        <h2 class="display-6">Most popular learning categories</h2>
+        <p class="text-muted mb-0">Discover the learning paths that students are
+          most passionate about this week.</p>
+      </div>
+
+      <div id="trendingCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+
+            <div class="row g-4">
+              {{#each topenrolledcourses}}
+                <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                <div class="card" style="width: 18rem;">
+                  <img
+                    src="{{thumbnail}}"
+                    class="card-img-top"
+                    alt="Web development"
+                  />
+                  <div class="card-body">
+                    <h5 class="card-title">{{title}}</h5>
+                    <p class="card-text">{{tinydes}}</p>
+                    {{{ renderStars this.rating }}}
+                  </div>
+                  <div class="card-footer">
+                    <a
+                      href="/course/{{courseid}}"
+                      class="btn btn-sm btn-outline-primary"
+                    >
+                      <i class="bi bi-eye"></i>
+                      View Details
+                    </a>
+                    <form action="/account/add-cart" method="post">
+                      <input type="hidden" name="courseid" value="{{courseid}}" />
+                        <button type="submit" class="btn btn-sm btn-outline-success">
+                          <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                      </form>
+                  </div>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-5 border-top bg-white site-footer">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <a
+            href="/"
+            class="text-decoration-none text-dark fs-3 fw-semibold d-block mb-3"
+          ><img src="/static/LogoUTE.png" alt="Logo" class="site-logo" /></a>
+          <p class="mb-1"><strong>Address</strong></p>
+          <p class="text-muted mb-2">1 Vo Van Ngan, Thu Duc, Tp.HCM</p>
+          <p class="mb-1"><strong>Contact</strong></p>
+          <a
+            href="mailto:onlineacademy@gmail.com"
+            class="text-decoration-none"
+          >onlineacademy@gmail.com</a>
+          <div class="footer-social mt-3">
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i
+                class="bi bi-instagram"
+              ></i></a>
+            <a href="#" aria-label="X"><i class="bi bi-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="row footer-link-group">
+            <div class="col-8">
+              <a href="#">Members of us: </a>
+              <a href="#">23110010 - Nguyen Chi Dung</a>
+              <a href="#">23110030 - Trinh Hoang Khang</a>
+              <a href="#">23110034 - Truong Dinh Khoa</a>
+              <a href="#">23110039 - Vo Huu Loc</a>
+              <a href="#">23110055 - Le Hoang Phuc</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ghost-image" style="min-height: 180px;"></div>
+        </div>
+      </div>
+      <hr class="my-5" />
+      <div
+        class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3"
+      >
+        <span class="text-muted">&copy; Online Academy. All rights reserved.</span>
+        <div class="d-flex gap-3">
+          <a
+            href="/legal/privacy"
+            class="text-decoration-none text-muted"
+          >Privacy policy</a>
+          <a
+            href="/legal/term-of-use"
+            class="text-decoration-none text-muted"
+          >Terms of service</a>
+          <a href="#" class="text-decoration-none text-muted">Cookies settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</main>

@@ -1,0 +1,116 @@
+{{!-- NEW FILE: views/vwAdminCategory/list.handlebars --}}
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/list.css" />
+{{/section}}
+
+<div class="category-container">
+  <div class="card shadow-sm">
+    <h5 class="card-header d-flex justify-content-between align-items-center">
+      <span>Categories</span>
+      <div class="d-flex gap-2">
+        <a class="btn btn-primary btn-sm" href="/admin/categories/add" role="button">
+          <i class="bi bi-plus-circle"></i>
+          New Category
+        </a>
+      </div>
+    </h5>
+
+    <div class="card-body">
+      <div class="accordion" id="categoryAccordion">
+
+        {{#if parents.length}}
+          {{#each parents}}
+          {{!-- L1 item --}}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-{{this.catid}}">
+              <div class="header-content">
+                <button
+                  class="accordion-button collapsed flex-grow-1"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse-{{this.catid}}"
+                  aria-expanded="false"
+                  aria-controls="collapse-{{this.catid}}"
+                >
+                  {{this.catname}}
+                </button>
+                <div class="text-end ms-2">
+                  <a class="btn btn-outline-primary btn-sm" href="/admin/categories/edit?id={{this.catid}}" role="button" title="Edit">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                </div>
+              </div>
+            </h2>
+            <div
+              id="collapse-{{this.catid}}"
+              class="accordion-collapse collapse"
+              aria-labelledby="heading-{{this.catid}}"
+              data-bs-parent="#categoryAccordion"
+            >
+              <div class="accordion-body p-0">
+
+                {{!-- Nested L2 --}}
+                <div class="accordion accordion-flush ms-3" id="subAccordion-{{this.catid}}">
+                  {{#with (lookup ../childrenMap this.catid)}}
+                    {{#if this.length}}
+                      {{#each this}}
+                      <div class="accordion-item">
+                        <h2 class="accordion-header" id="sub-heading-{{../catid}}-{{@index}}">
+                          <div class="d-flex align-items-center w-100">
+                            <button
+                              class="accordion-button collapsed py-2 flex-grow-1"
+                              type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#sub-collapse-{{../catid}}-{{@index}}"
+                              aria-expanded="false"
+                              aria-controls="sub-collapse-{{../catid}}-{{@index}}"
+                            >
+                              {{this.catname}}
+                            </button>
+                            <div class="text-end ms-2 me-3">
+                              <a class="btn btn-outline-primary btn-sm" href="/admin/categories/edit?id={{this.catid}}" title="Edit subcategory">
+                                <i class="bi bi-pencil-square"></i>
+                              </a>
+                            </div>
+                          </div>
+                        </h2>
+                        <div
+                          id="sub-collapse-{{../catid}}-{{@index}}"
+                          class="accordion-collapse collapse"
+                          aria-labelledby="sub-heading-{{../catid}}-{{@index}}"
+                          data-bs-parent="#subAccordion-{{../catid}}"
+                        >
+                          <div class="accordion-body p-0">
+                            <div class="list-group list-group-flush">
+                              {{!-- Link placeholder: đổi sau nếu bạn có trang courses theo catid --}}
+                              <a
+                                href="/admin/categories/children?parentid={{this.catid}}"
+                                class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
+                              >
+                                Xem danh mục con hoặc khoá học
+                                <i class="bi bi-chevron-right small"></i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {{/each}}
+                    {{else}}
+                      <div class="p-3 text-muted">Chưa có danh mục con.</div>
+                    {{/if}}
+                  {{/with}}
+                </div>
+                {{!-- /Nested L2 --}}
+
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        {{else}}
+          <div class="alert alert-info">Chưa có lĩnh vực nào.</div>
+        {{/if}}
+
+      </div>
+    </div>
+  </div>
+</div>

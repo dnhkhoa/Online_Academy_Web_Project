@@ -1,0 +1,16 @@
+.img-thumb {
+  width: 120px;
+  height: 76px;
+  object-fit: cover;
+}
+.cart-list .list-group-item {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.badge {
+  margin-right: 0.25rem;
+}
+.top-20 {
+  top: 20px;
+}
+
