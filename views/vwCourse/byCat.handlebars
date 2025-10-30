@@ -1,3 +1,5 @@
+{{!-- views/vwCourse/byCat.handlebars --}}
+
 {{#section "styles"}}
   <link rel="stylesheet" href="/static/byCat.css" />
 {{/section}}
@@ -10,379 +12,156 @@
 
           <!-- Sidebar: Categories (L1) -> Subcategories (L2) -> Courses -->
           <div class="accordion" id="categoryAccordion">
-            <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of
-              courses</h5>
+            <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of courses</h5>
 
-            <!-- L1: Category 101 -->
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading-101">
-                <div class="header-content">
-                  <button
-                    class="accordion-button collapsed flex-grow-1"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collapse-101"
-                    aria-expanded="false"
-                    aria-controls="collapse-101"
-                  >
-                    Accordion Item #1
-                  </button>
-                </div>
-              </h2>
-              <div
-                id="collapse-101"
-                class="accordion-collapse collapse"
-                aria-labelledby="heading-101"
-                data-bs-parent="#categoryAccordion"
-              >
-                <div class="accordion-body p-0">
-                  <!-- Nested L2 accordion -->
-                  <div
-                    class="accordion accordion-flush ms-3"
-                    id="subAccordion-101"
-                  >
-                    <div class="accordion-item">
-                      <h2 class="accordion-header" id="sub-heading-101-1">
-                        <button
-                          class="accordion-button collapsed py-2"
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#sub-collapse-101-1"
-                          aria-expanded="false"
-                          aria-controls="sub-collapse-101-1"
-                        >
-                          Subcategory #1
-                        </button>
-                      </h2>
-                      <div
-                        id="sub-collapse-101-1"
-                        class="accordion-collapse collapse"
-                        aria-labelledby="sub-heading-101-1"
-                        data-bs-parent="#subAccordion-101"
-                      >
-                        <div class="accordion-body p-0">
-                          <div class="list-group list-group-flush">
+            {{!-- [CHANGED] Lặp L1 parents --}}
+            {{#each parents}}
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-{{this.catid}}">
+                  <div class="header-content">
+                    <button
+                      class="accordion-button collapsed flex-grow-1"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapse-{{this.catid}}"
+                      aria-expanded="false"
+                      aria-controls="collapse-{{this.catid}}"
+                    >
+                      {{this.catname}}
+                    </button>
+                  </div>
+                </h2>
+                <div
+                  id="collapse-{{this.catid}}"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="heading-{{this.catid}}"
+                  data-bs-parent="#categoryAccordion"
+                >
+                  <div class="accordion-body p-0">
+                    <div class="accordion accordion-flush ms-3" id="subAccordion-{{this.catid}}">
+                      {{!-- [CHANGED] Lặp L2 từ childrenMap[parentId] --}}
+                      {{#each (lookup ../childrenMap this.catid)}}
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="sub-heading-{{this.catid}}">
                             <a
-                              href="/admin/courses/201"
-                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
-                            >aaa</a>
-                            <a
-                              href="/admin/courses/202"
-                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
-                            >bbb</a>
-                          </div>
+                              class="accordion-button collapsed py-2 text-decoration-none"
+                              href="/course/byCat?catid={{this.catid}}"
+                            >
+                              {{this.catname}}
+                            </a>
+                          </h2>
                         </div>
-                      </div>
-                    </div>
-
-                    <!-- Có thể nhân bản thêm L2 nếu cần -->
-                    <div class="accordion-item">
-                      <h2 class="accordion-header" id="sub-heading-101-2">
-                        <button
-                          class="accordion-button collapsed py-2"
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#sub-collapse-101-2"
-                          aria-expanded="false"
-                          aria-controls="sub-collapse-101-2"
-                        >
-                          Subcategory #2
-                        </button>
-                      </h2>
-                      <div
-                        id="sub-collapse-101-2"
-                        class="accordion-collapse collapse"
-                        aria-labelledby="sub-heading-101-2"
-                        data-bs-parent="#subAccordion-101"
-                      >
-                        <div class="accordion-body p-0">
-                          <div class="list-group list-group-flush">
-                            <a
-                              href="/admin/courses/203"
-                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
-                            >ccc</a>
-                          </div>
-                        </div>
-                      </div>
+                      {{/each}}
                     </div>
                   </div>
-                  <!-- /Nested L2 accordion -->
                 </div>
               </div>
-            </div>
-
-            <!-- L1: Category 102 -->
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading-102">
-                <div class="header-content">
-                  <button
-                    class="accordion-button collapsed flex-grow-1"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collapse-102"
-                    aria-expanded="false"
-                    aria-controls="collapse-102"
-                  >
-                    Accordion Item #2
-                  </button>
-                </div>
-              </h2>
-              <div
-                id="collapse-102"
-                class="accordion-collapse collapse"
-                aria-labelledby="heading-102"
-                data-bs-parent="#categoryAccordion"
-              >
-                <div class="accordion-body p-0">
-                  <!-- Nested L2 accordion -->
-                  <div
-                    class="accordion accordion-flush ms-3"
-                    id="subAccordion-102"
-                  >
-                    <div class="accordion-item">
-                      <h2 class="accordion-header" id="sub-heading-102-1">
-                        <button
-                          class="accordion-button collapsed py-2"
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#sub-collapse-102-1"
-                          aria-expanded="false"
-                          aria-controls="sub-collapse-102-1"
-                        >
-                          Subcategory #1
-                        </button>
-                      </h2>
-                      <div
-                        id="sub-collapse-102-1"
-                        class="accordion-collapse collapse"
-                        aria-labelledby="sub-heading-102-1"
-                        data-bs-parent="#subAccordion-102"
-                      >
-                        <div class="accordion-body p-0">
-                          <div class="list-group list-group-flush">
-                            <a
-                              href="/admin/courses/301"
-                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
-                            >ddd</a>
-                            <a
-                              href="/admin/courses/302"
-                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
-                            >eee</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- /Nested L2 accordion -->
-                </div>
-              </div>
-            </div>
-
-            <!-- L1: Category 103 -->
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading-103">
-                <div class="header-content">
-                  <button
-                    class="accordion-button collapsed flex-grow-1"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#collapse-103"
-                    aria-expanded="false"
-                    aria-controls="collapse-103"
-                  >
-                    Accordion Item #3
-                  </button>
-                </div>
-              </h2>
-              <div
-                id="collapse-103"
-                class="accordion-collapse collapse"
-                aria-labelledby="heading-103"
-                data-bs-parent="#categoryAccordion"
-              >
-                <div class="accordion-body p-0">
-                  <!-- Nested L2 accordion -->
-                  <div
-                    class="accordion accordion-flush ms-3"
-                    id="subAccordion-103"
-                  >
-                    <div class="accordion-item">
-                      <h2 class="accordion-header" id="sub-heading-103-1">
-                        <button
-                          class="accordion-button collapsed py-2"
-                          type="button"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#sub-collapse-103-1"
-                          aria-expanded="false"
-                          aria-controls="sub-collapse-103-1"
-                        >
-                          Subcategory #1
-                        </button>
-                      </h2>
-                      <div
-                        id="sub-collapse-103-1"
-                        class="accordion-collapse collapse"
-                        aria-labelledby="sub-heading-103-1"
-                        data-bs-parent="#subAccordion-103"
-                      >
-                        <div class="accordion-body p-0">
-                          <div class="list-group list-group-flush">
-                            <a
-                              href="/admin/courses/401"
-                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
-                            >fff</a>
-                            <a
-                              href="/admin/courses/402"
-                              class="list-group-item list-group-item-action px-3 d-flex justify-content-between align-items-center"
-                            >ggg</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- /Nested L2 accordion -->
-                </div>
-              </div>
-            </div>
-
+            {{/each}}
+            {{!-- /parents --}}
           </div>
-          <!-- /Sidebar: Categories (L1) -> Subcategories (L2) -> Courses -->
+          <!-- /Sidebar -->
 
         </div>
       </aside>
 
       <div class="col-lg-9">
-        <div
-          class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4"
-        >
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
           <div>
-            <h2 class="h4 fw-semibold mb-1">Courses</h2>
+            <h2 class="h4 fw-semibold mb-1">
+              {{#if category}}Courses in {{category.catname}}{{else}}All Courses{{/if}}
+            </h2>
           </div>
+          <form method="get" class="ms-auto d-flex align-items-center gap-2">
+            {{#if category}}
+            <input type="hidden" name="catid" value="{{category.catid}}" />
+            {{/if}}
+            <label for="sortSelect" class="form-label mb-0 me-1">Sort by:</label>
+            <select id="sortSelect" name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="">Default</option>
+              <option value="rating">Rating</option>
+              <option value="price">Price</option>
+              <option value="newest">Newest</option>
+            </select>
+          </form>
+          <script>
+            (function(){
+              var sel = document.getElementById('sortSelect');
+              if (sel) sel.value = '{{sort}}';
+            })();
+          </script>
         </div>
 
         <div class="row g-4">
-          <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-            <div class="card" style="width: 18rem;">
-              <img
-                src="https://picsum.photos/seed/course-detail/640/420"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
+          {{!-- [CHANGED] Lặp courses --}}
+          {{#each courses}}
+            <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+                    <div class="card" style="width: 18rem;">
+                    <img
+                        src="{{thumbnail}}"
+                        class="card-img-top"
+                        alt="Python for beginners"
+                    />
+                    <div class="card-body">
+                        <h5 class="card-title">{{title}}</h5>
+                        <p class="card-text">{{tinydes}}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a
+                        href="/course/{{this.courseid}}"
+                        class="btn btn-sm btn-outline-primary"
+                        >
+                        <i class="bi bi-eye"></i>
+                        View Details
+                        </a>
+                        <form action="/account/add-cart" method="post">
+                        <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                          <button type="submit" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                          </button>
+                        </form>
+                        <form action="/account/add" method="post">
+                        <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                          <button type="submit" class="btn btn-sm btn btn-outline-danger">
+                            <i class="bi bi-heart"></i> Add to watchlist
+                          </button>
+                        </form>
+                        {{{renderStars fbAvg}}} 
+                    </div>
+                </div>
               </div>
-              <div class="card-footer">
-                <a
-                  href="/course/details"
-                  class="btn btn-sm btn-outline-primary"
-                >
-                  <i class="bi bi-eye"></i>
-                  View Details
+          {{/each}}
+                  <nav aria-label="..." class="mt-3">
+        <ul class="pagination">
+            <li class="page-item {{#if isFirstPage}}disabled{{/if}}">
+            <a class="page-link" href="/course/byCat?page={{prevPage}}&sort={{sort}}" tabindex="-1">Previous</a>
+            </li>
+            {{#each pages}}
+            {{#if isCurrent}}
+                <li class="page-item active" aria-current="page">
+                <a class="page-link" href="javascript:void(0);">
+                    {{value}}
                 </a>
-                <a href="#" class="btn btn-sm btn-outline-success">
-                  <i class="bi bi-cart-plus"></i>
-                  Add to Cart
+                </li>
+            {{else}}
+                <li class="page-item">
+                <a class="page-link" href="/course/byCat?page={{value}}&sort={{../sort}}">
+                  {{value}}
                 </a>
-                <a
-                  href="/course/lesson"
-                  class="btn btn-sm btn-outline-primary mt-2"
-                >
-                  <i class="bi bi-plus-square"></i>
-                  Add Lessons
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-            <div class="card" style="width: 18rem;">
-              <img
-                src="https://picsum.photos/seed/course-detail/640/420"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-              </div>
-              <div class="card-footer">
-                <a
-                  href="/course/details"
-                  class="btn btn-sm btn-outline-primary"
-                >
-                  <i class="bi bi-eye"></i>
-                  View Details
-                </a>
-                <a href="#" class="btn btn-sm btn-outline-success">
-                  <i class="bi bi-cart-plus"></i>
-                  Add to Cart
-                </a>
-                <a
-                  href="/course/lesson"
-                  class="btn btn-sm btn-outline-primary mt-2"
-                >
-                  <i class="bi bi-plus-square"></i>
-                  Add Lessons
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-            <div class="card" style="width: 18rem;">
-              <img
-                src="https://picsum.photos/seed/course-detail/640/420"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">
-                  Some quick example text to build on the card title and make up
-                  the bulk of the card's content.
-                </p>
-              </div>
-              <div class="card-footer">
-                <a
-                  href="/course/details"
-                  class="btn btn-sm btn-outline-primary"
-                >
-                  <i class="bi bi-eye"></i>
-                  View Details
-                </a>
-                <a href="#" class="btn btn-sm btn-outline-success">
-                  <i class="bi bi-cart-plus"></i>
-                  Add to Cart
-                </a>
-                <a
-                  href="/course/lesson"
-                  class="btn btn-sm btn-outline-primary mt-2"
-                >
-                  <i class="bi bi-plus-square"></i>
-                  Add Lessons
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <nav aria-label="Page navigation example">
-          <ul class="pagination mt-4 justify-content-center">
-            <li class="page-item"><a
-                class="page-link"
-                href="#"
-              >Previous</a></li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-          </ul>
+                </li>
+            {{/if}}
+            {{/each}}
+            <li class="page-item {{#if isLastPage}}disabled{{/if}}">
+            <a class="page-link" href="/course/byCat?page={{nextPage}}&sort={{sort}}">Next</a>
+            </li>
+        </ul>
         </nav>
+          {{!-- Nếu không có course --}}
+          {{#unless courses.length}}
+            <div class="col-12">
+              <div class="alert alert-warning">No courses found.</div>
+            </div>
+          {{/unless}}
+        </div>
       </div>
     </div>
   </div>

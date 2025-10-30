@@ -34,39 +34,76 @@
         </a>
 
         <!-- Search bar -->
-        <div class="d-none d-lg-block flex-grow-1" style="max-width: 550px;">
-          <div class="input-group">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search"
-              aria-label="Search courses"
-            />
-            <button class="btn btn-outline-secondary" type="button">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-        </div>
+        <form class="d-flex me-4" role="search" method="get" action="/course/search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q" />
+          <button class="btn btn-sm btn-outline-success" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
 
         <nav
           class="d-none d-lg-flex gap-4 align-items-center flex-shrink-0"
           role="navigation"
-          aria-label="Primary"
-        >
-          <a
-            href="/course/byCat"
-            class="text-decoration-none text-dark"
-          >Courses</a>
+          aria-label="Primary">
+          <a href="/course/byCat" class="text-decoration-none text-dark">
+            Courses
+          </a>
+          <a href="/course/lesson" class="text-decoration-none text-dark"
+          >Lessons</a>
           <a
             href="/admin/categories/list"
             class="text-decoration-none text-dark"
           >Categories</a>
-          <a href="/cart/cart" class="text-decoration-none text-dark"><i
+          <a href="/account/cart" class="text-decoration-none text-dark"><i
               class="bi bi-cart4"
             ></i></a>
         </nav>
 
-        <div class="d-none d-lg-flex gap-2 flex-shrink-0">
+        {{#if isAuthenticated}}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Welcome, <b>{{authUser.username}}</b>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" href="/account/profile">
+                  <i class="bi bi-person-circle"></i>
+                  Profile
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/account/change-pwd">
+                  <i class="bi bi-key"></i>
+                  Change Password
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/account/watchlist">
+                  <i class="bi bi-key"></i>
+                  My watchlist
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/account/enrolled">
+                  <i class="bi bi-key"></i>
+                  My course
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <a class="dropdown-item"
+                href="javascript:document.querySelector('#frmSignout').submit();">
+                  <i class="bi bi-box-arrow-right"></i>
+                  Sign Out
+                </a>
+              </li>
+            </ul>
+          </li>
+          <form id="frmSignout" action="/account/signout" method="post"></form>
+          {{else}}
+          <div class="d-none d-lg-flex gap-2 flex-shrink-0">
           <a
             href="/account/signup"
             class="btn btn-outline-dark rounded-pill px-4"
@@ -76,6 +113,9 @@
             class="btn btn-dark rounded-pill px-4"
           >Login</a>
         </div>
+          {{/if}}
+        
+        
 
         <button
           class="btn btn-outline-secondary d-lg-none rounded-circle flex-shrink-0"

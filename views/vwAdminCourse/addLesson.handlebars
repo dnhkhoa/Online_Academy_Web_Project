@@ -7,7 +7,7 @@
     <form
       id="frmAddLesson"
       method="post"
-      enctype="multipart/form-data"
+      action="/course/addlesson"          {{! [CHANGED] gửi đúng route POST }}
       class="card shadow-sm lesson-form-card"
     >
       <div class="card-header">
@@ -15,132 +15,116 @@
       </div>
 
       <div class="card-body">
-        <!--COURSE SECTION -->
+        <!-- COURSE BỐI CẢNH -->
+        {{#if course}}
+          <div class="alert alert-info mb-3">
+            <strong>Course:</strong> {{course.title}}
+          </div>
+          <input type="hidden" name="courseid" value="{{course.courseid}}" />     {{! [ADDED] ẩn courseid cho BE }}
+        {{else}}
+          <div class="alert alert-warning">No course context. Go back and choose a course.</div>
+        {{/if}}
+
+        <!-- COURSE SECTION -->
         <section class="form-panel panel-soft">
           <div class="form-section">
-            <label class="form-label" for="selCourseSection">Course Section
-            </label>
+            <label class="form-label" for="selCourseSection">Course Section (existing)</label>
             <select class="form-select" id="selCourseSection">
               <option value="">-- Select section --</option>
-              <option value="s1">Section A: Fundamentals</option>
-              <option value="s2">Section B: Advanced Topics</option>
-              <option value="s3">Section C: Deployment</option>
+              {{#each sections}}                                                        {{! [CHANGED] render từ server }}
+                <option value="{{this.sectionid}}">[{{this.order}}] {{this.title}}</option>
+              {{/each}}
             </select>
           </div>
 
           <div class="form-section">
-            <label class="form-label" for="txtNewSectionName">Or create new
-              Course Section</label>
+            <label class="form-label" for="txtNewSectionName">Or create new Course Section</label>
             <input
               type="text"
               class="form-control"
               id="txtNewSectionName"
+              name="newSectionName"                                                  {{! [CHANGED] thêm name để BE nhận }}
               placeholder="e.g. React Basics"
             />
-
           </div>
         </section>
 
-        <!--LESSONS -->
+        <!-- LESSON (1 bài) -->
         <section class="form-panel panel-soft" id="lessonsPanel">
-          <div
-            class="panel-header d-flex align-items-center justify-content-between"
-          >
-            <div>
-              <h6 class="mb-1">Lessons</h6>
-
-            </div>
-            <button
-              type="button"
-              class="btn btn-sm btn-primary"
-              id="btnAddLesson"
-            >
-              <i class="bi bi-plus-lg"></i>
-              Add lesson
-            </button>
+          <div class="panel-header d-flex align-items-center justify-content-between">
+            <div><h6 class="mb-1">Lesson</h6></div>
           </div>
 
-          <!-- danh sách lesson dạng thẻ, giống form-section -->
           <div class="lesson-list" id="lessonList">
-            <!-- Lesson item mẫu 1 -->
             <div class="lesson-item card shadow-sm border-0">
               <div class="card-body">
                 <div class="form-section">
-                  <label class="form-label">Lesson Name</label>
+                  <label class="form-label" for="txtLessonTitle">Lesson Title <span class="text-danger">*</span></label>
                   <input
                     type="text"
+                    id="txtLessonTitle"
+                    name="title"                                                     {{! [CHANGED] có name="title" }}
                     class="form-control"
                     placeholder="e.g., Introduction"
                     required
                   />
                 </div>
+
                 <div class="row g-3">
-                  <div class="col-sm-4">
-                    <div class="form-section">
-                      <label class="form-label">Duration</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        placeholder="e.g., 07:15"
-                      />
-                    </div>
-                  </div>
                   <div class="col-sm-8">
                     <div class="form-section">
-                      <label class="form-label">YouTube URL (optional)</label>
+                      <label class="form-label" for="txtVideoUrl">YouTube URL (optional)</label>
                       <input
                         type="url"
+                        id="txtVideoUrl"
+                        name="video_url"                                             {{! [CHANGED] có name="video_url" }}
                         class="form-control"
                         placeholder="https://youtu.be/..."
                       />
                     </div>
                   </div>
+                  <div class="col-sm-4 d-flex align-items-end">
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="chkPreview" name="preview" /> {{! [ADDED] preview }}
+                      <label class="form-check-label" for="chkPreview">Preview</label>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="card-footer bg-white d-flex justify-content-end">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-danger btnRemoveLesson"
-                >
-                  <i class="bi bi-trash"></i>
-                  Remove
-                </button>
+
+                <div class="form-section mt-3">
+                  <label class="form-label" for="txtContent">Content (HTML)</label>
+                  <textarea id="txtContent" name="content" rows="10" class="form-control"></textarea> {{! [ADDED] TinyMCE target }}
+                </div>
               </div>
             </div>
           </div>
         </section>
-
       </div>
 
       <div class="card-footer">
         <div class="action-buttons">
-          <a
-            class="btn btn-outline-success"
-            href="/course/lesson"
-            role="button"
-          >
-            <i class="bi bi-arrow-left"></i>
-            Back
+          <a class="btn btn-outline-success" href="/course/lesson{{#if course}}?courseid={{course.courseid}}{{/if}}" role="button">
+            <i class="bi bi-arrow-left"></i> Back
           </a>
           <div class="secondary-actions">
             <button type="reset" class="btn btn-outline-secondary">
-              <i class="bi bi-arrow-counterclockwise"></i>
-              Reset
+              <i class="bi bi-arrow-counterclockwise"></i> Reset
             </button>
             <button type="submit" class="btn btn-success">
-              <i class="bi bi-check2"></i>
-              Save
+              <i class="bi bi-check2"></i> Save
             </button>
           </div>
         </div>
       </div>
 
       <!-- Ẩn: backend có thể đọc nếu muốn -->
-      <input type="hidden" id="resolvedSectionId" name="sectionId" value="" />
+      <input type="hidden" id="resolvedSectionId" name="sectionId" value="" />     {{! [CHANGED] đúng name=sectionId }}
     </form>
   </div>
 </div>
 
 {{#section "scripts"}}
+  <script src="https://cdn.tiny.cloud/1/mmaq3rslqswh6rx02556bksjien4alrpawgfc7mupcl85zag/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+  <script src="/static/tinymce-init.js?v=2"></script> 
   <script defer src="/static/addLesson.js"></script>
 {{/section}}

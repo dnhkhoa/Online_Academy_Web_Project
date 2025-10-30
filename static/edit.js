@@ -1,20 +1,17 @@
 (function () {
-  function ready(fn) {
-    if (document.readyState === "loading")
-      document.addEventListener("DOMContentLoaded", fn);
+  function onReady(fn) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
     else fn();
   }
 
-  ready(function () {
+  onReady(function () {
     const form = document.getElementById("frmEditCategory");
     if (!form) return;
 
-    // Parent
+    // ===== ELEMENTS =====
     const txtParentName = form.querySelector("#txtParentName");
     const parentId = form.querySelector("#parentId");
-    const txtParentId = document.getElementById("txtParentId");
 
-    // Toggle child
     const toggleChild = form.querySelector("#toggleChild");
     const childPicker = form.querySelector("#childPicker");
     const filterChild = form.querySelector("#filterChild");
@@ -24,17 +21,15 @@
     const btnDeleteChild = form.querySelector("#btnDeleteChild");
     const boundChildId = form.querySelector("#boundChildId");
 
-    // Toggle course
     const courseToggleRow = form.querySelector("#courseToggleRow");
     const toggleCourse = form.querySelector("#toggleCourse");
     const coursePicker = form.querySelector("#coursePicker");
     const filterCourse = form.querySelector("#filterCourse");
-    const selCourse = form.querySelector("#selCourse");
+    const selCourse = form.querySelector("#selCourse"); // select KHÔNG có name
     const isEditingCourseHidden = form.querySelector("#isEditingCourseHidden");
     const btnDeleteCourse = form.querySelector("#btnDeleteCourse");
-    const boundCourseId = form.querySelector("#boundCourseId");
+    const boundCourseId = form.querySelector("#boundCourseId"); // hidden có name="courseId"
 
-    // Course fields
     const panelMedia = document.getElementById("panelMedia");
     const panelCourseMain = document.getElementById("panelCourseMain");
     const panelRich = document.getElementById("panelRich");
@@ -47,210 +42,202 @@
     const numDiscount = document.getElementById("numDiscount");
     const txtStatus = document.getElementById("txtStatus");
 
-    // ===== MOCK DATA (thay bằng API/SSR khi tích hợp thật) =====
-    // Child categories (L2) của parent hiện tại
-    const CHILDREN = [
-      { id: "11", name: "Lập trình Web" },
-      { id: "12", name: "Lập trình thiết bị di động" },
-      { id: "13", name: "Khoa học dữ liệu" },
-    ];
-    // Courses theo childId
-    const COURSES = {
-      11: [
-        {
-          courseid: "201",
-          title: "Web cơ bản",
-          tinydes: "Tiny MCE",
-          fulldes: "TinyMCE",
-          price: 1200000,
-          discount: 200000,
-          thumbnail: "",
-          status: "published",
-        },
-        {
-          courseid: "202",
-          title: "Web nâng cao",
-          tinydes: "Tiny MCE",
-          fulldes: "TinyMCE",
-          price: 2200000,
-          discount: 0,
-          thumbnail: "",
-          status: "draft",
-        },
-      ],
-      12: [
-        {
-          courseid: "301",
-          title: "Android Kotlin",
-          tinydes: "Tiny MCE",
-          fulldes: "TinyMCE",
-          price: 2400000,
-          discount: 300000,
-          thumbnail: "",
-          status: "published",
-        },
-      ],
-      13: [],
-    };
-    // ===========================================================
+    const btnSave = form.querySelector("#btnSave");
+    const btnDeleteParent = form.querySelector("#btnDeleteParent");
+    const hidCatId = form.querySelector("#hidCatId");
+    const hidParentId = form.querySelector("#hidParentId");
+    const hidCatName = form.querySelector("#hidCatName");
 
-    function show(el, on) {
-      el.classList.toggle("d-none", !on);
+    // ===== UTILS =====
+    function show(el, on) { if (el) el.classList.toggle("d-none", !on); }
+    function syncTinyMCE() { try { if (window.tinymce?.triggerSave) tinymce.triggerSave(); } catch (_) { } }
+    function ensureHidden(name, value) {
+      let ip = form.querySelector(`input[name="${CSS.escape(name)}"]`);
+      if (!ip) { ip = document.createElement("input"); ip.type = "hidden"; ip.name = name; form.appendChild(ip); }
+      ip.value = value;
     }
 
-    // ---- CHILD (L2) ----
-    function populateChildren(keyword = "") {
-      selChild.innerHTML = "";
-      const kw = (keyword || "").toLowerCase();
-      CHILDREN.filter((c) =>
-        kw ? c.name.toLowerCase().includes(kw) : true
-      ).forEach((c) => {
-        const opt = document.createElement("option");
-        opt.value = c.id;
-        opt.textContent = c.name;
-        selChild.appendChild(opt);
-      });
+    // ===== DATA =====
+    const COURSE_CACHE = new Map(); // key = childId
 
-      if (selChild.options.length) {
-        selChild.disabled = false;
-        selChild.selectedIndex = 0;
-        onSelectChild();
-      } else {
-        selChild.disabled = true;
-        txtChildName.value = "";
-        boundChildId.value = "";
-        // Ẩn nhánh Course luôn
-        show(courseToggleRow, false);
-        show(coursePicker, false);
-        toggleCourse.checked = false;
-        onToggleCourse();
+    async function loadCourses(childId) {
+      const key = String(childId || "");
+      if (!key) return [];
+      if (COURSE_CACHE.has(key)) return COURSE_CACHE.get(key);
+      try {
+        const url = `/course/byChild.json?childid=${encodeURIComponent(key)}`; // dùng prefix /course
+        console.log('[Edit] fetch', url);
+        const res = await fetch(url, { headers: { Accept: "application/json" } });
+        if (!res.ok) {
+          console.error('[Edit] API error status =', res.status);
+          return [];
+        }
+        const list = (await res.json()) || [];
+        console.log('[Edit] API result length =', list.length, 'sample:', list[0]);
+        COURSE_CACHE.set(key, list);
+        return list;
+      } catch (e) {
+        console.error('loadCourses error:', e);
+        return [];
+      }
+    }
+
+    // ===== CHILD =====
+    function filterChildOptions(keyword = "") {
+      const kw = (keyword || "").toLowerCase().trim();
+      Array.from(selChild.options).forEach((opt) => {
+        const text = (opt.textContent || "").toLowerCase();
+        opt.hidden = !!kw && !text.includes(kw);
+      });
+      const cur = selChild.options[selChild.selectedIndex];
+      if (cur && cur.hidden) {
+        const first = Array.from(selChild.options).find((o) => !o.hidden);
+        selChild.value = first ? first.value : "";
       }
     }
 
     function onToggleChild() {
-      const on = toggleChild.checked;
-      isEditingChildHidden.value = on ? "1" : "0";
+      const on = !!toggleChild?.checked;
+      if (isEditingChildHidden) isEditingChildHidden.value = on ? "1" : "0";
+
       show(childPicker, on);
-      show(courseToggleRow, on); // chỉ khi có child mới cho bật Course
+      show(courseToggleRow, on);
+
       if (!on) {
-        // reset child state
-        selChild.innerHTML = "";
-        filterChild.value = "";
-        txtChildName.value = "";
-        boundChildId.value = "";
-        // tắt course branch
-        toggleCourse.checked = false;
+        selChild && (selChild.value = "");
+        filterChild && (filterChild.value = "");
+        txtChildName && (txtChildName.value = "");
+        boundChildId && (boundChildId.value = "");
+        if (toggleCourse) toggleCourse.checked = false;
         onToggleCourse();
-      } else {
-        populateChildren();
+        show(btnDeleteChild, false);
+        show(courseToggleRow, false);
+        return;
       }
+
+      if (selChild && !selChild.value) {
+        const first = Array.from(selChild.options || []).find((o) => !o.hidden);
+        if (first) selChild.value = first.value;
+      }
+      onSelectChild();
     }
 
     function onFilterChild() {
-      if (!toggleChild.checked) return;
-      populateChildren(filterChild.value);
+      if (!toggleChild?.checked) return;
+      filterChildOptions(filterChild.value);
+      onSelectChild();
     }
 
     function onSelectChild() {
+      if (!selChild) return;
       const id = selChild.value;
-      const item = CHILDREN.find((x) => x.id === id);
-      if (!item) {
-        txtChildName.value = "";
-        boundChildId.value = "";
-        show(courseToggleRow, false);
-        toggleCourse.checked = false;
-        onToggleCourse();
-        return;
-      }
-      txtChildName.value = item.name;
-      boundChildId.value = item.id;
-      show(courseToggleRow, true);
-      // khi đổi child mà đang bật course → reload course list
-      if (toggleCourse.checked) populateCourses();
+      const opt = selChild.options[selChild.selectedIndex];
+      const hasChild = !!(opt && opt.value);
+
+      txtChildName && (txtChildName.value = hasChild ? (opt.textContent || "") : "");
+      boundChildId && (boundChildId.value = hasChild ? id : "");
+      console.log('[Edit] boundChildId =', boundChildId?.value);
+
+      show(courseToggleRow, hasChild);
+      show(btnDeleteChild, !!(toggleChild?.checked && hasChild));
+
+      if (toggleCourse?.checked) populateCourses();
     }
 
-    // ---- COURSE (courses) ----
-    function populateCourses(keyword = "") {
-      const childId = boundChildId.value;
-      const list = COURSES[childId] || [];
+    // ===== COURSE =====
+    async function populateCourses(keyword = "") {
+      const childId = boundChildId ? boundChildId.value : "";
+      const list = await loadCourses(childId);
       const kw = (keyword || "").toLowerCase();
 
+      if (!selCourse) return;
       selCourse.innerHTML = "";
-      list
-        .filter((c) => {
-          if (!kw) return true;
-          return (c.title || "").toLowerCase().includes(kw);
-        })
-        .forEach((c) => {
-          const opt = document.createElement("option");
-          opt.value = c.courseid;
-          opt.textContent = `${c.courseid} — ${c.title}`;
-          selCourse.appendChild(opt);
-        });
 
-      if (selCourse.options.length) {
-        selCourse.disabled = false;
-        selCourse.selectedIndex = 0;
-        onSelectCourse();
-      } else {
+      const filtered = list.filter(c => !kw || (c.title || "").toLowerCase().includes(kw));
+
+      if (!filtered.length) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = list.length === 0
+          ? "(No course returned by API for this child)"
+          : "(No course matched by filter)";
+        selCourse.appendChild(opt);
         selCourse.disabled = true;
-        // clear course fields
         fillCourseFields(null);
+        return;
       }
+
+      filtered.forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = String(c.courseid);
+        opt.textContent = `${c.courseid} — ${c.title}`;
+        selCourse.appendChild(opt);
+      });
+
+      selCourse.disabled = false;
+      selCourse.selectedIndex = 0;
+      onSelectCourse();
     }
 
     function onToggleCourse() {
-      const on = toggleCourse.checked && !!boundChildId.value;
-      isEditingCourseHidden.value = on ? "1" : "0";
+      const on = !!(toggleCourse?.checked && boundChildId && boundChildId.value);
+      if (isEditingCourseHidden) isEditingCourseHidden.value = on ? "1" : "0";
+
       show(coursePicker, on);
       show(panelMedia, on);
       show(panelCourseMain, on);
       show(panelRich, on);
       show(btnDeleteCourse, on);
+
       if (on) populateCourses();
       else fillCourseFields(null);
     }
 
-    function onFilterCourse() {
-      if (!toggleCourse.checked) return;
-      populateCourses(filterCourse.value);
+    async function onFilterCourse() {
+      if (!toggleCourse?.checked) return;
+      await populateCourses(filterCourse.value);
     }
 
-    function onSelectCourse() {
-      const id = selCourse.value;
-      const childId = boundChildId.value;
-      const list = COURSES[childId] || [];
-      const course = list.find((x) => x.courseid === id) || null;
+    async function onSelectCourse() {
+      if (!selCourse || !boundChildId) return;
+      const id = String(selCourse.value || "");
+      const childId = String(boundChildId.value || "");
+      const list = await loadCourses(childId);
+      const course = list.find((x) => String(x.courseid) === id) || null;
+      console.log('[Edit] selected course =', course);
       fillCourseFields(course);
     }
 
     function fillCourseFields(course) {
       if (!course) {
-        boundCourseId.value = "";
-        txtCourseTitle.value = "";
-        txtThumbnailUrl.value = "";
+        boundCourseId && (boundCourseId.value = "");
+        txtCourseTitle && (txtCourseTitle.value = "");
+        txtThumbnailUrl && (txtThumbnailUrl.value = "");
         if (previewImg)
-          previewImg.src =
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80";
-        txtTinyDes.value = "Tiny MCE";
-        txtFullDes.value = "TinyMCE";
-        numPrice.value = "";
-        numDiscount.value = "";
-        txtStatus.value = "";
+          previewImg.src = "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80";
+        txtTinyDes && (txtTinyDes.value = "Tiny MCE");
+        txtFullDes && (txtFullDes.value = "TinyMCE");
+        numPrice && (numPrice.value = "");
+        numDiscount && (numDiscount.value = "");
+        txtStatus && (txtStatus.value = "");
         return;
       }
-      boundCourseId.value = course.courseid;
-      txtCourseTitle.value = course.title || "";
-      txtThumbnailUrl.value = course.thumbnail || "";
-      if (previewImg && course.thumbnail) previewImg.src = course.thumbnail;
-      txtTinyDes.value = course.tinydes || "Tiny MCE";
-      txtFullDes.value = course.fulldes || "TinyMCE";
-      numPrice.value = course.price ?? "";
-      numDiscount.value = course.discount ?? "";
-      txtStatus.value = course.status || "";
+      boundCourseId && (boundCourseId.value = course.courseid);
+      txtCourseTitle && (txtCourseTitle.value = course.title || "");
+      txtThumbnailUrl && (txtThumbnailUrl.value = course.thumbnail || "");
+      if (previewImg) {
+        previewImg.src = (course.thumbnail && String(course.thumbnail).trim())
+          ? course.thumbnail
+          : "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80";
+      }
+      txtTinyDes && (txtTinyDes.value = course.tinydes || "Tiny MCE");
+      txtFullDes && (txtFullDes.value = course.fulldes || "TinyMCE");
+      numPrice && (numPrice.value = course.price ?? "");
+      numDiscount && (numDiscount.value = course.discount ?? "");
+      txtStatus && (txtStatus.value = course.status || "");
     }
 
-    // Preview khi nhập URL thumbnail
+    // Preview thumbnail
     if (txtThumbnailUrl && previewImg) {
       txtThumbnailUrl.addEventListener("input", () => {
         const url = (txtThumbnailUrl.value || "").trim();
@@ -258,76 +245,143 @@
       });
     }
 
-    // ===== INIT =====
-    txtParentName.value = txtParentName.value || "Parent Sample";
-    parentId.value = parentId.value || "P-101";
-    if (txtParentId) txtParentId.textContent = parentId.value;
+    // ===== SUBMIT =====
+    btnDeleteParent?.addEventListener("click", () => {
+      if (!parentId?.value) return;
+      if (!hidCatId || !hidParentId || !hidCatName) return;
 
-    toggleChild.addEventListener("change", onToggleChild);
-    filterChild.addEventListener("input", onFilterChild);
-    selChild.addEventListener("change", onSelectChild);
+      if (isEditingChildHidden) isEditingChildHidden.value = "0";
+      if (boundChildId) boundChildId.value = "";
 
-    toggleCourse.addEventListener("change", onToggleCourse);
-    filterCourse.addEventListener("input", onFilterCourse);
-    selCourse.addEventListener("change", onSelectCourse);
+      hidCatId.value = parentId.value;
+      hidParentId.value = "";
+      hidCatName.value = "";
+    });
 
-    // mặc định: chỉ sửa Parent
+    btnDeleteChild?.addEventListener("click", (e) => {
+      if (!hidCatId || !hidParentId || !hidCatName) return;
+      const childId = selChild?.value;
+      const pId = parentId?.value;
+      if (!childId) {
+        e.preventDefault();
+        alert("Hãy chọn child (L2) để xóa.");
+        return;
+      }
+      hidCatId.value = childId;
+      hidParentId.value = pId || "";
+      hidCatName.value = "";
+    });
+
+    form.addEventListener("submit", (e) => {
+      const submitter = e.submitter;
+      const isChildEditing = isEditingChildHidden?.value === "1";
+      const isCourseEditing = isEditingCourseHidden?.value === "1";
+
+      syncTinyMCE();
+
+      const isSaving =
+        submitter === btnSave ||
+        (submitter && submitter.formAction && submitter.formAction.endsWith("/admin/categories/patch"));
+
+      if (isSaving) {
+        if (!parentId) return;
+
+        if (isCourseEditing) {
+          const childId = boundChildId?.value || "";
+          const courseId = boundCourseId?.value || "";
+          if (!childId || !courseId) {
+            e.preventDefault();
+            alert("Hãy chọn child (L2) và course để lưu.");
+            return;
+          }
+          if (submitter) submitter.formAction = "/course/patch";
+          form.action = "/course/patch";
+
+          ensureHidden("parentId", parentId.value || "");
+          ensureHidden("childId", childId);
+          ensureHidden("catid", childId);
+          ensureHidden("courseId", courseId);
+          return;
+        }
+
+        if (isChildEditing) {
+          const childId = selChild ? selChild.value : "";
+          if (!childId) {
+            e.preventDefault();
+            alert("Hãy chọn child (L2) để lưu.");
+            return;
+          }
+          const childText =
+            (txtChildName?.value || "").trim() ||
+            (selChild?.options[selChild.selectedIndex]?.textContent || "").trim();
+
+          hidCatId.value = childId;
+          hidParentId.value = parentId.value;
+          hidCatName.value = childText;
+
+          if (submitter) submitter.formAction = "/admin/categories/patch";
+          form.action = "/admin/categories/patch";
+          return;
+        }
+
+        // save parent
+        hidCatId.value = parentId.value;
+        hidParentId.value = "";
+        hidCatName.value = (txtParentName?.value || "").trim();
+
+        if (submitter) submitter.formAction = "/admin/categories/patch";
+        form.action = "/admin/categories/patch";
+        return;
+      }
+
+      // Delete course
+      if (submitter === btnDeleteCourse ||
+        (submitter && submitter.formAction && submitter.formAction.endsWith("/course/del"))) {
+        const courseId = boundCourseId?.value || "";
+        if (!courseId) {
+          e.preventDefault();
+          alert("Hãy chọn course để xóa.");
+          return;
+        }
+        ensureHidden("parentId", parentId?.value || "");
+        ensureHidden("courseId", courseId);
+        return;
+      }
+
+      // Delete child
+      if (submitter === btnDeleteChild) {
+        const childId = selChild ? selChild.value : "";
+        if (!childId) {
+          e.preventDefault();
+          alert("Hãy chọn child (L2) để xóa.");
+          return;
+        }
+        hidCatId.value = childId;
+        hidParentId.value = parentId?.value || "";
+        hidCatName.value = "";
+        return;
+      }
+
+      if (submitter === btnDeleteParent) {
+        hidCatId.value = parentId?.value || "";
+        hidParentId.value = "";
+        hidCatName.value = txtParentName?.value || "";
+        if (isEditingChildHidden) isEditingChildHidden.value = "0"; 
+        if (boundChildId) boundChildId.value = "";
+        return;
+      }
+    });
+
+    // INIT
+    toggleChild && toggleChild.addEventListener("change", onToggleChild);
+    filterChild && filterChild.addEventListener("input", onFilterChild);
+    selChild && selChild.addEventListener("change", onSelectChild);
+
+    toggleCourse && toggleCourse.addEventListener("change", onToggleCourse);
+    filterCourse && filterCourse.addEventListener("input", onFilterCourse);
+    selCourse && selCourse.addEventListener("change", onSelectCourse);
+
     onToggleChild();
     onToggleCourse();
-  });
-})();
-
-(function () {
-  function onReady(fn) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fn);
-    } else {
-      fn();
-    }
-  }
-
-  onReady(function () {
-    var form = document.getElementById("frmEditCategory");
-    if (!form) return;
-
-    var toggleChild = form.querySelector("#toggleChild");
-    var childPicker = form.querySelector("#childPicker");
-    var selChild = form.querySelector("#selChild");
-    var isEditingChild = form.querySelector("#isEditingChild"); // LƯU Ý: đúng id với HTML hiện tại
-    var btnDeleteChild = form.querySelector("#btnDeleteChild");
-    var courseToggleRow = form.querySelector("#courseToggleRow"); // chỉ cho bật Course khi có child
-
-    function show(el, on) {
-      if (!el) return;
-      el.classList.toggle("d-none", !on);
-    }
-
-    function refreshChildUI() {
-      var editing = !!(toggleChild && toggleChild.checked);
-      // bật/tắt nhóm chọn child
-      show(childPicker, editing);
-      if (isEditingChild) isEditingChild.value = editing ? "1" : "0";
-
-      // có child được chọn?
-      var hasChild =
-        !!selChild &&
-        selChild.options &&
-        selChild.options.length > 0 &&
-        selChild.value &&
-        selChild.value.trim() !== "";
-
-      // chỉ hiện nút Delete khi đang chỉnh child và có child được chọn
-      show(btnDeleteChild, editing && hasChild);
-
-      // chỉ hiện công tắc chỉnh course khi có child
-      show(courseToggleRow, editing && hasChild);
-    }
-
-    // Khi đổi trạng thái toggle hoặc chọn child mới → cập nhật UI
-    if (toggleChild) toggleChild.addEventListener("change", refreshChildUI);
-    if (selChild) selChild.addEventListener("change", refreshChildUI);
-
-    // Khởi tạo UI lúc vào trang
-    refreshChildUI();
   });
 })();

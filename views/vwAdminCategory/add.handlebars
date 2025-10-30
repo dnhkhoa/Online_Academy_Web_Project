@@ -1,199 +1,148 @@
 {{#section "styles"}}
-  <link rel="stylesheet" href="/static/add.css" />
+<link rel="stylesheet" href="/static/add.css" />
 {{/section}}
 
 <div class="category-add-container">
   <div class="content-grid single-column">
-    <form
-      id="frmAddCategory"
-      method="post"
-      enctype="multipart/form-data"
-      class="card shadow-sm category-form-card"
-    >
+    <form id="frmAddCategory" method="post" action="/admin/categories/add" class="card shadow-sm category-form-card"
+      data-preset="{{presetMode}}">
       <div class="card-header">
         <h5 class="card-title mb-0">Add Category / Course</h5>
       </div>
 
       <div class="card-body">
-
+        <!-- 1️⃣ CATEGORY SECTION -->
         <section class="form-panel">
-
           <!-- Level 1 -->
           <div class="form-section">
             <label class="form-label" for="selL1">Level 1 (Parent category)</label>
             <select class="form-select" id="selL1" name="l1catid">
-
+              <option value="">-- Select L1 --</option>
+              {{#each parents}}
+              <option value="{{this.catid}}">{{this.catname}}</option>
+              {{/each}}
             </select>
           </div>
 
           <div class="form-section">
             <label class="form-label" for="txtNewL1">Or create new Level 1</label>
-            <input
-              type="text"
-              class="form-control"
-              id="txtNewL1"
-              name="newL1Name"
-              placeholder="e.g. IT"
-            />
-
+            <input type="text" class="form-control" id="txtNewL1" name="newL1Name" placeholder="e.g. IT" />
           </div>
 
           <!-- Level 2 -->
           <div class="form-section">
             <label class="form-label" for="selL2">Level 2 (Child category)</label>
-            <select class="form-select" id="selL2" name="l2catid" disabled>
+            <select class="form-select" id="selL2" name="l2catid">
               <option value="">-- Select L2 --</option>
             </select>
-
           </div>
 
           <div class="form-section">
-            <label class="form-label" for="txtNewL2">Or create new Level 2 under
-              selected L1</label>
-            <input
-              type="text"
-              class="form-control"
-              id="txtNewL2"
-              name="newL2Name"
-              placeholder="e.g. Lập trình Web"
-            />
-
+            <label class="form-label" for="txtNewL2">Or create new Level 2 under selected L1</label>
+            <input type="text" class="form-control" id="txtNewL2" name="newL2Name" placeholder="e.g. Lập trình Web" />
           </div>
         </section>
 
-        <!-- 2) COURSE SWITCH -->
+        <!-- Templates để load L2 -->
+        <div id="l2-templates" class="d-none">
+          {{#each parents}}
+          <select data-parentid="{{this.catid}}">
+            <option value="">-- Select L2 --</option>
+            {{#each (lookup ../childrenMap this.catid)}}
+            <option value="{{this.catid}}">{{this.catname}}</option>
+            {{/each}}
+          </select>
+          {{/each}}
+        </div>
+
+        <!-- 2️⃣ COURSE SWITCH -->
         <section class="form-panel">
           <div class="panel-header">
             <h6>Add Course</h6>
-            <p>Turn on to create L2 courses; turn off if you only want to create
-              categories.</p>
+            <p>Turn on to create L2 courses; turn off if you only want to create categories.</p>
           </div>
 
           <div class="form-section toggles">
             <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="switchCourseMode"
-              />
-              <label class="form-check-label" for="switchCourseMode">Add course
-                details</label>
+              <input class="form-check-input" type="checkbox" id="switchCourseMode" />
+              <label class="form-check-label" for="switchCourseMode">Add course details</label>
             </div>
           </div>
 
-          <!-- Tiêu đề course (khóa học) -->
-          <div class="form-section d-none" id="rowCourseTitle">
+          <!-- Title -->
+          <div class="form-section " id="rowCourseTitle">
             <label class="form-label" for="txtCourseTitle">Course title</label>
-            <input
-              type="text"
-              class="form-control"
-              id="txtCourseTitle"
-              name="title"
-              placeholder="vd: Lập trình Web cơ bản"
-            />
+            <input type="text" class="form-control" id="txtCourseTitle" name="title"
+              placeholder="vd: Lập trình Web cơ bản" />
           </div>
         </section>
 
-        <!-- 3) MEDIA (COURSE ONLY) -->
-        <section class="form-panel detail-block d-none" id="panelMedia">
+        <!-- 3️⃣ MEDIA (COURSE ONLY) -->
+        <section class="form-panel detail-block " id="panelMedia">
           <div class="panel-header">
             <h6>Media & visibility</h6>
             <p>Ảnh bìa cho course (map vào <code>courses.thumbnail</code>).</p>
           </div>
-
           <div class="form-section">
             <label class="form-label" for="fileCover">Course cover</label>
             <div class="media-upload">
               <div class="media-preview">
-                <img
+                <!-- >>> CHANGE: thêm id để JS thay src -->
+                <img id="imgCourseCoverPreview"
                   src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=720&q=80"
-                  alt="Course cover preview"
-                />
+                  alt="Course cover preview" />
               </div>
               <div class="media-actions">
                 <p class="media-note">Khuyến nghị 1200×640px hoặc lớn hơn.</p>
                 <div class="media-controls">
                   <label for="fileCover" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-upload"></i>
-                    Upload image
+                    <i class="bi bi-upload"></i> Upload image
                   </label>
-                  <input
-                    type="file"
-                    class="d-none"
-                    id="fileCover"
-                    accept="image/*"
-                  />
-                  <input
-                    type="url"
-                    class="form-control form-control-sm"
-                    id="txtThumbnailUrl"
-                    name="thumbnail"
-                    placeholder="Or paste an image URL"
-                  />
+                  <!-- input file dùng cho AJAX upload; không cần name/enctype -->
+                  <input type="file" class="d-none" id="fileCover" accept="image/*" />
+                  <input type="url" class="form-control form-control-sm" id="txtThumbnailUrl" name="thumbnail"
+                    placeholder="Or paste an image URL" />
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- 4) HERO (COURSE ONLY) -->
-        <section class="form-panel detail-block d-none" id="panelHero">
+        <!-- 4️⃣ HERO (COURSE ONLY) -->
+        <section class="form-panel detail-block" id="panelHero">
           <div class="form-section">
             <label for="txtTinyDes" class="form-label">Subtitle (tinydes)</label>
-            <textarea
-              class="form-control tinymce"
-              id="txtTinyDes"
-              name="tinydes"
-              rows="3"
-            >Tiny MCE</textarea>
+            <input type="text" class="form-control" id="txtTinyDes" name="tinydes"
+              placeholder="A brief description of the course" />
           </div>
         </section>
 
-        <!-- 5) RICH (COURSE ONLY) -->
-        <div class="rich-grid detail-block d-none" id="panelRich">
+
+        <!-- 5️⃣ FULL DESCRIPTION (TinyMCE) -->
+        <div class="rich-grid detail-block " id="panelRich">
           <section class="rich-panel">
             <div class="panel-header">
               <h6>Course description (fulldes)</h6>
               <p>Mô tả chi tiết của khóa học.</p>
             </div>
-            <textarea
-              class="form-control tinymce"
-              id="txtFullDes"
-              name="fulldes"
-              rows="6"
-            >TinyMCE</textarea>
+            <textarea class="form-control tinymce" id="txtFullDes" name="fulldes" rows="6"></textarea>
           </section>
 
           <section class="rich-panel">
             <div class="panel-header">
               <h6>Pricing</h6>
-              <p>Map vào
-                <code>courses.price</code>
-                và
-                <code>courses.discount</code>.</p>
+              <p>Map vào <code>courses.price</code> và <code>courses.discount</code>.</p>
             </div>
             <div class="row g-2">
               <div class="col-sm-6">
                 <label class="form-label" for="numPrice">Price</label>
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control"
-                  id="numPrice"
-                  name="price"
-                  placeholder="e.g. 1200000"
-                />
+                <input type="number" min="0" class="form-control" id="numPrice" name="price"
+                  placeholder="e.g. 1200000" />
               </div>
               <div class="col-sm-6">
                 <label class="form-label" for="numDiscount">Discount</label>
-                <input
-                  type="number"
-                  min="0"
-                  class="form-control"
-                  id="numDiscount"
-                  name="discount"
-                  placeholder="e.g. 200000"
-                />
+                <input type="number" min="0" class="form-control" id="numDiscount" name="discount"
+                  placeholder="e.g. 200000" />
               </div>
             </div>
           </section>
@@ -201,52 +150,44 @@
           <section class="rich-panel wide">
             <div class="panel-header">
               <h6>Status</h6>
-              <p>Map vào
-                <code>courses.status</code>
-                (ví dụ: draft/published/hide).</p>
+              <p>Map vào <code>courses.status</code> (draft/published/hide).</p>
             </div>
-            <input
-              type="text"
-              class="form-control"
-              id="txtStatus"
-              name="status"
-              placeholder="draft / published"
-            />
+            <input type="text" class="form-control" id="txtStatus" name="status" placeholder="draft / published" />
           </section>
         </div>
       </div>
 
       <div class="card-footer">
         <div class="action-buttons">
-          <a
-            class="btn btn-outline-success"
-            href="/admin/categories/list"
-            role="button"
-          >
-            <i class="bi bi-arrow-left"></i>
-            Back
+          <a class="btn btn-outline-success" href="/admin/categories/list" role="button">
+            <i class="bi bi-arrow-left"></i> Back
           </a>
           <div class="secondary-actions">
             <button type="reset" class="btn btn-outline-secondary">
-              <i class="bi bi-arrow-counterclockwise"></i>
-              Reset
+              <i class="bi bi-arrow-counterclockwise"></i> Reset
             </button>
             <button type="submit" class="btn btn-success">
-              <i class="bi bi-check2"></i>
-              Save
+              <i class="bi bi-check2"></i> Save
             </button>
           </div>
         </div>
       </div>
 
-      <!-- hidden to tell backend what we are doing -->
+      <!-- Hidden fields -->
       <input type="hidden" id="mode" name="mode" value="category-only" />
-      <!-- L2 catid thực sự dùng cho course (khi Add course details) -->
       <input type="hidden" id="resolvedL2CatId" name="catid" value="" />
+      <input type="hidden" id="catname" name="catname" />
+      <input type="hidden" id="parentid" name="parentid" />
+      <input type="hidden" id="photos" name="photos" value="" />
+
+
     </form>
   </div>
 </div>
 
 {{#section "scripts"}}
-  <script defer src="/static/add.js"></script>
+<script src="https://cdn.tiny.cloud/1/mmaq3rslqswh6rx02556bksjien4alrpawgfc7mupcl85zag/tinymce/7/tinymce.min.js"
+  referrerpolicy="origin"></script>
+<script src="/static/tinymce-init.js?v=2"></script>
+<script defer src="/static/add.js?v=2"></script>
 {{/section}}

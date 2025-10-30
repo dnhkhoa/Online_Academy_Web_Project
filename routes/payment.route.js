@@ -1,124 +1,263 @@
-import express from "express";
-import crypto from "crypto";
+import express from 'express';
+import db from '../utils/db.js';
+import { createPayment, verifyIpnSignature } from '../services/momo.js';
 
 const router = express.Router();
 
-// Payment review page
-router.get("/", (req, res) => {
-  const amount = Number(req.query.amount || 0);
-  const items = String(req.query.items || "");
-  const method = String(req.query.method || "momo");
+function buildOrderInfo(order, items) {
+  const names = items.map(i => i.title).filter(Boolean);
+  if (!names.length) return `Thanh toán đơn hàng #${order.orderid}`;
+  const head = names.slice(0,2).join(', ');
+  const more = names.length > 2 ? ` +${names.length-2} courses` : '';
+  return `Thanh toán ${head}${more} (Order #${order.orderid})`;
+}
 
-  res.render("vwPayments/payments", {
-    amount,
-    items,
-    method,
-  });
-});
-
-// Create MoMo payment and redirect
-router.get("/momo", async (req, res) => {
-  try {
-    const amount = String(req.query.amount || "0");
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
-      return res.status(400).send("Invalid amount for MoMo payment");
-    }
-
-    const partnerCode = "MOMO";
-    const accessKey = "F8BBA842ECF85";
-    const secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
-    if (!partnerCode || !accessKey || !secretKey) {
-      return res
-        .status(500)
-        .send(
-          "MoMo credentials are not configured. Set MOMO_PARTNER_CODE, MOMO_ACCESS_KEY, MOMO_SECRET_KEY."
-        );
-    }
-
-    const requestId = `${partnerCode}-${Date.now()}`;
-    const orderId = `OA_${Date.now()}`;
-    const orderInfo = `Online Academy order ${orderId}`;
-    const host = `${req.protocol}://${req.get("host")}`;
-    const redirectUrl = `${host}/payment/return`;
-    const ipnUrl = `${host}/payment/ipn`;
-    const requestType = "captureWallet";
-    const extraData = Buffer.from(
-      JSON.stringify({ source: "cart", items: req.query.items || "" })
-    ).toString("base64");
-
-    const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`;
-    const signature = crypto
-      .createHmac("sha256", secretKey)
-      .update(rawSignature)
-      .digest("hex");
-
-    const body = {
-      partnerCode,
-      accessKey,
-      requestId,
-      amount,
-      orderId,
-      orderInfo,
-      redirectUrl,
-      ipnUrl,
-      requestType,
-      extraData,
-      signature,
-      lang: "vi",
-    };
-
-    const resp = await fetch(
-      "https://test-payment.momo.vn/v2/gateway/api/create",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+function sumFromItems(items = []) {
+  return items.reduce((acc, it) => {
+    const price = Number(it.unit_price || 0);
+    const qty = Number(it.quantity || 1);
+    const disc = Number(it.discount_vnd || 0);
+    const tax = Number(5000);
+    return acc + (price * qty - disc + tax);
+  }, 0);
+}
+import * as courseModel from '../models/course.model.js';
+router.get('/go', async (req, res) => {
+    try {
+      const userId = req.session?.userid || 1; // hoặc lấy từ token/session thật
+      const courseIds = req.query.courseIds;
+      
+      if (!courseIds) {
+        return res.status(400).send('No courses selected.');
       }
-    );
-    const data = await resp.json();
+      
+      // Nếu chỉ chọn 1 khóa thì đảm bảo nó là mảng
+      const selectedCourses = Array.isArray(courseIds) ? courseIds : [courseIds];
+      const alreadyEnrolled = [];
+      const notEnrolled = [];
+      for (const cid of selectedCourses) {
+        const enrolled = await courseModel.isEnrolledItem(userId, cid);
+        if (enrolled) {
+          alreadyEnrolled.push(cid);
+        } else {
+          notEnrolled.push(cid);
+        }
+      }
 
-    if (data?.payUrl) {
-      return res.redirect(data.payUrl);
-    }
-    return res
-      .status(502)
-      .send(
-        `Failed to create MoMo payment: ${data?.message || "Unknown error"}`
+      if (notEnrolled.length === 0) {
+        
+        return res.render('vwCart/error', {
+          cartItems: await courseModel.cartItemsByUID(userId),
+          alreadyEnrolled: true,
+          
+        });
+
+      }
+      // Lấy danh sách orderid tương ứng từng course
+      const orderList = await Promise.all(
+        selectedCourses.map(async (cid) => {
+          const row = await courseModel.getCartIDByCourseIDAndUserID(cid, userId);
+          return row ? row.orderid : null;
+        })
       );
-  } catch (err) {
-    console.error("MoMo create error", err);
-    return res.status(500).send("MoMo payment error");
-  }
-});
-
-// MoMo redirect URL (user's browser returns here)
-router.get("/return", (req, res) => {
-  const {
-    resultCode = "",
-    message = "",
-    orderId = "",
-    amount = "",
-    transId = "",
-  } = req.query;
-
-  const success = String(resultCode) === "0";
-  res.render("vwPayments/payments", {
-    amount: Number(amount || 0),
-    orderId,
-    transId,
-    momoMessage: message,
-    momoSuccess: success,
-    returned: true,
+  
+      // Lọc bỏ những course không có orderid
+      const validOrderIds = orderList.filter(Boolean);
+      if (validOrderIds.length === 0) {
+        return res.status(400).send('No valid order IDs found.');
+      }
+  
+      // Giả sử: mỗi user có 1 order gộp, hoặc bạn chỉ xử lý theo order đầu tiên
+      const orderId = validOrderIds[0];
+  
+      // Lấy thông tin order
+      const order = await db('orders').where({ orderid: orderId }).first();
+      if (!order) {
+        return res.status(404).send('Order not found.');
+      }
+  
+      // Lấy items của order để tính tổng tiền
+      const items = await courseModel.cartItemsByUID(order.userid);
+  
+      let amount = Number(order.total);
+      if (!Number.isFinite(amount) || amount <= 0) {
+        amount = sumFromItems(items);
+      }
+      amount = Math.round(amount);
+  
+      const orderInfo = buildOrderInfo(order, items);
+  
+      // Gọi API MoMo
+      const momoRes = await createPayment({ amount, orderInfo });
+  
+      // Ghi vào bảng payments
+      await db('payments').insert({
+        orderid: order.orderid,
+        amount: amount,
+        payment_method: 'momo',
+        payment_status: 'pending',
+        requestid: momoRes.requestId,
+        signature: momoRes.signature || null,
+        transid: null
+      });
+  
+      // Chuyển hướng người dùng đến trang thanh toán MoMo
+      return res.redirect(momoRes.payUrl);
+  
+    } catch (e) {
+      console.error(e);
+      return res.status(500).send(e.message);
+    }
   });
-});
+  
+  
+router.post('/ipn', express.json(), async (req, res) => {
+    try {
+      const ipn = req.body;
+      console.log('📩 [MoMo IPN] Received:', ipn);
 
-// MoMo IPN (server-to-server notification)
-router.post("/ipn", express.json(), (req, res) => {
-  try {
-    console.log("MoMo IPN:", req.body);
-  } catch {}
-  // Always acknowledge receipt (MoMo expects 2xx)
-  res.json({ resultCode: 0, message: "OK" });
-});
+      const valid = verifyIpnSignature(ipn);
+      if (!valid) {
+        console.error('❌ [MoMo IPN] Invalid signature:', ipn);
+        return res.status(403).json({ message: 'Invalid signature' });
+      }
+  
+      // 2️⃣ Xác định trạng thái giao dịch từ resultCode
+      let status = 'failed';
+      if (Number(ipn.resultCode) === 0) status = 'completed';
+      else if (Number(ipn.resultCode) === 9000) status = 'pending';
+  
+      // 3️⃣ Cập nhật thông tin vào bảng payments
+      const updated = await db('payments')
+        .where({ requestid: ipn.requestId })
+        .update({
+          transid: ipn.transId || null,
+          signature: ipn.signature,
+          amount: Number(ipn.amount) || 0,
+          payment_status: status,
+          paidat: new Date(),
+          createdat : new Date()
+        });
+  
+      if (updated === 0) {
+        console.warn('⚠️ [MoMo IPN] Payment not found for requestId:', ipn.requestId);
+        return res.status(404).json({ message: 'Payment record not found' });
+      }
+  
+      // 4️⃣ Lấy thông tin thanh toán + đơn hàng
+      const payment = await db('payments').where({ requestid: ipn.requestId }).first();
+      const order = await db('orders').where({ orderid: payment.orderid }).first();
+  
+      if (!order) {
+        console.warn('⚠️ [MoMo IPN] Order not found for orderid:', payment.orderid);
+        return res.status(404).json({ message: 'Order not found' });
+      }
+  
+      // 5️⃣ Cập nhật trạng thái đơn hàng
+      const orderStatus =
+        status === 'completed' ? 'paid' :
+        status === 'failed' ? 'failed' : 'pending';
+  
+      await db('orders')
+        .where({ orderid: order.orderid })
+        .update({
+          status: orderStatus,
+          updatedat: new Date()
+        });
+  
+      console.log(`🧾 [Order ${order.orderid}] updated -> ${orderStatus}`);
+  
+      // 6️⃣ Nếu thanh toán thành công -> thêm bản ghi vào bảng enrollment
+      if (status === 'completed') {
+        const order = await db('orders').where({ orderid: payment.orderid }).first();
+      
+        if (order && order.courseid && order.userid) {
+
+          const exists = await db('enrollments')
+            .where({ userid: order.userid, courseid: order.courseid })
+            .first();
+      
+          if (!exists) {
+            await db('enrollments').insert({
+              userid: order.userid,
+              courseid: order.courseid,
+              enrolledat: new Date(),
+            });
+            console.log(`✅ Enrolled user ${order.userid} to course ${order.courseid}`);
+          } else {
+            console.log(`ℹ️ Enrollment already exists for user ${order.userid}, course ${order.courseid}`);
+          }
+        } else {
+          console.warn(`⚠️ Order ${pay.orderid} missing userid or courseid`);
+        }
+      }
+  
+      // 7️⃣ Trả về phản hồi cho MoMo (MoMo chỉ cần HTTP 204 hoặc 200)
+      console.log(`✅ [MoMo IPN] Processed successfully: order ${order.orderid}, status: ${status}`);
+      return res.status(204).end();
+  
+    } catch (error) {
+      console.error('🔥 [MoMo IPN] Error:', error);
+      return res.status(500).json({ message: error.message });
+    }
+  });
+  
+  
+  
+
+  router.get('/return', async (req, res) => {
+    try {
+      // Lấy toàn bộ query string MoMo trả về
+      const momoRes = req.query;
+      console.log('🎯 MoMo return:', momoRes);
+  
+      // ✅ Bước 1: Kiểm tra chữ ký trả về (để tránh fake request)
+      const validSig = verifyIpnSignature(momoRes);
+      if (!validSig) {
+        return res.render('vwPayment/result', {
+          payment: null,
+          message: 'Invalid signature from MoMo!',
+          success: false
+        });
+      }
+  
+      // ✅ Bước 2: Lấy payment trong DB
+      const payment = await db('payments')
+        .where({ requestid: momoRes.requestId })
+        .first();
+  
+      if (!payment) {
+        return res.render('vwPayment/result', {
+          payment: null,
+          message: 'Payment not found!',
+          success: false
+        });
+      }
+  
+      // ✅ Bước 3: Kiểm tra trạng thái giao dịch
+      let success = false;
+      if (Number(momoRes.resultCode) === 0) {
+        success = true;
+      }
+  
+      // ✅ Bước 4: Render kết quả cho người dùng
+      res.render('vwPayment/result', {
+        payment,
+        message: success
+          ? 'Thanh toán thành công! Cảm ơn bạn.'
+          : 'Thanh toán thất bại hoặc đã bị hủy.',
+        success
+      });
+  
+    } catch (err) {
+      console.error('🔥 Error in /return:', err);
+      res.render('vwPayment/result', {
+        payment: null,
+        message: 'Có lỗi xảy ra trong quá trình xử lý thanh toán.',
+        success: false
+      });
+    }
+  });
+
 
 export default router;

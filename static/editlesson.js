@@ -1,55 +1,82 @@
 (function () {
-  const form = document.getElementById("frmEditLesson");
-  const lessonList = document.getElementById("lessonList");
-  const removedBin = document.getElementById("removedLessonsBin");
-  const btnDeleteSection = document.getElementById("btnDeleteSection");
-  const deleteSectionInput = document.getElementById("deleteSection");
-  const sectionDeleteNote = document.getElementById("sectionDeleteNote");
+  function ready(fn) {
+    if (document.readyState === "loading")
+      document.addEventListener("DOMContentLoaded", fn);
+    else fn();
+  }
 
-  // Validate
-  form.addEventListener("submit", function (e) {
-    if (!form.checkValidity()) {
+  ready(function () {
+    const form = document.getElementById("frmEditLesson");
+    if (!form) return;
+
+    const sectionIdInput = form.querySelector("#sectionId");
+    const courseIdInput = form.querySelector("#courseId");
+    const targetInput = form.querySelector("#targetLessonId");
+
+    document.getElementById("btnEditSection")?.addEventListener("click", function (e) {
       e.preventDefault();
-      e.stopPropagation();
-    }
-    form.classList.add("was-validated");
-  });
+      form.setAttribute("action", "/course/section/edit");
+      targetInput.value = "";
+      form.submit();
+    });
 
-  // Remove single lesson (no add)
-  lessonList.addEventListener("click", function (e) {
-    const btn = e.target.closest(".btnRemoveLesson");
-    if (!btn) return;
+    document.getElementById("btnDeleteSection")?.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (!sectionIdInput?.value) return;
+      if (!window.confirm("Delete this section and all its lessons?")) return;
 
-    const card = btn.closest(".lesson-item");
-    const lessonId = card?.getAttribute("data-lesson-id") || "";
-    const title =
-      card?.querySelector('input[type="text"]')?.value || "this lesson";
+      form.setAttribute("action", "/course/section/delete");
+      targetInput.value = "";
+      form.submit();
+    });
 
-    if (!confirm(`Remove "${title}"?`)) return;
+    const lessonList = document.getElementById("lessonList");
 
-    // mark for deletion -> append hidden input; then remove from UI
-    if (lessonId) {
-      const hidden = document.createElement("input");
-      hidden.type = "hidden";
-      hidden.name = "removedLessonIds[]";
-      hidden.value = lessonId;
-      removedBin.appendChild(hidden);
-    }
-    card.remove();
-  });
+    lessonList?.addEventListener("click", function (e) {
+      const btn = e.target.closest(".btnSaveLesson");
+      if (!btn) return;
 
-  // Delete ENTIRE section
-  btnDeleteSection.addEventListener("click", function () {
-    const ok = confirm(
-      "This will DELETE the entire section and ALL its lessons. Continue?"
-    );
-    if (!ok) return;
+      e.preventDefault();
 
-    // Đánh dấu xoá section
-    deleteSectionInput.value = "1";
+      const lid = btn.getAttribute("data-lesson-id");
+      if (!lid) return;
 
-    // Hiển thị cảnh báo & khóa UI nhập liệu (nhưng vẫn cho Back/Reset/Save)
-    sectionDeleteNote.classList.remove("d-none");
-    document.body.classList.add("section-deleting");
+      const cb = form.querySelector(
+        `.lesson-item[data-lesson-id="${lid}"] input[type="checkbox"][name="previews[${lid}]"]`
+      );
+      if (!cb || !cb.checked) {
+        form.querySelectorAll(
+          `input[name="previews[${lid}]"][type="hidden"]`
+        ).forEach((n) => n.remove());
+        const h = document.createElement("input");
+        h.type = "hidden";
+        h.name = `previews[${lid}]`;
+        h.value = "0";
+        form.appendChild(h);
+      }
+
+      form.setAttribute("action", "/course/lesson/editLesson");
+      targetInput.value = String(lid);
+      form.submit();
+    });
+
+    lessonList?.addEventListener("click", function (e) {
+      const btn = e.target.closest(".btnRemoveLesson");
+      if (!btn) return;
+
+      e.preventDefault();
+
+      const card = btn.closest(".lesson-item");
+      if (!card) return;
+
+      const lid = card.getAttribute("data-lesson-id");
+      if (!lid) return;
+
+      if (!window.confirm("Delete this lesson?")) return;
+
+      form.setAttribute("action", "/course/lesson/deleteOne");
+      targetInput.value = String(lid);
+      form.submit();
+    });
   });
 })();
