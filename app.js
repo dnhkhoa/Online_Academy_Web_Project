@@ -41,6 +41,9 @@ app.use("/cart", cartRouter);
 import termRouter from "./routes/term.route.js";
 app.use("/legal", termRouter);
 
+import instructorRouter from "./routes/instructor.route.js";
+app.use("/instructor", instructorRouter);
+
 app.use(function (req, res) {
   res.status(404).render("404");
 });
