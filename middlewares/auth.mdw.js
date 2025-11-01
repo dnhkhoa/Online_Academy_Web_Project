@@ -39,4 +39,20 @@ export function requireAuth(req, res, next) {
     }
   }
   
-  
+export function allowPreview(req, res, next) {
+  const sess = req.session || {};
+  res.locals.isAuthenticated = !!sess.isAuthenticated;
+  res.locals.authUser = sess.authUser || null;
+  next();
+}
+
+export function restrictLessonAccess(req, res, next) {
+  // Nếu đã đăng nhập thì cho qua
+  if (req.session.isAuthenticated) {
+    return next();
+  }
+
+  // Nếu chưa đăng nhập thì chỉ cho xem preview
+  req.isPreviewMode = true;
+  next();
+}

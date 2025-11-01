@@ -8,6 +8,7 @@ import passport from "passport";
 import "./config/passport.google.js";
 import { renderStars } from './utils/rating.js';
 import * as courseModel from "./models/course.model.js";
+import { allowPreview } from "./middlewares/auth.mdw.js";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 dotenv.config();
@@ -18,6 +19,12 @@ const app = express();
 const SECRET_KEY = process.env.SECRET_KEY;
 
 app.use(cookieParser());
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}));
+app.use(allowPreview);
 
 app.engine(
   "handlebars",
@@ -52,27 +59,47 @@ app.use(passport.session());
 
 // Persistent login middleware
 app.use((req, res, next) => {
-  if (!req.session.isAuthenticated && req.cookies.remember_token) {
-    try {
-      const payload = jwt.verify(req.cookies.remember_token, SECRET_KEY);
-
-      // tái tạo session từ token
-      req.session.isAuthenticated = true;
-      req.session.authUser = {
-        userid: payload.userid,
-        userName: payload.username,
-        email: payload.email,
-      };
-      req.session.userid = payload.userid;
-
+  try {
+    // Nếu đã có session thì không cần làm gì
+    if (req.session.isAuthenticated) {
       res.locals.isAuthenticated = true;
-      res.locals.authUser = req.session.authUser;
-    } catch (err) {
-      // token sai hoặc hết hạn thì xóa cookie
-      res.clearCookie('remember_token');
+      res.locals.authUser = req.session.authUser || null;
+      return next();
     }
+
+    const token = req.cookies.remember_token;
+    if (!token) {
+      res.locals.isAuthenticated = false;
+      res.locals.authUser = null;
+      return next();
+    }
+
+    // verify token
+    const payload = jwt.verify(token, SECRET_KEY);
+
+    // rebuild session from payload
+    req.session.isAuthenticated = true;
+    // nếu payload có đủ trường, dùng payload; nếu muốn đầy đủ user từ DB có thể fetch ở đây
+    req.session.authUser = {
+      userid: payload.userid,
+      username: payload.username,
+      email: payload.email,
+    };
+    req.session.userid = payload.userid;
+
+    // expose to views
+    res.locals.isAuthenticated = true;
+    res.locals.authUser = req.session.authUser;
+
+    return next();
+  } catch (err) {
+    // token sai hoặc hết hạn -> clear cookie & reset locals
+    console.error("remember middleware:", err.message);
+    res.clearCookie('remember_token');
+    res.locals.isAuthenticated = false;
+    res.locals.authUser = null;
+    return next();
   }
-  next();
 });
 
 

@@ -161,24 +161,25 @@ router.post('/signin', async function (req, res) {
   req.session.userid = user.userid;
 
   // === Remember Me (JWT cookie) ===
-  if (remember) {
-    const token = jwt.sign(
-      {
-        userid: user.userid,
-        userName: user.username,
-        email: user.email,
-      },
-      SECRET_KEY,
-      { expiresIn: '30d' } // 30 ngày
-    );
+// === Remember Me (JWT cookie) ===
+if (remember) {
+  const token = jwt.sign(
+    {
+      userid: user.userid,
+      username: user.username, // <- dùng 'username' (khớp với view)
+      email: user.email,
+    },
+    SECRET_KEY,
+    { expiresIn: '30d' } // 30 ngày
+  );
 
-    res.cookie('remember_token', token, {
-      httpOnly: true,
-      secure: false, // đổi true nếu deploy HTTPS
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-  }
+  res.cookie('remember_token', token, {
+    httpOnly: true,
+    secure: false, // true nếu deploy HTTPS
+    sameSite: 'lax',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+}
 
   const retUrl = req.session.retUrl || '/';
   delete req.session.retUrl;

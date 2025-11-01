@@ -228,13 +228,29 @@ router.post("/addlesson", async function (req, res) {
 router.get('/watch', async function (req, res) {
   const lessonid = Number(req.query.lessonid || 0);
   const lesson = await lessonModel.findOne(lessonid);
+
+  if (!lesson) {
+    return res.status(404).render('404', { message: 'Lesson not found' });
+  }
+
+  // Nếu chưa đăng nhập và bài không phải preview
+  const isAuthenticated = req.session.isAuthenticated;
+  if (!isAuthenticated && !lesson.preview) {
+    req.session.retUrl = req.originalUrl;
+    return res.render('403', {
+      message: 'You must log in to watch this lesson.',
+      requireLogin: true,
+    });
+  }
+
   const src = (lesson.video_url || '').trim();
   res.render('vwAdminCourse/watchLesson', {
     lesson: lesson,
     player: {
       src: src,
-      type: 'video/youtube'
-    }
+      type: 'video/youtube',
+    },
+    isAuthenticated,
   });
 });
 //edit lesson
