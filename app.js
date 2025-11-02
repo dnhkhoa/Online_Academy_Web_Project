@@ -10,6 +10,7 @@ import paymentRouter from "./routes/payment.route.js";
 import { renderStars } from "./utils/rating.js";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
+import { allowPreview } from "./middlewares/auth.mdw.js";
 dotenv.config();
 
 const __dirname = import.meta.dirname;
@@ -30,6 +31,8 @@ app.engine(
       calcOriginal: (price, discount) => (Number(price) || 0) + (Number(discount) || 0),
       calcPrice: (price, discount) => (Number(price) || 0) - (Number(discount) || 0),
       renderStars,
+      eq: (a, b) => Number(a) === Number(b),
+      is: (a, b) => String(a) === String(b),
     },
   })
 );
@@ -151,8 +154,15 @@ app.use('/tiny', tinyRouter);
 import termRouter from "./routes/term.route.js";
 app.use("/legal", termRouter);
 
+import instructorRouter from "./routes/instructor.route.js";
+app.use("/instructor", instructorRouter);
+
 
 app.use("/payments", paymentRouter);
+
+import adminUsersRouter from "./routes/admin.users.route.js";
+app.use("/admin/users", authMiddleware.requireAuth, authMiddleware.restrictAdmin, adminUsersRouter);
+
 
 app.use(function (req, res) {
   res.status(404).render("404");

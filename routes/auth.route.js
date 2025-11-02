@@ -28,6 +28,10 @@ router.get("/google/callback",
   }),
   (req, res) => {
     console.log("Google auth successful, user:", req.user);
+    // If account is locked, do not create session
+    if (req.user && (req.user.islocked === 1 || req.user.islocked === true)) {
+      return res.redirect("/account/signin?locked=1");
+    }
     req.session.isAuthenticated = true;
     req.session.authUser = req.user;
     req.session.userid = req.user.userid;

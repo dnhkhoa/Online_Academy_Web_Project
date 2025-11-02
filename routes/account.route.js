@@ -132,9 +132,11 @@ router.get("/check-email", async (req, res) => {
   return res.json({ available: !data });
 });
 
-router.get("/signin", (req, res) => {
+router.get("/signin", function (req, res) {
+  const locked = (req.query.locked || "").toString();
   res.render("vwAccount/signin", {
     error: false,
+    locked: locked === '1' || locked === 'true',
   });
 });
 
@@ -150,6 +152,11 @@ router.post('/signin', async function (req, res) {
   const isPasswordValid = bcrypt.compareSync(password, user.password);
   if (!isPasswordValid) {
     return res.render('vwAccount/signin', { error: true });
+  }
+
+  // Check lock status
+  if (user.islocked) {
+    return res.render('vwAccount/signin', { error: false, locked: true });
   }
 
   // === Session login ===

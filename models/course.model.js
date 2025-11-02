@@ -1,5 +1,9 @@
 import db from '../utils/db.js';
 
+export function findAll2() {
+  return db('courses') ;
+}
+
 export function findAll(limit, offset) {
     return db('courses')
     .limit(limit)
@@ -107,6 +111,24 @@ export function countAllCourses(){
     .count('courseid', { as: 'count' })
     .first()
     .then((row) => row.count);
+}
+
+export function applySort(qb, sort) {
+  const s = String(sort || '').toLowerCase();
+  if (s === 'newest') {
+    qb.orderBy('createdat', 'desc');
+  } else if (s === 'rating'){
+    qb.orderBy('rating', 'desc');
+  }
+  else {
+    qb.orderBy('courseid');
+  }
+}
+
+export function searchSorted(keyword, sort, limit, offset) {
+  const qb = db('courses').whereRaw('fts @@ to_tsquery(remove_accent(?))', [keyword]);
+  applySort(qb, sort);
+  return qb.limit(limit).offset(offset);
 }
 
 export function addEnrolledItem(userid, courseid) {
@@ -246,3 +268,22 @@ export async function get3TopCourses() {
     .orderBy('view', 'desc')
     .limit(3);
 }
+
+// ✅ lấy list giảng viên
+export async function getInstructors() {
+  return db('courses')
+    .join('users', 'courses.instructorid', 'users.userid')
+    .whereNotNull('courses.instructorid')
+    .distinct('users.userid', 'users.full_name')
+    .orderBy('users.full_name', 'asc');
+}
+
+// ✅ lấy course theo giảng viên (có phân trang)
+export async function findByInstructor(instructorid, limit, offset) {
+  return db('courses')
+    .where('instructorid', instructorid)
+    .limit(limit)
+    .offset(offset)
+    .orderBy('courseid', 'asc');
+}
+
