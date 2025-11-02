@@ -1,0 +1,192 @@
+{{#section "styles"}}
+<link rel="stylesheet" href="/static/details.css" />
+{{/section}}
+
+<section class="course-detail-section py-5">
+  <div class="container">
+    <div class="row g-4">
+      <!-- SIDEBAR: giữ tĩnh (mẫu), bạn có thể xóa nếu không cần -->
+      <aside class="col-lg-3">
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="accordion" id="categoryAccordion">
+            <h5 class="text text-uppercase medium mb-3 px-3 pt-3">List of courses</h5>
+
+            {{#each parents}}
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-{{this.catid}}">
+                <div class="header-content">
+                  <button class="accordion-button collapsed flex-grow-1" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-{{this.catid}}" aria-expanded="false"
+                    aria-controls="collapse-{{this.catid}}">
+                    {{this.catname}}
+                  </button>
+                </div>
+              </h2>
+              <div id="collapse-{{this.catid}}" class="accordion-collapse collapse"
+                aria-labelledby="heading-{{this.catid}}" data-bs-parent="#categoryAccordion">
+                <div class="accordion-body p-0">
+                  <div class="accordion accordion-flush ms-3" id="subAccordion-{{this.catid}}">
+                    {{#each (lookup ../childrenMap this.catid)}}
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-{{this.catid}}">
+                        <a class="accordion-button collapsed py-2 text-decoration-none"
+                          href="/course/byCat?catid={{this.catid}}">
+                          {{this.catname}}
+                        </a>
+                      </h2>
+                    </div>
+                    {{/each}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="col-lg-9">
+        <div class="card border-0 shadow-sm rounded-4 course-detail-hero mb-4">
+          <div class="row g-0">
+            <div class="col-md-5">
+              <div class="course-detail-hero__cover h-100">
+                <img src="{{course.thumbnail}}" alt="{{course.title}}" class="img-fluid w-100 h-100" />
+              </div>
+            </div>
+            <div class="col-md-7">
+              <div class="course-detail-hero__body p-4">
+                <h1 class="h4 fw-semibold mb-2">{{course.title}}</h1>
+                <p class="text-muted mb-3">{{course.tinydes}}</p>
+                <p class="text-muted mb-3">Instructor: {{instructorName}}
+                  <a href="/instructor/infor/{{course.instructorid}}" 
+                    class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-person"></i> View Instructor Info
+                  </a>
+                </p>
+
+                <ul class="course-detail-hero__meta list-unstyled d-flex flex-wrap gap-3 mb-4">
+                  <li><i class="bi bi-clock me-1"></i> Cập nhật: {{course.createdat}}</li>
+                </ul>
+
+                {{#if fb.count}}
+                  <div class="course-feedback-summary d-flex align-items-center mb-3">
+                    <span class="me-2 text-warning fs-5">
+                      <div class="rating">
+                        {{{ renderStars fb.avg }}}
+                        <span class="small text-muted">({{fb.count}} đánh giá)</span>
+                      </div>
+                    </span>
+                    <span class="fw-semibold">{{fb.avg}} / 5</span>
+                    <span class="text-muted ms-2">({{fb.count}} đánh giá)</span>
+                  </div>
+                  {{else}}
+                    <p class="text-muted small">Chưa có đánh giá nào cho khóa học này.</p>
+                  {{/if}}
+
+                <div class="course-detail-hero__pricing mb-4">
+                  <div class="d-flex align-items-end gap-3">
+                    <span class="price-current">
+                      {{ format_number (calcPrice course.price course.discount) }} VND
+                    </span>
+                    {{#if course.discount}}
+                    <span class="price-original text-muted text-decoration-line-through">
+                      {{format_number course.price}} VND
+                    </span>
+                    {{/if}}
+                  </div>
+                  {{#if course.discount}}
+                  <p class="text-success small mb-0">Tiết kiệm {{format_number course.discount}} VND</p>
+                  {{/if}}
+                </div>
+
+                <div class="course-detail-hero__actions d-flex flex-wrap gap-2">
+                  <form action="/account/add-cart" method="post">
+                    <input type="hidden" name="courseid" value="{{course.courseid}}" />
+                      <button type="submit" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                      </button>
+                    </form>
+                  <form action="/account/add" method="post">
+                    <input type="hidden" name="courseid" value="{{course.courseid}}" />
+                      <button type="submit" class="btn btn-sm btn btn-outline-danger">
+                        <i class="bi bi-heart"></i>
+                      </button>
+                    </form>
+
+                    <a
+                        href="/course/lesson?courseid={{course.courseid}}"
+                        class="btn btn-sm btn-outline-primary"
+                        >
+                        <i class="bi bi-eye"></i>
+                        View Lessons
+                        </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESCRIPTION (render HTML từ DB) -->
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 course-detail-content mb-4">
+              <div class="card-body">
+                <h2 class="h5 fw-semibold mb-3">Mô tả khóa học</h2>
+                <div class="course-detail-content__description">
+                  {{{course.fulldes}}}
+                </div>
+              </div>
+            </div>
+                        <!-- === FEEDBACK BLOCK START === -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body">
+                <h2 class="h5 fw-semibold mb-3">Phản hồi của học viên</h2>
+
+                {{#if fb.count}}
+                <p class="mb-3 text-muted">
+                  Trung bình: <strong>{{fb.avg}} / 5</strong> • ({{fb.count}} đánh giá)
+                </p>
+
+                <ul class="list-unstyled">
+                  {{#each fb.comments}}
+                  <li class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <div class="fw-semibold">
+                        {{#if this.user_name}}
+                        {{this.user_name}}
+                        {{else}}
+                        Học viên #{{this.userid}}
+                        {{/if}}
+                      </div>
+                      <div class="text-warning small">
+                        {{{ renderStars this.rating }}}
+                      </div>
+                    </div>
+
+                    {{#if this.comment}}
+                    <p class="mb-1">{{this.comment}}</p>
+                    {{else}}
+                    <p class="mb-1 text-muted fst-italic">Học viên chỉ đánh giá sao.</p>
+                    {{/if}}
+
+                    {{#if this.created_at}}
+                    <p class="mb-0 text-muted small">Lúc: {{this.created_at}}</p>
+                    {{/if}}
+                  </li>
+                  {{/each}}
+                </ul>
+                {{else}}
+                <p class="text-muted mb-0">Chưa có phản hồi nào cho khóa học này.</p>
+                {{/if}}
+              </div>
+            </div>
+            <!-- === FEEDBACK BLOCK END === -->
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

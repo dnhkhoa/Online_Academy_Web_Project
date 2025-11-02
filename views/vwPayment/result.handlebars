@@ -1,0 +1,15 @@
+{{!< layouts/main }}
+<h3>Kết quả thanh toán</h3>
+{{#if payment}}
+  <ul class="list-group text-dark">
+    <li class="list-group-item"><b>orderid:</b> {{payment.orderid}}</li>
+    <li class="list-group-item"><b>requestid:</b> {{payment.requestid}}</li>
+    <li class="list-group-item"><b>transid:</b> {{payment.transid}}</li>
+    <li class="list-group-item"><b>payment_method:</b> {{payment.payment_method}}</li>
+    <li class="list-group-item"><b>payment_status:</b> {{payment.payment_status}}</li>
+    <li class="list-group-item"><b>amount:</b> {{payment.amount}} VND</li>
+  </ul>
+{{else}}
+  <p>Không tìm thấy bản ghi thanh toán (thiếu requestId trên URL).</p>
+{{/if}}
+<a class="btn btn-secondary mt-3" href="/">Back</a>

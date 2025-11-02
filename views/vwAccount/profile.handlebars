@@ -1,0 +1,45 @@
+<form action="/account/profile" method="post">
+  <div class="card">
+    <h5 class="card-header">Profile</h5>
+    <div class="card-body">
+      <div class="mb-3">
+        <label for="txtId" class="form-label">User ID</label>
+        <input type="text" class="form-control" id="txtId" name="userid" readonly value="{{users.userid}}">
+      </div>
+
+      <div class="mb-3">
+        <label for="txtCurrentPwd" class="form-label">Current Password</label>
+        <input type="password" class="form-control" id="txtCurrentPwd" name="currentPassword" >
+      </div>
+
+      <div class="mb-3">
+        <label for="txtUsername" class="form-label">User Name</label>
+        <input type="text" class="form-control" id="txtUsername" name="username" value="{{users.username}}">
+      </div>
+
+      <div class="mb-3">
+        <label for="txtFullname" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="txtFullname" name="full_name" value="{{users.full_name}}">
+      </div>
+
+      <div class="mb-3">
+        <label for="txtEmail" class="form-label">Email</label>
+        <input type="email" class="form-control" id="txtEmail" name="email" value="{{users.email}}">
+      </div>
+
+      {{#if error}}
+      <div class="alert alert-danger mt-3">{{error}}</div>
+      {{/if}}
+      {{#if success}}
+      <div class="alert alert-success mt-3">{{success}}</div>
+      {{/if}}
+    </div>
+
+    <div class="card-footer text-muted">
+      <button type="submit" class="btn btn-outline-success">
+        <i class="bi bi-check2"></i>
+        Save
+      </button>
+    </div>
+  </div>
+</form>

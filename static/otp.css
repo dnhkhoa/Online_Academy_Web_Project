@@ -1,0 +1,24 @@
+.otp-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+  }
+  .otp-card {
+    width: 100%;
+    max-width: 420px;
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    background: #fff;
+  }
+  .otp-card .card-body {
+    padding: 2.5rem;
+  }
+  .otp-input {
+    font-size: 1.2rem;
+    letter-spacing: 0.3rem;
+    text-align: center;
+    height: 3rem;
+  }

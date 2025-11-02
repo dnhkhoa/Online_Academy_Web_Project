@@ -1,0 +1,122 @@
+/*  Base  */
+body {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background-color: #fbfbfb;
+}
+
+/*  HERO CAROUSEL  */
+#carouselExampleAutoplaying {
+  overflow: hidden;
+}
+
+/* Chiều cao khung ảnh + crop */
+#carouselExampleAutoplaying .carousel-item {
+  height: 500px;
+}
+#carouselExampleAutoplaying .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Nút điều hướng trên nền ảnh */
+#carouselExampleAutoplaying .carousel-control-prev-icon,
+#carouselExampleAutoplaying .carousel-control-next-icon {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+/* Mobile */
+@media (max-width: 767.98px) {
+  #carouselExampleAutoplaying {
+    border-radius: 1.5rem;
+  }
+  #carouselExampleAutoplaying .carousel-item {
+    height: 320px;
+  }
+}
+
+/*  Section heading  */
+.section-heading small {
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #6c757d;
+}
+.section-heading h2 {
+  font-weight: 700;
+}
+
+/*  Benefits  */
+.feature-item h5 {
+  font-weight: 700;
+}
+.feature-item p {
+  color: #6c757d;
+}
+
+/* Cards */
+.card {
+  border-radius: 1rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Ảnh card  */
+.card .card-img-top {
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+/* Nội dung card */
+.card .card-body .card-title {
+  font-weight: 700;
+}
+.card .card-text {
+  color: #6c757d;
+}
+
+/* Footer card */
+.card .card-footer {
+  background: #fff;
+  border-top: 1px solid #f1f3f5;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+.card .btn {
+  border-radius: 0.75rem;
+}
+
+@media (max-width: 575.98px) {
+  .card {
+    width: 100% !important;
+  }
+}
+
+.footer-link-group a {
+  display: block;
+  color: #212529;
+  text-decoration: none;
+  margin-bottom: 0.25rem;
+}
+
+.footer-link-group a:hover {
+  text-decoration: underline;
+}
+
+.footer-social a {
+  color: #212529;
+  font-size: 1.1rem;
+  margin-right: 0.65rem;
+}
+
+.footer-social a:hover {
+  color: #000;
+}

@@ -1,0 +1,120 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">User Management</h2>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <strong>Students</strong>
+        </div>
+        <div class="card-body">
+          {{#if students.length}}
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">User ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each students}}
+                    <tr>
+                      <td>{{this.userid}}</td>
+                      <td>{{this.username}}</td>
+                      <td>{{this.full_name}}</td>
+                      <td>{{this.email}}</td>
+                      <td>
+                        {{#if this.islocked}}
+                          <span class="badge text-bg-danger">Locked</span>
+                        {{else}}
+                          <span class="badge text-bg-success">Active</span>
+                        {{/if}}
+                      </td>
+                      <td class="text-end">
+                        <form method="post" action="/admin/users/lock" class="d-inline">
+                          <input type="hidden" name="userid" value="{{this.userid}}" />
+                          <button type="submit" class="btn btn-sm btn-outline-danger" {{#if this.islocked}}disabled{{/if}}>
+                            Khóa tài khoản
+                          </button>
+                        </form>
+                        <form method="post" action="/admin/users/grant-instructor" class="d-inline ms-1">
+                          <input type="hidden" name="userid" value="{{this.userid}}" />
+                          <button type="submit" class="btn btn-sm btn-outline-primary">
+                            Cấp tài khoản giảng viên
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          {{else}}
+            <div class="alert alert-info">No students found.</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <strong>Instructors</strong>
+        </div>
+        <div class="card-body">
+          {{#if instructors.length}}
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">User ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each instructors}}
+                    <tr>
+                      <td>{{this.userid}}</td>
+                      <td>{{this.username}}</td>
+                      <td>{{this.full_name}}</td>
+                      <td>{{this.email}}</td>
+                      <td>
+                        {{#if this.islocked}}
+                          <span class="badge text-bg-danger">Locked</span>
+                        {{else}}
+                          <span class="badge text-bg-success">Active</span>
+                        {{/if}}
+                      </td>
+                      <td class="text-end">
+                        <form method="post" action="/admin/users/lock" class="d-inline">
+                          <input type="hidden" name="userid" value="{{this.userid}}" />
+                          <button type="submit" class="btn btn-sm btn-outline-danger" {{#if this.islocked}}disabled{{/if}}>
+                            Khóa tài khoản
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          {{else}}
+            <div class="alert alert-info">No instructors found.</div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

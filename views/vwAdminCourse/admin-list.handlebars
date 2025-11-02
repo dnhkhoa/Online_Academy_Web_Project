@@ -1,0 +1,57 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Courses Management</h2>
+  </div>
+
+  {{#if courses.length}}
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Category</th>
+            <th scope="col">Instructor</th>
+            <th scope="col">Status</th>
+            <th scope="col">Views</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each courses}}
+            <tr>
+              <td>{{this.courseid}}</td>
+              <td>{{this.title}}</td>
+              <td>{{this.category_name}}</td>
+              <td>{{this.instructor_name}}</td>
+              <td>
+                {{#if (is this.status "hide")}}
+                  <span class="badge text-bg-danger">Suspended</span>
+                {{else}}
+                  <span class="badge text-bg-success">{{this.status}}</span>
+                {{/if}}
+              </td>
+              <td>{{this.view}}</td>
+              <td class="text-end">
+                {{#if (is this.status "hide")}}
+                  <form method="post" action="/admin/courses/unsuspend" class="d-inline">
+                    <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                    <button type="submit" class="btn btn-sm btn-outline-success">Mở lại</button>
+                  </form>
+                {{else}}
+                  <form method="post" action="/admin/courses/suspend" class="d-inline">
+                    <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Đình chỉ</button>
+                  </form>
+                {{/if}}
+              </td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{else}}
+    <div class="alert alert-info">No courses found.</div>
+  {{/if}}
+</div>
+
