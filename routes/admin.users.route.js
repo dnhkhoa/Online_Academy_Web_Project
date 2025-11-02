@@ -42,4 +42,12 @@ router.post('/lock', async (req, res) => {
   res.redirect('/admin/users');
 });
 
+// POST /admin/users/grant-instructor - upgrade role to instructor
+router.post('/grant-instructor', async (req, res) => {
+  const userid = Number(req.body.userid || 0);
+  if (!userid) return res.redirect('/admin/users');
+  await userModel.setUserRole(userid, 'instructor');
+  res.redirect('/admin/users');
+});
+
 export default router;

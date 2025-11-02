@@ -44,6 +44,12 @@
                             Khóa tài khoản
                           </button>
                         </form>
+                        <form method="post" action="/admin/users/grant-instructor" class="d-inline ms-1">
+                          <input type="hidden" name="userid" value="{{this.userid}}" />
+                          <button type="submit" class="btn btn-sm btn-outline-primary">
+                            Cấp tài khoản giảng viên
+                          </button>
+                        </form>
                       </td>
                     </tr>
                   {{/each}}

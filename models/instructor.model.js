@@ -35,3 +35,19 @@ export function getInstructorEmail(id) {
       .where('instructors.userid', id)
       .first();
 }
+
+// Update helper: update instructor profile by userid
+export function updateByUserId(userid, changes) {
+  return db('instructors').where('userid', userid).update(changes);
+}
+
+// Upsert helper: insert if not exists, else update
+export async function upsertByUserId(userid, entity) {
+  const existing = await db('instructors').where('userid', userid).first();
+  if (existing) {
+    await db('instructors').where('userid', userid).update(entity);
+    return { updated: true };
+  }
+  await db('instructors').insert({ userid, ...entity });
+  return { inserted: true };
+}

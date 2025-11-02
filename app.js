@@ -149,6 +149,9 @@ app.use("/admin/categories",authMiddleware.requireAuth ,authMiddleware.restrictA
 import adminUsersRouter from "./routes/admin.users.route.js";
 app.use("/admin/users", authMiddleware.requireAuth, authMiddleware.restrictAdmin, adminUsersRouter);
 
+import adminCoursesRouter from "./routes/admin.courses.route.js";
+app.use("/admin/courses", authMiddleware.requireAuth, authMiddleware.restrictAdmin, adminCoursesRouter);
+
 
 import tinyRouter from './routes/tiny.route.js';
 app.use('/tiny', tinyRouter);
@@ -157,7 +160,7 @@ import termRouter from "./routes/term.route.js";
 app.use("/legal", termRouter);
 
 import instructorRouter from "./routes/instructor.route.js";
-app.use("/instructor", instructorRouter);
+app.use("/instructor", authMiddleware.requireAuth, authMiddleware.restrictInstructor, instructorRouter);
 
 
 app.use("/payments", paymentRouter);

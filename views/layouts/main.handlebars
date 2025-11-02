@@ -57,6 +57,7 @@
           {{#if isAuthenticated}}
             {{#if (is authUser.role "admin")}}
               <a href="/admin/users" class="text-decoration-none text-dark">Users</a>
+              <a href="/admin/courses" class="text-decoration-none text-dark">Admin Courses</a>
             {{/if}}
           {{/if}}
           <a href="/account/cart" class="text-decoration-none text-dark"><i
@@ -176,6 +177,7 @@
         {{#if isAuthenticated}}
           {{#if (is authUser.role "admin")}}
             <a href="/admin/users" class="text-decoration-none text-dark">Users</a>
+            <a href="/admin/courses" class="text-decoration-none text-dark">Admin Courses</a>
           {{/if}}
         {{/if}}
 
