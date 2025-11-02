@@ -2,69 +2,133 @@ import express from 'express';
 import * as courseModel from '../models/course.model.js';
 import * as categoryModel from '../models/category.model.js';
 import * as sectionModel from '../models/courseSections.model.js';
-import * as lessonModel from '../models/lesson.model.js'; const router = express.Router();
-// --- ADD: at top of course.route.js ---
-import multer from 'multer';
-import fs from 'fs';
+import * as lessonModel from '../models/lesson.model.js';
+import * as authMiddleware from '../middlewares/auth.mdw.js';
+//new
+import fs from 'fs/promises';
 import path from 'path';
-//multer config
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'static/temp_uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-const upload = multer({ storage });
-router.post('/upload', upload.array('photos', 5), function (req, res) {
-  res.json({
-    success: true,
-    files: req.files
-  });
-});
 
+async function saveVideoLink(lessonId, videoUrl) {
+  if (!lessonId) return;
+  const folder = path.join('static', 'video', String(lessonId));
+  await fs.mkdir(folder, { recursive: true }); // tạo thư mục nếu chưa có
+  await fs.writeFile(path.join(folder, 'source.txt'), videoUrl || '', 'utf8');
+}
+
+const router = express.Router();
 
 //list
-router.get('/', async function (req, res) {
-  const parents = await categoryModel.findAllParents();
-  const childrenMap = {};
-  for (const p of parents) {
-    childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
-  }
-  const courses = await courseModel.findAll();
-  res.render('vwCourse/byCat', {
-    parents: parents,
-    childrenMap: childrenMap,
-    courses: courses,
-  });
-});
-
-//list
+import * as feedbackModel from '../models/feedback.model.js';
 router.get('/byCat', async function (req, res) {
   let catid = req.query.catid || 0;
+  //new
+  const instructorid = Number(req.query.instructorid || 0);
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
     childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
   }
+  const page = parseInt(req.query.page) || 1;
+  const limit = 9;
+  const offset = (page - 1) * limit;
 
+  // new
+  const instructors = await courseModel.getInstructors();
+
+  const total = await courseModel.countAllCourses();
+  const totalPages = Math.ceil(total / limit);
+  const pages = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pages.push({
+      value: i,
+      isCurrent: i === page,
+    });
+  }
   let category = null;
   if (catid) category = await categoryModel.findById(catid);
-  let courses = category
-    ? await courseModel.findByCat(catid)
-    : await courseModel.findAll();
+
+  //new
+  let courses;
+
+  if (instructorid) {
+
+    courses = await courseModel.findByInstructor(instructorid, limit, offset);
+  } else {
+    courses = category
+      ? await courseModel.findByCat(catid)
+      : await courseModel.findAll(limit, offset);
+  }
+
+  // ****
+  for (const c of courses) {
+    const list = await feedbackModel.findByCourse(c.courseid);
+    if (!list?.length) {
+      c.fbAvg = 0;
+      c.fbCount = 0;
+    } else {
+      const sum = list.reduce((s, r) => s + r.rating, 0);
+      c.fbAvg = Number((sum / list.length).toFixed(1));
+      c.fbCount = list.length;
+    }
+  }
 
   res.render('vwCourse/byCat', {
     parents: parents,
     childrenMap: childrenMap,
     category: category,
     courses: courses,
+    pages,
+    isFirstPage: page === 1,
+    isLastPage: page === totalPages,
+    prevPage: page > 1 ? page - 1 : 1,
+    nextPage: page < totalPages ? page + 1 : totalPages,
+    //new
+    instructors,
+    currentInstructor: instructorid || null,
+  });
+});
+
+router.get('/search', async function (req, res) {
+  const q = req.query.q.trim() || '';
+  if (q.length === 0) {
+    return res.render('vwCourse/search', {
+      q: q,
+      empty: true,
+      courses: [],
+      pages: [],
+    });
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = 3;
+  const offset = (page - 1) * limit;
+
+  const keyword = q.replace(/ /g, ' & ');
+  const courses = await courseModel.search(keyword, limit, offset);
+  const total = await courseModel.countSearch(keyword);
+  const totalPages = Math.ceil(total / limit);
+  const pages = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pages.push({
+      value: i,
+      isCurrent: i === page,
+    });
+  }
+
+  res.render('vwCourse/search', {
+    q: q,
+    courses,
+    empty: courses.length === 0,
+    pages,
+    isFirstPage: page === 1,
+    isLastPage: page === totalPages,
+    prevPage: page > 1 ? page - 1 : 1,
+    nextPage: page < totalPages ? page + 1 : totalPages,
   });
 });
 
 //add
-router.get('/add', async function (req, res) {
+router.get('/add', authMiddleware.requireAuth, authMiddleware.restrictAdmin, async function (req, res) {
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
@@ -78,15 +142,19 @@ router.get('/add', async function (req, res) {
 });
 
 router.post('/add', async function (req, res) {
-  if (req.body.mode !== 'course') return res.redirect('/admin/categories/add');
+  if (req.body.mode !== 'course')
+    return res.redirect('/admin/categories/add');
   let catid = Number(req.body.catid) || null;
+
   if (!catid && req.body.catname?.trim()) {
-    const [newId] = await categoryModel.add({
+    const newCat = {
       catname: req.body.catname.trim(),
       parentid: Number(req.body.parentid) || null
-    });
+    };
+    const [newId] = await categoryModel.add(newCat);
     catid = newId;
   }
+
   const title = (req.body.title || '').trim();
   if (!title || !catid)
     return res.redirect('/course/add?err=missing_title_or_cat&mode=course');
@@ -95,47 +163,16 @@ router.post('/add', async function (req, res) {
     title,
     price: Number(req.body.price) || 0,
     discount: Number(req.body.discount) || 0,
-    thumbnail: (req.body.thumbnail || '').trim() || null, 
-    status: (req.body.status || 'draft').trim(),
+    thumbnail: req.body.thumbnail?.trim() || null,
+    status: req.body.status?.trim() || 'draft',
     catid,
     instructorid: Number(req.body.instructorid) || null,
     lastupdate: new Date(),
-    tinydes: (req.body.tinydes || '').trim() || null,
-    fulldes: (req.body.fulldes || '').trim() || null,
+    tinydes: req.body.tinydes?.trim() || null,
+    fulldes: req.body.fulldes?.trim() || null,
   };
-  const ret = await courseModel.add(course);
-
-  try {
-    const courseid =
-      (Array.isArray(ret) && typeof ret[0] === 'object' && ret[0] && (ret[0].courseid ?? ret[0].id)) ||
-      (Array.isArray(ret) && typeof ret[0] !== 'object' && ret[0]) ||
-      ret.insertId || ret.courseid || ret.id;
-
-    if (req.body.photos) {
-      const dirPath = path.join('static', 'imgs', 'course', String(courseid));
-      if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
-
-      const photos = JSON.parse(req.body.photos);
-      let i = 0;
-      for (const p of photos) {
-        const name = path.basename(p);
-        const src  = path.join('static', 'temp_uploads', name);
-
-        if (i === 0) {
-          fs.copyFileSync(src, path.join(dirPath, 'main.jpg'));
-          fs.copyFileSync(src, path.join(dirPath, 'main_thumbs.jpg'));
-        } else {
-          fs.copyFileSync(src, path.join(dirPath, `${i}.jpg`));
-          fs.copyFileSync(src, path.join(dirPath, `${i}_thumbs.jpg`));
-        }
-        try { fs.unlinkSync(src); } catch {}
-        i++;
-      }
-    }
-  } catch (err) {
-    console.error('[course/add] move images error:', err);
-  }
-  return res.redirect(`/course/byCat?catid=${catid}`);
+  await courseModel.add(course);
+  res.redirect(`/course/byCat?catid=${catid}`);
 });
 router.get('/byChild.json', async function (req, res) {
   const catid = Number(req.query.childid || req.query.catid || 0);
@@ -187,7 +224,7 @@ router.get("/lesson", async function (req, res) {
   });
 });
 //addlesson
-router.get("/addlesson", async function (req, res) {
+router.get("/addlesson", authMiddleware.requireAuth, authMiddleware.restrictInstructorAndAdmin, async function (req, res) {
   const courseid = Number(req.query.courseid || 0);
 
   const parents = await categoryModel.findAllParents();
@@ -211,11 +248,13 @@ router.get("/addlesson", async function (req, res) {
     sections: sections,
   });
 });
+//sửa
 router.post("/addlesson", async function (req, res) {
   const courseid = Number(req.body.courseid);
   let sectionid = Number(req.body.sectionId);
   const newSectionName = (req.body.newSectionName || '').trim();
   const title = (req.body.title || '').trim();
+  const videoUrl = (req.body.video_url || '').trim();
 
   if (!sectionid && newSectionName) {
     const [sec] = await sectionModel.add({
@@ -223,34 +262,47 @@ router.post("/addlesson", async function (req, res) {
       title: newSectionName,
       order: 1,
     });
-    sectionid = sec.sectionid;
+    sectionid = sec?.sectionid || sec;
   }
 
-  await lessonModel.add({
+  const result = await lessonModel.add({
     sectionid,
     title,
     content: req.body.content || '',
-    video_url: (req.body.video_url || '').trim(),
+    video_url: videoUrl,
     preview: req.body.preview === 'on',
   });
 
+  let lessonId =
+    (Array.isArray(result) && (result[0]?.lessonid || result[0]?.id || result[0])) ||
+    result?.lessonid ||
+    result?.id ||
+    Number(result) ||
+    0;
+
+  console.log('👉 lessonModel.add() trả về:', result);
+  console.log('👉 lessonId suy ra:', lessonId);
+
+  if (!lessonId) {
+    const lessonsInSection = await lessonModel.findBySection(sectionid);
+    if (Array.isArray(lessonsInSection) && lessonsInSection.length > 0) {
+      const last = lessonsInSection[lessonsInSection.length - 1];
+      lessonId = last.lessonid || last.id || 0;
+      console.log('👉 Fallback lấy từ findBySection:', lessonId);
+    }
+  }
+
+  if (lessonId) {
+    await saveVideoLink(lessonId, videoUrl);
+  } else {
+    console.warn('⚠ Không lấy được lessonId nên không ghi file video.');
+  }
+
   res.redirect(`/course/lesson?courseid=${courseid}`);
 });
-//watch
-router.get('/watch', async function (req, res) {
-  const lessonid = Number(req.query.lessonid || 0);
-  const lesson = await lessonModel.findOne(lessonid);
-  const src = (lesson.video_url || '').trim();
-  res.render('vwAdminCourse/watchLesson', {
-    lesson: lesson,
-    player: {
-      src: src,
-      type: 'video/youtube'
-    }
-  });
-});
+
 //edit lesson
-router.get('/lesson/edit', async function (req, res) {
+router.get('/lesson/edit', authMiddleware.requireAuth, authMiddleware.restrictInstructorAndAdmin, async function (req, res) {
   const sectionid = Number(req.query.sectionid || 0);
   if (!sectionid) return res.redirect('/course/lesson');
 
@@ -282,9 +334,8 @@ router.post('/section/edit', async function (req, res) {
 
   return res.redirect(`/course/lesson?courseid=${courseid}`);
 });
-
+//sửa
 router.post('/lesson/editLesson', async function (req, res) {
-  const sectionid = Number(req.body.sectionId || 0);
   const courseid = Number(req.body.courseId || 0);
   const lessonId = Number(req.body.targetLessonId || 0);
 
@@ -298,6 +349,7 @@ router.post('/lesson/editLesson', async function (req, res) {
     preview
   });
 
+  await saveVideoLink(lessonId, videoUrl);
   return res.redirect(`/course/lesson?courseid=${courseid}`);
 });
 //delete section
@@ -353,6 +405,30 @@ router.post('/del', async function (req, res) {
     return res.redirect('back');
   }
 });
+
+
+
+
+router.post('/:id/feedback', async function (req, res) {
+  const courseId = Number(req.params.id);
+  if (!courseId) return res.redirect('/course/byCat');
+
+  // TODO: bạn có session user? ví dụ lưu user vào req.session.authUser
+  const user = req.session?.authUser;
+  if (!user) return res.redirect('/auth/signin');
+
+  const { rating, comment } = req.body;
+  if (!rating) return res.redirect(`/course/${courseId}`); // không đánh giá thì quay lại
+
+  await feedbackModel.insert({
+    userid: user.userid,
+    courseid: courseId,
+    rating: Number(rating),
+    comment: comment || null,
+  });
+
+  return res.redirect(`/course/${courseId}`);
+});
 //
 router.get('/:id', async function (req, res) {
   const id = Number(req.params.id);
@@ -360,6 +436,21 @@ router.get('/:id', async function (req, res) {
 
   const course = await courseModel.findById(id);
   if (!course) return res.status(404).send('Course not found');
+
+  const instructorName = await courseModel.InstructorName(id);
+
+  // ==== LẤY FEEDBACK SUMMARY ====
+  const list = await feedbackModel.findByCourse(id); // bạn sẽ có hàm này hoặc t sẽ viết sau
+  let fb = { avg: 0, count: 0, comments: [] };
+
+  if (list && list.length) {
+    const sum = list.reduce((s, r) => s + r.rating, 0);
+    fb.avg = Number((sum / list.length).toFixed(1));
+    fb.count = list.length;
+    fb.comments = list; // chứa rating, comment, userid, create_at
+  }
+
+  // === Lấy categories ===
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
@@ -367,9 +458,14 @@ router.get('/:id', async function (req, res) {
   }
 
   res.render('vwCourse/details', {
-    course: course,
-    parents: parents,
-    childrenMap: childrenMap,
+    course,
+    parents,
+    childrenMap,
+    fb,
+    instructorName,
   });
 });
+
+
+
 export default router;

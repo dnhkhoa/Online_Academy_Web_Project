@@ -60,40 +60,98 @@
               {{#if category}}Courses in {{category.catname}}{{else}}All Courses{{/if}}
             </h2>
           </div>
+          {{!-- new --}}
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownInstructor"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Lọc giảng viên
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownInstructor"
+              style="max-height: 280px; overflow-y: auto;">
+              <li>
+                <a class="dropdown-item {{#unless currentInstructor}}active{{/unless}}" href="/course/byCat">
+                  Tất cả giảng viên
+                </a>
+              </li>
+              {{#each instructors}}
+              <li>
+                <a class="dropdown-item {{#if (eq ../currentInstructor this.userid)}}active{{/if}}"
+                  href="/course/byCat?instructorid={{this.userid}}">
+                  {{this.full_name}}
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+          {{!-- new --}}
         </div>
 
+
         <div class="row g-4">
+          {{!-- [CHANGED] Lặp courses --}}
           {{#each courses}}
           <div class="col-md-6 col-xl-4 d-flex justify-content-center">
             <div class="card" style="width: 18rem;">
-              <img
-                src="{{#if this.thumbnail}}{{this.thumbnail}}{{else}}/static/imgs/course/{{this.courseid}}/main_thumbs.jpg{{/if}}"
-                class="card-img-top" alt="{{this.title}}"
-                onerror="this.onerror=null;this.src='/static/imgs/placeholder.jpg';" />
-               <div class="card-body">
-                <h5 class="card-title">{{this.title}}</h5>
-                <p class="card-text">
-                  {{#if this.tinydes}}{{this.tinydes}}{{else}}No description{{/if}}
-                </p>
-            </div>
-            <div class="card-footer d-flex justify-content-between align-items-center">
-              <span class="text-muted">{{format_number this.price}} đ</span>
-              <a href="/course/{{this.courseid}}" class="btn btn-sm btn-outline-primary">
-                View Details
-              </a>
+              <img src="{{thumbnail}}" class="card-img-top" alt="Python for beginners" />
+              <div class="card-body">
+                <h5 class="card-title">{{title}}</h5>
+                <p class="card-text">{{tinydes}}</p>
+              </div>
+              <div class="card-footer">
+                <a href="/course/{{this.courseid}}" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye"></i>
+                  View Details
+                </a>
+                <form action="/account/add-cart" method="post">
+                  <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                  <button type="submit" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                  </button>
+                </form>
+                <form action="/account/add" method="post">
+                  <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                  <button type="submit" class="btn btn-sm btn btn-outline-danger">
+                    <i class="bi bi-heart"></i> Add to watchlist
+                  </button>
+                </form>
+                {{{renderStars fbAvg}}}
+              </div>
             </div>
           </div>
+          {{/each}}
+          <nav aria-label="..." class="mt-3">
+            <ul class="pagination">
+              <li class="page-item {{#if isFirstPage}}disabled{{/if}}">
+                <a class="page-link" href="/course/byCat?page={{prevPage}}" tabindex="-1">Previous</a>
+              </li>
+              {{#each pages}}
+              {{#if isCurrent}}
+              <li class="page-item active" aria-current="page">
+                <a class="page-link" href="javascript:void(0);">
+                  {{value}}
+                </a>
+              </li>
+              {{else}}
+              <li class="page-item">
+                <a class="page-link" href="/course/byCat?page={{value}}">
+                  {{value}}
+                </a>
+              </li>
+              {{/if}}
+              {{/each}}
+              <li class="page-item {{#if isLastPage}}disabled{{/if}}">
+                <a class="page-link" href="/course/byCat?page={{nextPage}}">Next</a>
+              </li>
+            </ul>
+          </nav>
+          {{!-- Nếu không có course --}}
+          {{#unless courses.length}}
+          <div class="col-12">
+            <div class="alert alert-warning">No courses found.</div>
+          </div>
+          {{/unless}}
         </div>
-        {{/each}}
-
-        {{#unless courses.length}}
-        <div class="col-12">
-          <div class="alert alert-warning">No courses found.</div>
-        </div>
-        {{/unless}}
       </div>
-
     </div>
-  </div>
   </div>
 </section>
