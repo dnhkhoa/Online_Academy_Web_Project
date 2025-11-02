@@ -51,7 +51,11 @@
           <div class="row g-0">
             <div class="col-md-5">
               <div class="course-detail-hero__cover h-100">
-                <img src="{{course.thumbnail}}" alt="{{course.title}}" class="img-fluid w-100 h-100" />
+                {{#if course.thumbnail}}
+                  <img src="{{course.thumbnail}}" alt="{{course.title}}" class="img-fluid w-100 h-100">
+                {{else}}
+                  <img src="/static/imgs/course/{{course.courseid}}/main.jpg" alt="{{course.title}}" class="img-fluid w-100 h-100">
+                {{/if}}
               </div>
             </div>
             <div class="col-md-7">

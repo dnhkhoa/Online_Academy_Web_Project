@@ -99,6 +99,16 @@ router.get('/byCat', async function (req, res) {
   // --- Lấy danh sách giảng viên ---
   const instructors = await courseModel.getInstructors();
 
+  const topViewed = await courseModel.getTop10ByViews();
+  const topEnrolled = await courseModel.getTop10ByEnrolled();
+
+  const topViewedIds = topViewed.map(c => c.courseid);
+  const topEnrolledIds = topEnrolled.map(c => c.courseid);
+
+  for (const c of courses) {
+    c.isTopView = topViewedIds.includes(c.courseid);
+    c.isTopEnroll = topEnrolledIds.includes(c.courseid);
+  }
   // --- Render ---
   res.render('vwCourse/byCat', {
     parents,
@@ -160,6 +170,16 @@ router.get('/search', async function (req, res) {
       value: i,
       isCurrent: i === page,
     });
+  }
+  const topViewed = await courseModel.getTop10ByViews();
+  const topEnrolled = await courseModel.getTop10ByEnrolled();
+
+  const topViewedIds = topViewed.map(c => c.courseid);
+  const topEnrolledIds = topEnrolled.map(c => c.courseid);
+
+  for (const c of courses) {
+    c.isTopView = topViewedIds.includes(c.courseid);
+    c.isTopEnroll = topEnrolledIds.includes(c.courseid);
   }
 
   res.render('vwCourse/search', {

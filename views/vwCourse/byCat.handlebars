@@ -1,7 +1,5 @@
-{{!-- views/vwCourse/byCat.handlebars --}}
-
 {{#section "styles"}}
-  <link rel="stylesheet" href="/static/byCat.css" />
+<link rel="stylesheet" href="/static/byCat.css" />
 {{/section}}
 
 <section class="py-5">
@@ -16,46 +14,35 @@
 
             {{!-- [CHANGED] Lặp L1 parents --}}
             {{#each parents}}
-              <div class="accordion-item">
-                <h2 class="accordion-header" id="heading-{{this.catid}}">
-                  <div class="header-content">
-                    <button
-                      class="accordion-button collapsed flex-grow-1"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapse-{{this.catid}}"
-                      aria-expanded="false"
-                      aria-controls="collapse-{{this.catid}}"
-                    >
-                      {{this.catname}}
-                    </button>
-                  </div>
-                </h2>
-                <div
-                  id="collapse-{{this.catid}}"
-                  class="accordion-collapse collapse"
-                  aria-labelledby="heading-{{this.catid}}"
-                  data-bs-parent="#categoryAccordion"
-                >
-                  <div class="accordion-body p-0">
-                    <div class="accordion accordion-flush ms-3" id="subAccordion-{{this.catid}}">
-                      {{!-- [CHANGED] Lặp L2 từ childrenMap[parentId] --}}
-                      {{#each (lookup ../childrenMap this.catid)}}
-                        <div class="accordion-item">
-                          <h2 class="accordion-header" id="sub-heading-{{this.catid}}">
-                            <a
-                              class="accordion-button collapsed py-2 text-decoration-none"
-                              href="/course/byCat?catid={{this.catid}}"
-                            >
-                              {{this.catname}}
-                            </a>
-                          </h2>
-                        </div>
-                      {{/each}}
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading-{{this.catid}}">
+                <div class="header-content">
+                  <button class="accordion-button collapsed flex-grow-1" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse-{{this.catid}}" aria-expanded="false"
+                    aria-controls="collapse-{{this.catid}}">
+                    {{this.catname}}
+                  </button>
+                </div>
+              </h2>
+              <div id="collapse-{{this.catid}}" class="accordion-collapse collapse"
+                aria-labelledby="heading-{{this.catid}}" data-bs-parent="#categoryAccordion">
+                <div class="accordion-body p-0">
+                  <div class="accordion accordion-flush ms-3" id="subAccordion-{{this.catid}}">
+                    {{!-- [CHANGED] Lặp L2 từ childrenMap[parentId] --}}
+                    {{#each (lookup ../childrenMap this.catid)}}
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="sub-heading-{{this.catid}}">
+                        <a class="accordion-button collapsed py-2 text-decoration-none"
+                          href="/course/byCat?catid={{this.catid}}">
+                          {{this.catname}}
+                        </a>
+                      </h2>
                     </div>
+                    {{/each}}
                   </div>
                 </div>
               </div>
+            </div>
             {{/each}}
             {{!-- /parents --}}
           </div>
@@ -105,84 +92,86 @@
             </select>
           </form>
           <script>
-            (function(){
+            (function () {
               var sel = document.getElementById('sortSelect');
               if (sel) sel.value = '{{sort}}';
             })();
           </script>
         </div>
-        
+
 
         <div class="row g-4">
           {{!-- [CHANGED] Lặp courses --}}
           {{#each courses}}
-            <div class="col-md-6 col-xl-4 d-flex justify-content-center">
-                    <div class="card" style="width: 18rem;">
-                    <img
-                        src="{{thumbnail}}"
-                        class="card-img-top"
-                        alt="Python for beginners"
-                    />
-                    <div class="card-body">
-                        <h5 class="card-title">{{title}}</h5>
-                        <p class="card-text">{{tinydes}}</p>
-                    </div>
-                    <div class="card-footer">
-                        <a
-                        href="/course/{{this.courseid}}"
-                        class="btn btn-sm btn-outline-primary"
-                        >
-                        <i class="bi bi-eye"></i>
-                        View Details
-                        </a>
-                        <form action="/account/add-cart" method="post">
-                        <input type="hidden" name="courseid" value="{{this.courseid}}" />
-                          <button type="submit" class="btn btn-sm btn-outline-success">
-                            <i class="bi bi-cart-plus"></i> Add to Cart
-                          </button>
-                        </form>
-                        <form action="/account/add" method="post">
-                        <input type="hidden" name="courseid" value="{{this.courseid}}" />
-                          <button type="submit" class="btn btn-sm btn btn-outline-danger">
-                            <i class="bi bi-heart"></i> Add to watchlist
-                          </button>
-                        </form>
-                        {{{renderStars fbAvg}}} 
-                    </div>
-                </div>
+          <div class="col-md-6 col-xl-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+              <img
+                src="{{#if this.thumbnail}}{{this.thumbnail}}{{else}}/static/imgs/course/{{this.courseid}}/main_thumbs.jpg{{/if}}"
+                class="card-img-top" alt="{{this.title}}"
+                onerror="this.onerror=null;this.src='/static/imgs/placeholder.jpg';" />
+
+              <div class="card-body">
+                <h5 class="card-title">{{title}}</h5>
+                <p class="card-text">{{tinydes}}</p>
+                {{#if this.isTopView}}
+                <span class="badge text-bg-warning">🔥 Top Viewed</span>
+                {{/if}}
+                {{#if this.isTopEnroll}}
+                <span class="badge text-bg-primary">⭐ Top Enrolled</span>
+                {{/if}}
               </div>
+              <div class="card-footer">
+                <a href="/course/{{this.courseid}}" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye"></i> View Details
+                </a>
+                <form action="/account/add-cart" method="post">
+                  <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                  <button type="submit" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                  </button>
+                </form>
+                <form action="/account/add" method="post">
+                  <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                  <button type="submit" class="btn btn-sm btn btn-outline-danger">
+                    <i class="bi bi-heart"></i> Add to watchlist
+                  </button>
+                </form>
+                {{{renderStars fbAvg}}}
+              </div>
+            </div>
+          </div>
           {{/each}}
-                  <nav aria-label="..." class="mt-3">
-        <ul class="pagination">
-            <li class="page-item 
+          <nav aria-label="..." class="mt-3">
+            <ul class="pagination">
+              <li class="page-item 
             {{#if isFirstPage}}disabled{{/if}}">
-            <a class="page-link" href="/course/byCat?page={{prevPage}}&sort={{sort}}" tabindex="-1">Previous</a>
-            </li>
-            {{#each pages}}
-            {{#if isCurrent}}
-                <li class="page-item active" aria-current="page">
+                <a class="page-link" href="/course/byCat?page={{prevPage}}&sort={{sort}}" tabindex="-1">Previous</a>
+              </li>
+              {{#each pages}}
+              {{#if isCurrent}}
+              <li class="page-item active" aria-current="page">
                 <a class="page-link" href="javascript:void(0);">
-                    {{value}}
+                  {{value}}
                 </a>
-                </li>
-            {{else}}
-                <li class="page-item">
+              </li>
+              {{else}}
+              <li class="page-item">
                 <a class="page-link" href="/course/byCat?page={{value}}&sort={{../sort}}">
-                    {{value}}
+                  {{value}}
                 </a>
-                </li>
-            {{/if}}
-            {{/each}}
-            <li class="page-item {{#if isLastPage}}disabled{{/if}}">
-            <a class="page-link" href="/course/byCat?page={{nextPage}}&sort={{sort}}">Next</a>
-            </li>
-        </ul>
-        </nav>
+              </li>
+              {{/if}}
+              {{/each}}
+              <li class="page-item {{#if isLastPage}}disabled{{/if}}">
+                <a class="page-link" href="/course/byCat?page={{nextPage}}&sort={{sort}}">Next</a>
+              </li>
+            </ul>
+          </nav>
           {{!-- Nếu không có course --}}
           {{#unless courses.length}}
-            <div class="col-12">
-              <div class="alert alert-warning">No courses found.</div>
-            </div>
+          <div class="col-12">
+            <div class="alert alert-warning">No courses found.</div>
+          </div>
           {{/unless}}
         </div>
       </div>

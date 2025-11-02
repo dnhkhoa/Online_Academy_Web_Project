@@ -26,11 +26,11 @@
                 {{#each courses}}
                 <div class="col-md-6 col-xl-4 d-flex justify-content-center">
                     <div class="card" style="width: 18rem;">
-                    <img
-                        src="{{thumbnail}}"
-                        class="card-img-top"
-                        alt="Python for beginners"
-                    />
+                    {{#if thumbnail}}
+                      <img src="{{thumbnail}}" alt="{{title}}" class="img-fluid w-100 h-100">
+                    {{else}}
+                      <img src="/static/imgs/course/{{courseid}}/main.jpg" alt="{{title}}" class="img-fluid w-100 h-100">
+                    {{/if}}
                     <div class="card-body">
                         <h5 class="card-title">{{title}}</h5>
                         <p class="card-text">{{tinydes}}</p>
@@ -93,61 +93,5 @@
       </div>
     </div>
   </section>
-
-  <!-- FOOTER -->
-  <footer class="py-5 border-top bg-white site-footer">
-    <div class="container">
-      <div class="row g-4">
-        <div class="col-lg-4">
-          <a
-            href="/"
-            class="text-decoration-none text-dark fs-3 fw-semibold d-block mb-3"
-          ><img src="/static/LogoUTE.png" alt="Logo" class="site-logo" /></a>
-          <p class="mb-1"><strong>Address</strong></p>
-          <p class="text-muted mb-2">1 Vo Van Ngan, Thu Duc, Tp.HCM</p>
-          <p class="mb-1"><strong>Contact</strong></p>
-          <a
-            href="mailto:onlineacademy@gmail.com"
-            class="text-decoration-none"
-          >onlineacademy@gmail.com</a>
-          <div class="footer-social mt-3">
-            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" aria-label="Instagram"><i
-                class="bi bi-instagram"
-              ></i></a>
-            <a href="#" aria-label="X"><i class="bi bi-twitter"></i></a>
-            <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="row footer-link-group">
-            <div class="col-8">
-              <a href="#">Members of us: </a>
-              <a href="#">23110010 - Nguyen Chi Dung</a>
-              <a href="#">23110030 - Trinh Hoang Khang</a>
-              <a href="#">23110034 - Truong Dinh Khoa</a>
-              <a href="#">23110039 - Vo Huu Loc</a>
-              <a href="#">23110055 - Le Hoang Phuc</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="ghost-image" style="min-height: 180px;"></div>
-        </div>
-      </div>
-      <hr class="my-5" />
-      <div
-        class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3"
-      >
-        <span class="text-muted">&copy; Online Academy. All rights reserved.</span>
-        <div class="d-flex gap-3">
-          <a href="#" class="text-decoration-none text-muted">Privacy policy</a>
-          <a href="#" class="text-decoration-none text-muted">Terms of service</a>
-          <a href="#" class="text-decoration-none text-muted">Cookies settings</a>
-        </div>
-      </div>
-    </div>
-  </footer>
 
 </main>

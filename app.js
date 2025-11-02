@@ -11,6 +11,7 @@ import { renderStars } from "./utils/rating.js";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import { allowPreview } from "./middlewares/auth.mdw.js";
+import supabase from "./config/supabase.js";
 dotenv.config();
 
 const __dirname = import.meta.dirname;
@@ -119,23 +120,62 @@ app.use("/auth", authRoutes);
 app.use("/account", accountRouter);
 import* as courseModel from "./models/course.model.js";
 app.get("/", async function (req, res) {
-  // by views
-  const topCourses = await courseModel.getTop10ByViews();
+  try {
+    // existing course queries
+    const topCourses = await courseModel.getTop10ByViews();
+    const top3Courses = await courseModel.get3TopCourses();
+    await courseModel.updateNumEnrolled();
+    const topEnrolledCourses = await courseModel.getTop10ByEnrolled();
+    const topLatestCourses = await courseModel.get10NewestCourses();
 
-  const top3Courses = await courseModel.get3TopCourses();
-  await courseModel.updateNumEnrolled();
-  //by enrolled
-  const topEnrolledCourses = await courseModel.getTop10ByEnrolled();
+    // --- NEW: build topCategories (copy từ home.route.js) ---
+    const { data: courses, error } = await supabase
+      .from("courses")
+      .select("courseid, catid, numenrolled, thumbnail");
+    if (error) throw error;
 
-  //by latest
-  const topLatestCourses = await courseModel.get10NewestCourses();
+    const map = new Map();
+    for (const c of courses || []) {
+      const id = c.catid;
+      const item = map.get(id) || { catid: id, total_enrolled: 0, course_count: 0, thumbnail: c.thumbnail };
+      item.total_enrolled += Number(c.numenrolled || 0);
+      item.course_count += 1;
+      if (!item.thumbnail && c.thumbnail) item.thumbnail = c.thumbnail;
+      map.set(id, item);
+    }
+    let topCategories = Array.from(map.values());
+    topCategories.sort((a,b)=> b.total_enrolled - a.total_enrolled);
+    topCategories = topCategories.slice(0,6);
 
-  res.render("home",{
-    topcourses : topCourses,
-    topenrolledcourses: topEnrolledCourses,
-    toplatestcourses: topLatestCourses,
-    top3courses: top3Courses
-  });
+    const catIds = topCategories.map(t=>t.catid).filter(Boolean);
+    if (catIds.length) {
+      const { data: cats } = await supabase
+        .from("categories")
+        .select("catid,catname")
+        .in("catid", catIds);
+      const catMap = (cats||[]).reduce((acc, c)=> (acc[c.catid]=c.catname, acc), {});
+      topCategories = topCategories.map(t => ({ ...t, catname: catMap[t.catid] || "Unknown" }));
+    }
+
+    // --- render with topCategories included ---
+    console.log("topCategories:", topCategories);
+    res.render("home", {
+      topcourses: topCourses,
+      topenrolledcourses: topEnrolledCourses,
+      toplatestcourses: topLatestCourses,
+      top3courses: top3Courses,
+      topCategories
+    });
+  } catch (err) {
+    console.error(err);
+    res.render("home", {
+      topcourses: [],
+      topenrolledcourses: [],
+      toplatestcourses: [],
+      top3courses: [],
+      topCategories: []
+    });
+  }
 });
 import accountRouter from "./routes/account.route.js";
 app.use("/account", accountRouter);

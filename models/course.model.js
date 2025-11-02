@@ -269,6 +269,16 @@ export async function get3TopCourses() {
     .limit(3);
 }
 
+export async function isInMostViewedCourses(courseId) {
+  const topCourses = await getTop10ByViews();
+  return topCourses.some(course => course.courseid === courseId);
+}
+
+export async function isInMostEnrolledCourses(courseId) {
+  const topCourses = await getTop10ByEnrolled();
+  return topCourses.some(course => course.courseid === courseId);
+}
+
 // ✅ lấy list giảng viên
 export async function getInstructors() {
   return db('courses')
