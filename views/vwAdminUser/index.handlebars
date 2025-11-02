@@ -31,28 +31,31 @@
                       <td>{{this.full_name}}</td>
                       <td>{{this.email}}</td>
                       <td>
-                        {{#if this.islocked}}
-                          <span class="badge text-bg-danger">Locked</span>
-                          <td class="text-end">
-                        <form method="post" action="/admin/users/unlock" class="d-inline">
-                          <input type="hidden" name="userid" value="{{this.userid}}" />
-                          <button type="submit" class="btn btn-sm btn-outline-danger" {{#unless this.islocked}}disabled{{/unless}}>
-                            Unlock
-                          </button>
-                        </form>
-                          </td>
-                        {{else}}
-                          <span class="badge text-bg-success">Active</span>
-                          <td class="text-end">
-                        <form method="post" action="/admin/users/lock" class="d-inline">
-                          <input type="hidden" name="userid" value="{{this.userid}}" />
-                          <button type="submit" class="btn btn-sm btn-outline-danger" {{#if this.islocked}}disabled{{/if}}>
-                            Lock
-                          </button>
-                        </form>
-                          </td>
-                        {{/if}}
-                      </td>
+                  {{#if this.islocked}}
+                    <span class="badge text-bg-danger">Locked</span>
+                  {{else}}
+                    <span class="badge text-bg-success">Active</span>
+                  {{/if}}
+                </td>
+                <td class="text-end">
+                  {{#if this.islocked}}
+                    <form method="post" action="/admin/users/unlock" class="d-inline">
+                      <input type="hidden" name="userid" value="{{this.userid}}" />
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Unlock</button>
+                    </form>
+                  {{else}}
+                    <form method="post" action="/admin/users/lock" class="d-inline">
+                      <input type="hidden" name="userid" value="{{this.userid}}" />
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Lock</button>
+                    </form>
+                  {{/if}}
+                  <form method="post" action="/admin/users/grant-instructor" class="d-inline ms-1">
+                    <input type="hidden" name="userid" value="{{this.userid}}" />
+                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                      Cấp tài khoản giảng viên
+                    </button>
+                  </form>
+                </td>
                       
                     </tr>
                   {{/each}}
@@ -93,20 +96,25 @@
                       <td>{{this.full_name}}</td>
                       <td>{{this.email}}</td>
                       <td>
-                        {{#if this.islocked}}
-                          <span class="badge text-bg-danger">Locked</span>
-                        {{else}}
-                          <span class="badge text-bg-success">Active</span>
-                        {{/if}}
-                      </td>
-                      <td class="text-end">
-                        <form method="post" action="/admin/users/lock" class="d-inline">
-                          <input type="hidden" name="userid" value="{{this.userid}}" />
-                          <button type="submit" class="btn btn-sm btn-outline-danger" {{#if this.islocked}}disabled{{/if}}>
-                            Khóa tài khoản
-                          </button>
-                        </form>
-                      </td>
+                  {{#if this.islocked}}
+                    <span class="badge text-bg-danger">Locked</span>
+                  {{else}}
+                    <span class="badge text-bg-success">Active</span>
+                  {{/if}}
+                </td>
+                <td class="text-end">
+                  {{#if this.islocked}}
+                    <form method="post" action="/admin/users/unlock" class="d-inline">
+                      <input type="hidden" name="userid" value="{{this.userid}}" />
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Unlock</button>
+                    </form>
+                  {{else}}
+                    <form method="post" action="/admin/users/lock" class="d-inline">
+                      <input type="hidden" name="userid" value="{{this.userid}}" />
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Lock</button>
+                    </form>
+                  {{/if}}
+                </td>
                     </tr>
                   {{/each}}
                 </tbody>

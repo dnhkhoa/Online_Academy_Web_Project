@@ -42,10 +42,20 @@ router.post('/lock', async (req, res) => {
   res.redirect('/admin/users');
 });
 
+
+// POST /admin/users/lock - lock account
 router.post('/unlock', async (req, res) => {
   const userid = Number(req.body.userid || 0);
   if (!userid) return res.redirect('/admin/users');
   await userModel.setUserLock(userid, 0);
+  res.redirect('/admin/users');
+});
+
+// POST /admin/users/grant-instructor - upgrade role to instructor
+router.post('/grant-instructor', async (req, res) => {
+  const userid = Number(req.body.userid || 0);
+  if (!userid) return res.redirect('/admin/users');
+  await userModel.setUserRole(userid, 'instructor');
   res.redirect('/admin/users');
 });
 

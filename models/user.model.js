@@ -63,3 +63,8 @@ export async function setUserLock(id, locked) {
     .where('userid', id)
     .update({ islocked: locked ? 1 : 0 });
 }
+export async function setUserRole(id, role) {
+  return db('users')
+    .where('userid', id)
+    .update({ role });
+}

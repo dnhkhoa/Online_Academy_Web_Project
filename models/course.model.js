@@ -287,3 +287,19 @@ export async function findByInstructor(instructorid, limit, offset) {
     .orderBy('courseid', 'asc');
 }
 
+export async function setCourseStatus(courseid, status) {
+  return db('courses').where('courseid', courseid).update({ status });
+}
+
+export async function adminListCourses() {
+  return db('courses as c')
+    .leftJoin('users as u', 'c.instructorid', 'u.userid')
+    .leftJoin('categories as k', 'c.catid', 'k.catid')
+    .select(
+      'c.courseid','c.title','c.status','c.view','c.createdat','c.lastupdate',
+      'u.full_name as instructor_name',
+      'k.catname as category_name'
+    )
+    .orderBy('c.createdat','desc');
+}
+

@@ -163,6 +163,9 @@ app.use("/payments", paymentRouter);
 import adminUsersRouter from "./routes/admin.users.route.js";
 app.use("/admin/users", authMiddleware.requireAuth, authMiddleware.restrictAdmin, adminUsersRouter);
 
+import adminCoursesRouter from "./routes/admin.courses.route.js";
+app.use("/admin/courses", authMiddleware.requireAuth, authMiddleware.restrictAdmin, adminCoursesRouter);
+
 
 app.use(function (req, res) {
   res.status(404).render("404");
