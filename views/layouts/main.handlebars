@@ -54,6 +54,11 @@
             href="/admin/categories/list"
             class="text-decoration-none text-dark"
           >Categories</a>
+          {{#if isAuthenticated}}
+            {{#if (is authUser.role "admin")}}
+              <a href="/admin/users" class="text-decoration-none text-dark">Users</a>
+            {{/if}}
+          {{/if}}
           <a href="/account/cart" class="text-decoration-none text-dark"><i
               class="bi bi-cart4"
             ></i></a>
@@ -168,6 +173,11 @@
           href="/admin/categories/list"
           class="text-decoration-none text-dark"
         >Categories</a>
+        {{#if isAuthenticated}}
+          {{#if (is authUser.role "admin")}}
+            <a href="/admin/users" class="text-decoration-none text-dark">Users</a>
+          {{/if}}
+        {{/if}}
 
         <div class="d-flex gap-2 mt-auto">
           <a

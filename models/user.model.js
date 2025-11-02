@@ -53,3 +53,13 @@ export async function userbyID(uid) {
 export function updateUserProfile(id, user) {
   return db('users').where('userid', id).update(user);
 }
+
+export async function findUsersByRole(role) {
+  return db('users').where('role', role).orderBy('createdat', 'desc');
+}
+
+export async function setUserLock(id, locked) {
+  return db('users')
+    .where('userid', id)
+    .update({ islocked: locked ? 1 : 0 });
+}

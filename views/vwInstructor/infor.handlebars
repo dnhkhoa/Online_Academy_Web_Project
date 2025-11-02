@@ -1,0 +1,159 @@
+{{#section "styles"}}
+  <link rel="stylesheet" href="/static/infor.css" />
+{{/section}}
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Avatar -->
+      {{!-- <div class="col-lg-4">
+        <div class="card card-rounded position-sticky top-20">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Photo</h5>
+
+            <div class="d-flex align-items-center gap-3 position-relative">
+              <div class="avatar-wrap bg-light">
+                <img
+                  id="avatarPreview"
+                  src="https://placehold.co/280x280"
+                  alt="Avatar preview"
+                />
+              </div>
+              <div class="flex-grow-1">
+
+                <form class="d-flex gap-2">
+                  <label class="btn btn-outline-secondary btn-sm mb-0">
+                    <i class="bi bi-upload me-1"></i>
+                    Upload
+                    <input
+                      id="avatarInput"
+                      type="file"
+                      accept="image/*"
+                      hidden
+                    />
+                  </label>
+                  <button type="button" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-trash3 me-1"></i>
+                    Remove
+                  </button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div> --}}
+
+      <!-- Info + Contact -->
+      <div class="col-lg-8">
+        <!-- Basic Info -->
+        <div class="card card-rounded mb-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="card-title mb-0">Basic Information</h5>
+
+            </div>
+
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Full name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Nguyen Van A"
+                    value = "{{fullname.instructorName}}"
+                  />
+
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    placeholder="nguyenvana@gmail.com"
+                    value = "{{email.instructorEmail}}"
+                  />
+                  
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Date of birth</label>
+                  <input type="date" class="form-control" value="{{instructor.birthday}}" />
+                    
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="card card-rounded">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="card-title mb-0">Contact Information</h5>
+
+            </div>
+
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Phone</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    placeholder="+84 123 456 789"
+                    value="{{instructor.phone}}"
+                  />
+                  
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label">Address</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="1, Vo Van Ngan, Thu Duc"
+                    value="{{instructor.address}}"
+                  />
+                  
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">City</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Ho Chi Minh City"
+                    value="{{instructor.city}}"
+                  />
+                    
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Country</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Viet Nam"
+                    value ="{{instructor.country}}"
+                  />
+                    
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+              <button type="button" class="btn btn-light me-2">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>
+                Reset
+              </button>
+              <button type="button" class="btn btn-success">
+                <i class="bi bi-check2"></i>
+                Save
+              </button>
+            </div>
+      </div>
+    </div>
+  </div>
+</section>

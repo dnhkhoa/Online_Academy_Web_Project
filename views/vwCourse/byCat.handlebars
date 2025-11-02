@@ -71,6 +71,28 @@
               {{#if category}}Courses in {{category.catname}}{{else}}All Courses{{/if}}
             </h2>
           </div>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownInstructor"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Lọc giảng viên
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownInstructor"
+              style="max-height: 280px; overflow-y: auto;">
+              <li>
+                <a class="dropdown-item {{#unless currentInstructor}}active{{/unless}}" href="/course/byCat">
+                  Tất cả giảng viên
+                </a>
+              </li>
+              {{#each instructors}}
+              <li>
+                <a class="dropdown-item {{#if (eq ../currentInstructor this.userid)}}active{{/if}}"
+                  href="/course/byCat?instructorid={{this.userid}}">
+                  {{this.full_name}}
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
           <form method="get" class="ms-auto d-flex align-items-center gap-2">
             {{#if category}}
             <input type="hidden" name="catid" value="{{category.catid}}" />
@@ -79,7 +101,6 @@
             <select id="sortSelect" name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
               <option value="">Default</option>
               <option value="rating">Rating</option>
-              <option value="price">Price</option>
               <option value="newest">Newest</option>
             </select>
           </form>
@@ -90,6 +111,7 @@
             })();
           </script>
         </div>
+        
 
         <div class="row g-4">
           {{!-- [CHANGED] Lặp courses --}}
@@ -132,7 +154,8 @@
           {{/each}}
                   <nav aria-label="..." class="mt-3">
         <ul class="pagination">
-            <li class="page-item {{#if isFirstPage}}disabled{{/if}}">
+            <li class="page-item 
+            {{#if isFirstPage}}disabled{{/if}}">
             <a class="page-link" href="/course/byCat?page={{prevPage}}&sort={{sort}}" tabindex="-1">Previous</a>
             </li>
             {{#each pages}}
@@ -145,7 +168,7 @@
             {{else}}
                 <li class="page-item">
                 <a class="page-link" href="/course/byCat?page={{value}}&sort={{../sort}}">
-                  {{value}}
+                    {{value}}
                 </a>
                 </li>
             {{/if}}

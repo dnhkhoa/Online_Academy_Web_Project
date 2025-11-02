@@ -58,10 +58,15 @@
               <div class="course-detail-hero__body p-4">
                 <h1 class="h4 fw-semibold mb-2">{{course.title}}</h1>
                 <p class="text-muted mb-3">{{course.tinydes}}</p>
-                <p class="text-muted mb-3">Instructor: {{instructorName}}</p>
+                <p class="text-muted mb-3">Instructor: {{instructorName}}
+                  <a href="/instructor/infor/{{course.instructorid}}" 
+                    class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-person"></i> View Instructor Info
+                  </a>
+                </p>
 
                 <ul class="course-detail-hero__meta list-unstyled d-flex flex-wrap gap-3 mb-4">
-                  <li><i class="bi bi-clock me-1"></i> Cập nhật: {{course.lastupdate}}</li>
+                  <li><i class="bi bi-clock me-1"></i> Cập nhật: {{course.createdat}}</li>
                 </ul>
 
                 {{#if fb.count}}
@@ -133,6 +138,50 @@
                 </div>
               </div>
             </div>
+                        <!-- === FEEDBACK BLOCK START === -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+              <div class="card-body">
+                <h2 class="h5 fw-semibold mb-3">Phản hồi của học viên</h2>
+
+                {{#if fb.count}}
+                <p class="mb-3 text-muted">
+                  Trung bình: <strong>{{fb.avg}} / 5</strong> • ({{fb.count}} đánh giá)
+                </p>
+
+                <ul class="list-unstyled">
+                  {{#each fb.comments}}
+                  <li class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <div class="fw-semibold">
+                        {{#if this.user_name}}
+                        {{this.user_name}}
+                        {{else}}
+                        Học viên #{{this.userid}}
+                        {{/if}}
+                      </div>
+                      <div class="text-warning small">
+                        {{{ renderStars this.rating }}}
+                      </div>
+                    </div>
+
+                    {{#if this.comment}}
+                    <p class="mb-1">{{this.comment}}</p>
+                    {{else}}
+                    <p class="mb-1 text-muted fst-italic">Học viên chỉ đánh giá sao.</p>
+                    {{/if}}
+
+                    {{#if this.created_at}}
+                    <p class="mb-0 text-muted small">Lúc: {{this.created_at}}</p>
+                    {{/if}}
+                  </li>
+                  {{/each}}
+                </ul>
+                {{else}}
+                <p class="text-muted mb-0">Chưa có phản hồi nào cho khóa học này.</p>
+                {{/if}}
+              </div>
+            </div>
+            <!-- === FEEDBACK BLOCK END === -->
           </div>
 
 

@@ -11,69 +11,84 @@ const router = express.Router();
 //list
 import * as feedbackModel from '../models/feedback.model.js';
 router.get('/byCat', async function (req, res) {
-  let catid = req.query.catid || 0;
+  const catid = Number(req.query.catid || 0);
+  const instructorid = Number(req.query.instructorid || 0);
+  const sort = String(req.query.sort || '').toLowerCase();
+  const page = parseInt(req.query.page) || 1;
+  const limit = 9;
+  const offset = (page - 1) * limit;
+
+  // --- Lấy danh mục cha & con ---
   const parents = await categoryModel.findAllParents();
   const childrenMap = {};
   for (const p of parents) {
     childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
   }
-  const page = parseInt(req.query.page) || 1; 
-  const limit = 9; 
-  const offset = (page - 1) * limit; 
 
-  const total = await courseModel.countAllCourses();
-  const totalPages = Math.ceil(total / limit);
-  const pages = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pages.push({
-      value: i,
-      isCurrent: i === page,
-    });
-  }
+  // --- Lấy thông tin danh mục hiện tại (nếu có) ---
   let category = null;
   if (catid) category = await categoryModel.findById(catid);
-  const sort = String(req.query.sort || '').toLowerCase();
-  let courses = category
-    ? await courseModel.findByCat(catid)
-    : await courseModel.findAllSorted(limit, offset, sort);
 
-    // ****
-  for (const c of courses) {
-  const list = await feedbackModel.findByCourse(c.courseid);
-  if (!list?.length) {
-    c.fbAvg = 0;
-    c.fbCount = 0;
+  // --- Lấy danh sách khoá học ban đầu ---
+  let courses;
+  if (instructorid) {
+    courses = await courseModel.findByInstructor(instructorid);
+  } else if (catid) {
+    courses = await courseModel.findByCat(catid);
   } else {
-    const sum = list.reduce((s,r)=>s+r.rating,0);
-    c.fbAvg = Number((sum/list.length).toFixed(1));
-    c.fbCount = list.length;
+    courses = await courseModel.findAll2();
   }
-}
 
+  // --- Tính toán feedback trung bình ---
+  for (const c of courses) {
+    const list = await feedbackModel.findByCourse(c.courseid);
+    if (!list?.length) {
+      c.fbAvg = 0;
+      c.fbCount = 0;
+    } else {
+      const sum = list.reduce((s, r) => s + r.rating, 0);
+      c.fbAvg = Number((sum / list.length).toFixed(1));
+      c.fbCount = list.length;
+    }
+  }
+
+  // --- Sắp xếp ---
   if (sort === 'rating') {
     courses.sort((a, b) => (b.fbAvg || 0) - (a.fbAvg || 0));
-  } else if (sort === 'price') {
-    const eff = c => (Number(c.price) || 0) - (Number(c.discount) || 0);
-    courses.sort((a, b) => eff(a) - eff(b));
-  } else if (sort === 'newest' && category) {
-    // When viewing by category (no DB pagination), sort here
-    courses.sort((a, b) => new Date(b.createdat || b.lastupdate || 0) - new Date(a.createdat || a.lastupdate || 0));
+  } else if (sort === 'newest') {
+    courses.sort((a, b) => new Date(b.createdat) - new Date(a.createdat));
   }
 
+  // --- Phân trang ---
+  const total = courses.length;
+  const totalPages = Math.ceil(total / limit);
+  const pagedCourses = courses.slice(offset, offset + limit);
+  const pages = Array.from({ length: totalPages }, (_, i) => ({
+    value: i + 1,
+    isCurrent: i + 1 === page,
+  }));
+
+  // --- Lấy danh sách giảng viên ---
+  const instructors = await courseModel.getInstructors();
+
+  // --- Render ---
   res.render('vwCourse/byCat', {
-    parents: parents,
-    childrenMap: childrenMap,
-    category: category,
-    courses: courses,
+    parents,
+    childrenMap,
+    category,
+    courses: pagedCourses,
     sort,
     pages,
     isFirstPage: page === 1,
     isLastPage: page === totalPages,
     prevPage: page > 1 ? page - 1 : 1,
     nextPage: page < totalPages ? page + 1 : totalPages,
+    instructors,
+    currentInstructor: instructorid || null,
   });
 });
 
+import {applySort} from '../models/course.model.js';
 router.get('/search', async function (req, res) {
   const q = req.query.q .trim()|| '';
   if (q.length === 0) {
@@ -92,7 +107,7 @@ router.get('/search', async function (req, res) {
   const keyword = q.replace(/ /g, ' & ');
   const sort = String(req.query.sort || '').toLowerCase();
   const courses = await courseModel.searchSorted(keyword, sort, limit, offset);
-  // add rating avg to each course for rendering and sorting by rating
+
   for (const c of courses) {
     const list = await feedbackModel.findByCourse(c.courseid);
     if (!list?.length) {
@@ -108,6 +123,7 @@ router.get('/search', async function (req, res) {
     const eff = c => (Number(c.price) || 0) - (Number(c.discount) || 0);
     courses.sort((a, b) => eff(a) - eff(b));
   }
+
   const total = await courseModel.countSearch(keyword);
   const totalPages = Math.ceil(total / limit);
   const pages = [];
@@ -122,8 +138,8 @@ router.get('/search', async function (req, res) {
     q: q,
     courses,
     empty: courses.length === 0,
-    sort,
     pages,
+    sort: sort,
     isFirstPage: page === 1,
     isLastPage: page === totalPages,
     prevPage: page > 1 ? page - 1 : 1,
@@ -443,12 +459,14 @@ router.get('/:id', async function (req, res) {
   for (const p of parents) {
     childrenMap[p.catid] = await categoryModel.findChildrenByParent(p.catid);
   }
+  const instructorName = await courseModel.InstructorName(id);
 
   res.render('vwCourse/details', {
     course,
     parents,
     childrenMap,
-    fb
+    fb,
+    instructorName,
   });
 });
 

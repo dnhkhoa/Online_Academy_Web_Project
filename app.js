@@ -30,6 +30,8 @@ app.engine(
       calcOriginal: (price, discount) => (Number(price) || 0) + (Number(discount) || 0),
       calcPrice: (price, discount) => (Number(price) || 0) - (Number(discount) || 0),
       renderStars,
+      eq: (a, b) => Number(a) === Number(b),
+      is: (a, b) => String(a) === String(b),
     },
   })
 );
@@ -144,12 +146,18 @@ import categoryRouter from "./routes/category.route.js";
 import * as authMiddleware from './middlewares/auth.mdw.js';
 app.use("/admin/categories",authMiddleware.requireAuth ,authMiddleware.restrictAdmin, categoryRouter);
 
+import adminUsersRouter from "./routes/admin.users.route.js";
+app.use("/admin/users", authMiddleware.requireAuth, authMiddleware.restrictAdmin, adminUsersRouter);
+
 
 import tinyRouter from './routes/tiny.route.js';
 app.use('/tiny', tinyRouter);
 
 import termRouter from "./routes/term.route.js";
 app.use("/legal", termRouter);
+
+import instructorRouter from "./routes/instructor.route.js";
+app.use("/instructor", instructorRouter);
 
 
 app.use("/payments", paymentRouter);

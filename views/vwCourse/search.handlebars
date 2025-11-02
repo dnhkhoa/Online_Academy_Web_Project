@@ -18,14 +18,12 @@
         <h2 class="display-6">Search result for "{{q}}"</h2>
         <p class="text-muted mb-0"></p>
       </div>
-
       <form method="get" class="d-flex justify-content-end mb-3 align-items-center gap-2">
         <input type="hidden" name="q" value="{{q}}" />
         <label for="searchSortSelect" class="form-label mb-0 me-1">Sort by:</label>
         <select id="searchSortSelect" name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
           <option value="">Default</option>
           <option value="rating">Rating</option>
-          <option value="price">Price</option>
           <option value="newest">Newest</option>
         </select>
       </form>
@@ -66,6 +64,13 @@
                           <i class="bi bi-cart-plus"></i> Add to Cart
                         </button>
                       </form>
+
+                      <form action="/account/add" method="post">
+                        <input type="hidden" name="courseid" value="{{this.courseid}}" />
+                          <button type="submit" class="btn btn-sm btn btn-outline-danger">
+                            <i class="bi bi-heart"></i> Add to watchlist
+                          </button>
+                        </form>
                     </div>
                     
                 </div>
@@ -91,7 +96,7 @@
             {{else}}
                 <li class="page-item">
                 <a class="page-link" href="/course/search?q={{../q}}&sort={{../sort}}&page={{value}}">
-                  {{value}}
+                    {{value}}
                 </a>
                 </li>
             {{/if}}
